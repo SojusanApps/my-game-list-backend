@@ -1,0 +1,123 @@
+@startuml entity_driagram
+
+' hide the spot
+hide circle
+
+' avoid problems with angled crows feet
+skinparam linetype ortho
+
+entity Account {
+    * account_id : number <<generated>>
+    --
+    * login : text
+    * password : text
+    * email : text
+    * nickname : text
+    * date_joined : date
+    * role : text <<FK>>
+    * is_admin : bool
+    * is_active : bool
+    --
+    gender : text
+    avatar : image
+}
+
+entity Role {
+    * role_id : number <<generated>>
+    --
+    * name : text
+}
+
+'will be replaced with django-friendship
+entity Friend {
+    * friend_id : number <<generated>>
+    --
+    * user_id : number <<FK>>
+    * user_friend_id : number <<FK>>
+    * date_of_adding : date
+    * is_accepted_by_both : bool
+}
+
+entity Follow {
+    * follow_id : number <<generated>>
+    --
+    * account_id : number <<FK>>
+    * game_id : number <<FK>>
+    * date_of_following : date
+    --
+    new_review : number
+}
+
+entity StatusInList {
+    * status_id : number <<generated>>
+    --
+    * name : text
+}
+
+entity GameList {
+    * gamelist_id : number <<generated>>
+    --
+    * account_id: number <<FK>>
+    * game_id : number <<FK>>
+    * status_id : text <<FK>>
+    * date_of_addition: date
+    --
+    score : number
+    review : text
+    date_of_adding_review : date
+}
+
+entity Publisher {
+    * publisher_id : number <<generated>>
+    --
+    * name : text
+}
+
+entity Game {
+    * game_id : number <<generated>>
+    --
+    * title : text
+    * studio_id : number <<FK>>
+    * publisher_id : number <<FK>>
+    * date_of_adding : date
+    * is_accepted : bool
+    --
+    cover_image : iamge
+    premiere : date
+    description : text
+}
+
+entity Studio {
+    * studio_id : number <<generated>>
+    --
+    * name : text
+    * is_indie : bool
+    * is_accepted : bool
+}
+
+entity Platform {
+    * platform_id : number <<generated>>
+    --
+    * name : text
+}
+
+entity Genre {
+    * genre_id : number <<generated>>
+    --
+    * name : text
+}
+
+Account -- Friend
+Account -- Friend
+Account --{ Follow
+Account --{ GameList
+Account --{ Role
+Game --{ Follow
+Studio --{ Game
+Publisher --{ Game
+Game }--{ Platform
+Game }--{ Genre
+GameList -- StatusInList
+
+@enduml
+

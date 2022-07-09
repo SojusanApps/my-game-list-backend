@@ -1,0 +1,3 @@
+[tool.black]
+# Compatible with the flake8 line length
+line-length = 100

@@ -1,0 +1,23 @@
+.vscode
+*.log
+__pycache__/
+*.py[cod]
+*.orig
+.coverage
+.coverage.*
+.tox/
+.cache/
+build/
+/*.egg-info
+dist/
+*.sqlite3
+media/
+# Remove static that are created after collectstatic by manage.py
+static/
+docker/my-game-list/*.whl
+docker/tests/requirements*.txt
+.pytest_cache/
+.idea/*
+_ignore_*
+docs/*
+.env
