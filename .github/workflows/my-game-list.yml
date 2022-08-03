@@ -31,9 +31,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements/requirements.txt
           pip install -r requirements/requirements-test.txt
+
       - name: Test using tox
         run: |
           tox -vv
+
       - name: Report coverage to codecov
         uses: codecov/codecov-action@v1
         with:

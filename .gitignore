@@ -11,11 +11,11 @@ build/
 /*.egg-info
 dist/
 *.sqlite3
-media/
 # Remove static that are created after collectstatic by manage.py
 static/
-docker/my-game-list/*.whl
-docker/tests/requirements*.txt
+media/
+docker/app/*.whl
+docker/.env
 .pytest_cache/
 .idea/*
 _ignore_*

@@ -34,8 +34,11 @@ CONFIG = {
     ],
     "scripts": [
         path.join("scripts", "my-game-list-manage.py"),
-        path.join("scripts", "my-game-list-run-tests-with-pg.sh")
-    ]
+        path.join("scripts", "my-game-list-run-tests-with-pg.sh"),
+        path.join("scripts", "my-game-list-run-tests.sh"),
+        path.join("scripts", "my-game-list-build.py"),
+        path.join("scripts", "wait-for-it.sh"),
+    ],
 }
 
 setup(**CONFIG)

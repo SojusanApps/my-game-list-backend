@@ -1,11 +1,8 @@
-drf-spectacular==0.22.1
-pika==1.3.0
-
 # Django
 django==4.0.6
 djangorestframework==3.13.1
 django-filter==22.1
-django-extensions==3.1.5
+django-extensions==3.2.0
 django-redis==5.2.0
 django-cors-headers==3.13.0
 django-rosetta==0.9.8
@@ -21,7 +18,8 @@ django-celery-beat==2.3.0
 
 # Others
 gunicorn==20.1.0
-psycopg-binary==3.0.15
+psycopg2-binary==2.9.3
 model-bakery==1.6.0
 redis==4.3.4
 colorlog==6.6.0
+drf-spectacular==0.23.1

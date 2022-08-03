@@ -6,8 +6,16 @@ hide circle
 ' avoid problems with angled crows feet
 skinparam linetype ortho
 
-entity Account {
-    * account_id : number <<generated>>
+!define DICTIONARY_COLOR LightPink
+
+legend right
+    | Color | Type |
+    | <#DICTIONARY_COLOR> | Dictionary class |
+    | | Model class |
+endlegend
+
+entity User {
+    * id : number <<generated>>
     --
     * login : text
     * password : text
@@ -22,42 +30,49 @@ entity Account {
     avatar : image
 }
 
-entity Role {
-    * role_id : number <<generated>>
+entity Role #DICTIONARY_COLOR {
+    * id : number <<generated>>
     --
     * name : text
 }
 
-'will be replaced with django-friendship
-entity Friend {
-    * friend_id : number <<generated>>
+entity FriendList {
+    * id : number <<generated>>
     --
-    * user_id : number <<FK>>
-    * user_friend_id : number <<FK>>
-    * date_of_adding : date
-    * is_accepted_by_both : bool
+    * user : number <<FK>>
+    * friends : number <<FK>>
+}
+
+entity FriendshipRequest {
+    * id : number <<generated>>
+    --
+    * sender : number <<FK>>
+    * receiver : number <<FK>>
+    * message : str
+    * is_active : boolean
+    * created : date
 }
 
 entity Follow {
-    * follow_id : number <<generated>>
+    * id : number <<generated>>
     --
-    * account_id : number <<FK>>
+    * user_id : number <<FK>>
     * game_id : number <<FK>>
     * date_of_following : date
     --
     new_review : number
 }
 
-entity StatusInList {
-    * status_id : number <<generated>>
+entity StatusInList #DICTIONARY_COLOR {
+    * id : number <<generated>>
     --
     * name : text
 }
 
 entity GameList {
-    * gamelist_id : number <<generated>>
+    * id : number <<generated>>
     --
-    * account_id: number <<FK>>
+    * user_id: number <<FK>>
     * game_id : number <<FK>>
     * status_id : text <<FK>>
     * date_of_addition: date
@@ -67,14 +82,14 @@ entity GameList {
     date_of_adding_review : date
 }
 
-entity Publisher {
-    * publisher_id : number <<generated>>
+entity Publisher #DICTIONARY_COLOR {
+    * id : number <<generated>>
     --
     * name : text
 }
 
 entity Game {
-    * game_id : number <<generated>>
+    * id : number <<generated>>
     --
     * title : text
     * studio_id : number <<FK>>
@@ -87,31 +102,33 @@ entity Game {
     description : text
 }
 
-entity Studio {
-    * studio_id : number <<generated>>
+entity Studio #DICTIONARY_COLOR {
+    * id : number <<generated>>
     --
     * name : text
     * is_indie : bool
     * is_accepted : bool
 }
 
-entity Platform {
-    * platform_id : number <<generated>>
+entity Platform #DICTIONARY_COLOR {
+    * id : number <<generated>>
     --
     * name : text
 }
 
-entity Genre {
-    * genre_id : number <<generated>>
+entity Genre #DICTIONARY_COLOR {
+    * id : number <<generated>>
     --
     * name : text
 }
 
-Account -- Friend
-Account -- Friend
-Account --{ Follow
-Account --{ GameList
-Account --{ Role
+User -- FriendList
+FriendList }--{ User
+User --{ FriendshipRequest
+User --{ FriendshipRequest
+User --{ Follow
+User --{ GameList
+User --{ Role
 Game --{ Follow
 Studio --{ Game
 Publisher --{ Game

@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14.4-alpine
+    restart: "unless-stopped"
+    ports:
+      - "5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - ./.env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U my_game_list"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  app: &main_app
+    image: docker.pkg.github.com/sojusan/my-game-list/app:latest
+    restart: "unless-stopped"
+    depends_on:
+      - postgres
+    volumes:
+      - static_volume:/opt/my_game_list/static
+      - media_volume:/opt/my_game_list/media
+    env_file:
+      - ./.env
+    command: gunicorn
+
+  set_state:
+    <<: *main_app
+    restart: "no"
+    depends_on:
+      - app
+      - postgres
+    command: set_state
+    volumes:
+      - static_volume:/opt/my_game_list/static
+
+  nginx:
+    image: docker.pkg.github.com/sojusan/my-game-list/nginx:latest
+    restart: "unless-stopped"
+    depends_on:
+      - app
+      - set_state
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - static_volume:/opt/my_game_list/static
+      - media_volume:/opt/my_game_list/media
+
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
