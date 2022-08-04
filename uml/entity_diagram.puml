@@ -7,33 +7,48 @@ hide circle
 skinparam linetype ortho
 
 !define DICTIONARY_COLOR LightPink
+!define DJANGO_COLOR LightGreen
 
 legend right
     | Color | Type |
     | <#DICTIONARY_COLOR> | Dictionary class |
+    | <#DJANGO_COLOR> | Django built-in class |
     | | Model class |
 endlegend
 
 entity User {
     * id : number <<generated>>
     --
-    * login : text
+    * username : text
     * password : text
     * email : text
-    * nickname : text
     * date_joined : date
-    * role : text <<FK>>
-    * is_admin : bool
+    * is_staff : bool
     * is_active : bool
+    * is_superuser : bool
+    * groups : number <<FK>>
+    * user_permissions : number <<FK>>
+    * friend_list : number <<FK>>
     --
+    first_name : text
+    last_name : text
     gender : text
     avatar : image
+    last_login : date
 }
 
-entity Role #DICTIONARY_COLOR {
+entity Group #DJANGO_COLOR {
     * id : number <<generated>>
     --
     * name : text
+    * permissions : number <<FK>>
+}
+
+entity Permission #DJANGO_COLOR {
+    * id : number <<generated>>
+    --
+    * name : text
+    * codename : text
 }
 
 entity FriendList {
@@ -56,11 +71,9 @@ entity FriendshipRequest {
 entity Follow {
     * id : number <<generated>>
     --
-    * user_id : number <<FK>>
-    * game_id : number <<FK>>
+    * user : number <<FK>>
+    * game : number <<FK>>
     * date_of_following : date
-    --
-    new_review : number
 }
 
 entity StatusInList #DICTIONARY_COLOR {
@@ -72,9 +85,9 @@ entity StatusInList #DICTIONARY_COLOR {
 entity GameList {
     * id : number <<generated>>
     --
-    * user_id: number <<FK>>
-    * game_id : number <<FK>>
-    * status_id : text <<FK>>
+    * user: number <<FK>>
+    * game : number <<FK>>
+    * status : text <<FK>>
     * date_of_addition: date
     --
     score : number
@@ -92,13 +105,14 @@ entity Game {
     * id : number <<generated>>
     --
     * title : text
-    * studio_id : number <<FK>>
-    * publisher_id : number <<FK>>
+    * studio : number <<FK>>
+    * publisher : number <<FK>>
     * date_of_adding : date
-    * is_accepted : bool
+    * genres : number <<FK>>
+    * platforms : number <<FK>>
+    * premiere : date
     --
-    cover_image : iamge
-    premiere : date
+    cover_image : image
     description : text
 }
 
@@ -106,8 +120,6 @@ entity Studio #DICTIONARY_COLOR {
     * id : number <<generated>>
     --
     * name : text
-    * is_indie : bool
-    * is_accepted : bool
 }
 
 entity Platform #DICTIONARY_COLOR {
@@ -122,13 +134,15 @@ entity Genre #DICTIONARY_COLOR {
     * name : text
 }
 
+User }--{ Permission
+User }--{ Group
+Group }--{ Permission
 User -- FriendList
 FriendList }--{ User
 User --{ FriendshipRequest
 User --{ FriendshipRequest
 User --{ Follow
 User --{ GameList
-User --{ Role
 Game --{ Follow
 Studio --{ Game
 Publisher --{ Game
