@@ -16,6 +16,7 @@ fresh_run:
 	my-game-list-manage.py runserver
 
 check:
+	isort .
 	black .
 	flake8
 

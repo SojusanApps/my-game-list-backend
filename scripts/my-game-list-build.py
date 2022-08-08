@@ -1,10 +1,9 @@
-import json
-import sys
-import os
 import inspect
-from pathlib import Path
+import json
+import os
+import sys
 from distutils.util import strtobool
-
+from pathlib import Path
 
 DOCKER_REGISTRY = "docker.pkg.github.com"
 DOCKER_REGISTRY_PATH_WEB = f"{DOCKER_REGISTRY}/sojusan/my-game-list/app"

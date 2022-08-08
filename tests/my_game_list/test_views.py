@@ -1,5 +1,5 @@
-from django.urls import reverse
 from django.test.client import Client
+from django.urls import reverse
 from rest_framework import status
 
 from my_game_list import __version__

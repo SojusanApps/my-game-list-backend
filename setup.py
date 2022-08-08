@@ -1,8 +1,8 @@
 from os import path
+
 from setuptools import find_packages, setup
 
 from my_game_list import __version__
-
 
 NAME = "my_game_list"
 DESCRIPTION = "MyGameList API - Application to manage game lists."
