@@ -39,6 +39,11 @@ INSTALLED_APPS = [
     # Internal apps
     f"{MAIN_APP}.{MAIN_APP}",
     f"{MAIN_APP}.users",
+    f"{MAIN_APP}.games",
+    f"{MAIN_APP}.friendships",
+    # This one must be the last to ensure that exceptions inside other app's
+    # signal handlers do not affect the integrity of file deletions within transactions
+    "django_cleanup.apps.CleanupConfig",
 ]
 
 MIDDLEWARE = [
@@ -119,7 +124,7 @@ LOCALE_PATHS = [
     os.path.join(BASE_DIR, "locale"),
 ]
 
-STATIC_URL = "static/"
+STATIC_URL = "/static/"
 STATIC_ROOT = f"/opt/{MAIN_APP}/static"
 
 MEDIA_URL = "/media/"
@@ -130,3 +135,5 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 AUTH_USER_MODEL = "users.User"
 
 CORS_ALLOWED_ORIGINS = oeg("DJANGO_CORS_ALLOWED_ORIGINS", "http://localhost:4200").split(",")
+
+LIMIT_AVATAR_SIZE = int(oeg("MGL_LIMIT_AVATAR_SIZE", 200 * 1024))  # 200 KiB

@@ -8,23 +8,193 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-03 14:01+0000\n"
-"PO-Revision-Date: 2022-08-03 12:31+0000\n"
+"POT-Creation-Date: 2022-08-09 20:07+0000\n"
+"PO-Revision-Date: 2022-08-09 20:08+0000\n"
 "Last-Translator:   <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
-"%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
-"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 "X-Translated-Using: django-rosetta 0.9.8\n"
 
-#: my_game_list/settings/base.py:104
+#: my_game_list/friendships/models.py:17
+msgid "friend list"
+msgstr "lista znajomych"
+
+#: my_game_list/friendships/models.py:18
+msgid "friend lists"
+msgstr "listy znajomych"
+
+#: my_game_list/friendships/models.py:27
+msgid "message"
+msgstr "wiadomość"
+
+#: my_game_list/friendships/models.py:29
+msgid "is active"
+msgstr "czy aktywny"
+
+#: my_game_list/friendships/models.py:31
+msgid "The request will be inactive if the request was accepted or rejected."
+msgstr "Żądanie będzie nieaktywne, jeśli zostanie przyjęte lub odrzucone."
+
+#: my_game_list/friendships/models.py:33 my_game_list/games/models.py:45
+#: my_game_list/games/models.py:80 my_game_list/games/models.py:105
+#: my_game_list/games/models.py:131
+msgid "creation time"
+msgstr "czas stworzenia"
+
+#: my_game_list/friendships/models.py:34 my_game_list/games/models.py:46
+#: my_game_list/games/models.py:81
+msgid "last modified"
+msgstr "ostatnio zmodyfikowano"
+
+#: my_game_list/friendships/models.py:44
+msgid "friendship request"
+msgstr "zaproszenie do znajomych"
+
+#: my_game_list/friendships/models.py:45
+msgid "friendship requests"
+msgstr "zaproszenia do znajomych"
+
+#: my_game_list/games/models.py:13
+msgid "publisher"
+msgstr "wydawca"
+
+#: my_game_list/games/models.py:14
+msgid "publishers"
+msgstr "wydawcy"
+
+#: my_game_list/games/models.py:21
+msgid "developer"
+msgstr "deweloper"
+
+#: my_game_list/games/models.py:22
+msgid "developers"
+msgstr "deweloperzy"
+
+#: my_game_list/games/models.py:29
+msgid "genre"
+msgstr "gatunek"
+
+#: my_game_list/games/models.py:30
+msgid "genres"
+msgstr "gatunki"
+
+#: my_game_list/games/models.py:37
+msgid "platform"
+msgstr "platforma"
+
+#: my_game_list/games/models.py:38
+msgid "platforms"
+msgstr "platformy"
+
+#: my_game_list/games/models.py:44
+msgid "title"
+msgstr "tytuł"
+
+#: my_game_list/games/models.py:47
+msgid "release date"
+msgstr "data wydania"
+
+#: my_game_list/games/models.py:48
+msgid "cover image"
+msgstr "okładka"
+
+#: my_game_list/games/models.py:49 my_game_list/games/models.py:132
+msgid "description"
+msgstr "opis"
+
+#: my_game_list/games/models.py:57
+msgid "game"
+msgstr "gra"
+
+#: my_game_list/games/models.py:58
+msgid "games"
+msgstr "gry"
+
+#: my_game_list/games/models.py:67
+msgid "Completed"
+msgstr "Zakończono"
+
+#: my_game_list/games/models.py:68
+msgid "Plan to play"
+msgstr "W planach"
+
+#: my_game_list/games/models.py:69
+msgid "Playing"
+msgstr "Aktualnie ogrywane"
+
+#: my_game_list/games/models.py:70
+msgid "Dropped"
+msgstr "Porzucno"
+
+#: my_game_list/games/models.py:71
+msgid "On hold"
+msgstr "Wstrzymano"
+
+#: my_game_list/games/models.py:79
+msgid "status"
+msgstr "status"
+
+#: my_game_list/games/models.py:89
+msgid "game list"
+msgstr "lista gier"
+
+#: my_game_list/games/models.py:90
+msgid "game lists"
+msgstr "listy gier"
+
+#: my_game_list/games/models.py:113
+msgid "game follow"
+msgstr "oserwowana gra"
+
+#: my_game_list/games/models.py:114
+msgid "games followed"
+msgstr "obserwowane gry"
+
+#: my_game_list/games/models.py:129
+msgid "score"
+msgstr "ocena"
+
+#: my_game_list/games/models.py:140
+msgid "game review"
+msgstr "recenzja gry"
+
+#: my_game_list/games/models.py:141
+msgid "games reviews"
+msgstr "recenzje gier"
+
+#: my_game_list/my_game_list/models.py:15
+msgid "name"
+msgstr "nazwa"
+
+#: my_game_list/my_game_list/validators.py:13
+#, python-brace-format
+msgid "File too large. Size should not exceed {limit} B"
+msgstr "Plik jest za duży. Rozmiar nie może przekraczać {limit} B"
+
+#: my_game_list/settings/base.py:108
 msgid "Polish"
 msgstr "Polski"
 
-#: my_game_list/settings/base.py:105
+#: my_game_list/settings/base.py:109
 msgid "English"
 msgstr "Angielski"
+
+#: my_game_list/users/models.py:12
+msgid "Male"
+msgstr "Mężczyzna"
+
+#: my_game_list/users/models.py:13
+msgid "Female"
+msgstr "Kobieta"
+
+#: my_game_list/users/models.py:20
+msgid "avatar"
+msgstr "awatar"
+
+#: my_game_list/users/models.py:22
+msgid "gender"
+msgstr "płeć"
