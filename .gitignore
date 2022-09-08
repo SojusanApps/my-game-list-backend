@@ -21,3 +21,4 @@ docker/.env
 _ignore_*
 docs/*
 .env
+.scannerwork

@@ -46,7 +46,7 @@ class Game(BaseModel):
     last_modified = models.DateTimeField(_("last modified"), auto_now=True)
     release_date = models.DateField(_("release date"), blank=True, null=True)
     cover_image = models.ImageField(_("cover image"), upload_to="cover_images/")
-    description = models.TextField(_("description"), blank=True)
+    description = models.TextField(_("description"), blank=True, max_length=2000)
 
     publisher = models.ForeignKey(Publisher, on_delete=models.PROTECT, related_name="games")
     developer = models.ForeignKey(Developer, on_delete=models.PROTECT, related_name="games")
@@ -129,7 +129,7 @@ class GameReview(BaseModel):
         _("score"), validators=[MinValueValidator(1), MaxValueValidator(10)], default=1
     )
     creation_time = models.DateTimeField(_("creation time"), auto_now_add=True)
-    review = models.TextField(_("description"), blank=True)
+    review = models.TextField(_("description"), blank=True, max_length=1000)
 
     game = models.ForeignKey(Game, on_delete=models.PROTECT, related_name="reviews")
     user = models.ForeignKey(

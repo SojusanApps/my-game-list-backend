@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-09 20:07+0000\n"
-"PO-Revision-Date: 2022-08-09 20:08+0000\n"
+"POT-Creation-Date: 2022-08-11 18:47+0000\n"
+"PO-Revision-Date: 2022-08-11 18:47+0000\n"
 "Last-Translator:   <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -172,14 +172,15 @@ msgstr "nazwa"
 
 #: my_game_list/my_game_list/validators.py:13
 #, python-brace-format
-msgid "File too large. Size should not exceed {limit} B"
-msgstr "Plik jest za duży. Rozmiar nie może przekraczać {limit} B"
+#| msgid "File too large. Size should not exceed {limit} B"
+msgid "File too large. Size should not exceed {limit} B."
+msgstr "Plik jest za duży. Rozmiar nie może przekraczać {limit} B."
 
-#: my_game_list/settings/base.py:108
+#: my_game_list/settings/base.py:111
 msgid "Polish"
 msgstr "Polski"
 
-#: my_game_list/settings/base.py:109
+#: my_game_list/settings/base.py:112
 msgid "English"
 msgstr "Angielski"
 

@@ -10,5 +10,5 @@ def validate_file_size(value: Any) -> None:
     limit = settings.LIMIT_AVATAR_SIZE
     if value.size > limit:
         raise ValidationError(
-            _("File too large. Size should not exceed {limit} B").format(limit=limit)
+            _("File too large. Size should not exceed {limit} B.").format(limit=limit)
         )

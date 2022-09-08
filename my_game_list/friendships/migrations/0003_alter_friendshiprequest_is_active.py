@@ -6,13 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('friendships', '0002_initial'),
+        ("friendships", "0002_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='friendshiprequest',
-            name='is_active',
-            field=models.BooleanField(default=True, help_text='The request will be inactive if the request was accepted or rejected.', verbose_name='is active'),
+            model_name="friendshiprequest",
+            name="is_active",
+            field=models.BooleanField(
+                default=True,
+                help_text="The request will be inactive if the request was accepted or rejected.",
+                verbose_name="is active",
+            ),
         ),
     ]
