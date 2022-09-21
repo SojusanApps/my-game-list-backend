@@ -22,3 +22,4 @@ _ignore_*
 docs/*
 .env
 .scannerwork
+coverage.xml
