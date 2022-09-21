@@ -1,5 +1,7 @@
 # MyGameList
 
+[![codecov](https://codecov.io/gh/Sojusan/my-game-list/branch/master/graph/badge.svg?token=knlIznGzJO)](https://codecov.io/gh/Sojusan/my-game-list)
+
 Application to manage game lists.
 
 ## Basic assumptions
