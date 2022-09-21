@@ -58,7 +58,7 @@ jobs:
           tox -vv
         env:
           POSTGRES_HOST: localhost
-          POSTGRES_PORT: 5432
+          POSTGRES_EXTERNAL_PORT: 5432
 
       - name: Report coverage to codecov
         uses: codecov/codecov-action@v1
