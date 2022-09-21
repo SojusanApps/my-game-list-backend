@@ -9,7 +9,7 @@ Application to manage game lists.
 * REST API based on the [Django REST Framework](https://www.django-rest-framework.org/)
 * Line length 100
 * Language: English
-* Tests performed with [PyTest](https://docs.pytest.org/)
+* Tests performed with [pytest](https://docs.pytest.org/)
 * Full compatibility with [PEP8](https://peps.python.org/pep-0008/)
 * Assumed coverage in tests > 90%
 * Automatic tests for PostgreSQL in GitHub CI

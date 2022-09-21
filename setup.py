@@ -37,7 +37,7 @@ CONFIG = {
         path.join("scripts", "my-game-list-run-tests-with-pg.sh"),
         path.join("scripts", "my-game-list-run-tests.sh"),
         path.join("scripts", "my-game-list-build.py"),
-        path.join("scripts", "wait-for-it.sh"),
+        path.join("scripts", "wait-for-postgresql.py"),
     ],
 }
 

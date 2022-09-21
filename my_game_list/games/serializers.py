@@ -49,6 +49,7 @@ class PlatformSerializer(BaseDictionarySerializer):
 
 class GameSerializer(serializers.ModelSerializer):
     """A serializer for the game model."""
+
     publisher = PublisherSerializer()
     developer = DeveloperSerializer()
     genres = GenreSerializer(many=True)

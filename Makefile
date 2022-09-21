@@ -5,6 +5,8 @@ help:
 	@echo "fresh_run - Use for the first start of the application. It collects the static files,"
 	@echo "            runs the migrations, prompts for superuser creation, and at the end runs the application."
 	@echo "check - Check the correctness of code with black formatter and flake8."
+	@echo "translations - Prepare the translations for supported languages."
+	@echo "coverage - Prepare the coverage report in HTML format."
 
 run:
 	my-game-list-manage.py runserver
@@ -22,6 +24,9 @@ check:
 	isort .
 	black .
 	flake8
+
+coverage:
+	coverage html
 
 # .PHONY defines parts of the makefile that are not dependant on any specific file
 # This is most often used to store functions
