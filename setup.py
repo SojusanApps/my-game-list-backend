@@ -1,4 +1,5 @@
 from os import path
+from pathlib import Path
 
 from setuptools import find_packages, setup
 
@@ -6,6 +7,7 @@ from my_game_list import __version__
 
 NAME = "my_game_list"
 DESCRIPTION = "MyGameList API - Application to manage game lists."
+LONG_DESCRIPTION = (Path(__file__).parent / "README.md").read_text()
 
 
 def get_version():
@@ -21,6 +23,8 @@ CONFIG = {
     "name": "my-game-list",
     "version": get_version(),
     "description": DESCRIPTION,
+    "long_description": LONG_DESCRIPTION,
+    "long_description_content_type": "text/markdown",
     "packages": get_packages(),
     "include_package_data": True,
     "author": "Sojusan",
