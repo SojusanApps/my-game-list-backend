@@ -1,3 +1,5 @@
+import base64
+
 import pytest
 from django.urls import reverse
 from rest_framework import status
@@ -9,14 +11,10 @@ def test_register_user(api_client: APIClient):
     data = {
         "username": "testuser",
         "password": "testpassword",
-        "gender": "M",
         "email": "test@test.com",
-        "first_name": "Test",
-        "last_name": "Doe",
-        "avatar": open("tests/resources/test_image.png", "rb"),
+        "avatar": base64.b64encode(b"Test").decode("utf-8"),
     }
     response = api_client.post(reverse("users:users-list"), data)
 
-    print(f"\033[92m {response.json()} \033[0m")
     assert response.status_code == status.HTTP_201_CREATED
     assert response.json()["username"] == "testuser"

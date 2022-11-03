@@ -16,6 +16,7 @@ translations:
 
 fresh_run:
 	my-game-list-manage.py collectstatic
+	my-game-list-manage.py makemigrations
 	my-game-list-manage.py migrate
 	my-game-list-manage.py createsuperuser
 	my-game-list-manage.py runserver

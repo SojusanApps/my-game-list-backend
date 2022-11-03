@@ -30,9 +30,6 @@ entity User {
     * user_permissions : number <<FK>>
     * friend_list : number <<FK>>
     --
-    first_name : text
-    last_name : text
-    gender : text
     avatar : image
     last_login : date
 }
