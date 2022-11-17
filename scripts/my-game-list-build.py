@@ -141,7 +141,7 @@ def _is_docker_registry_access() -> bool:
     try:
         path = f"{Path.home()}/.docker/config.json"
         with open(path, "r") as docker_config_file:
-            config_file : dict = json.load(docker_config_file)
+            config_file: dict = json.load(docker_config_file)
             if authorizations := config_file.get("auths"):
                 return authorizations.get(sys.argv[1]) is not None
             else:

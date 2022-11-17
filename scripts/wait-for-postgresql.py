@@ -3,8 +3,7 @@ import os
 from time import sleep
 
 import psycopg2
-
-from python_colors import print_error, print_success, print_info
+from python_colors import print_error, print_info, print_success
 
 
 def check_database_connection() -> bool:
