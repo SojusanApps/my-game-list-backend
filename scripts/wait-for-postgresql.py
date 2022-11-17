@@ -4,6 +4,8 @@ from time import sleep
 
 import psycopg2
 
+from python_colors import print_error, print_success, print_info
+
 
 def check_database_connection() -> bool:
     """
@@ -42,14 +44,14 @@ def wait_for_database_connection() -> None:
     i = 0
     interval = 1
     while i < timeout:
-        print(f"Waiting for database connection {i}/{timeout} seconds ...")
+        print_info(f"Waiting for database connection {i}/{timeout} seconds ...")
         if check_database_connection():
-            print("SUCCESS: Successfully connected to the PostgreSQL database.")
+            print_success("SUCCESS: Successfully connected to the PostgreSQL database.")
             return
         i += interval
         sleep(interval)
     else:
-        print("FAILED: Connection to PostgreSQL database time out.")
+        print_error("FAILED: Connection to PostgreSQL database time out.")
 
 
 if __name__ == "__main__":

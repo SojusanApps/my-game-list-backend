@@ -6,6 +6,8 @@ import sys
 from distutils.util import strtobool
 from pathlib import Path
 
+from python_colors import print_error, print_warning
+
 DOCKER_REGISTRY = "docker.pkg.github.com"
 DOCKER_REGISTRY_PATH_WEB = f"{DOCKER_REGISTRY}/sojusan/my-game-list/app"
 DOCKER_REGISTRY_PATH_NGINX = f"{DOCKER_REGISTRY}/sojusan/my-game-list/nginx"
@@ -139,7 +141,11 @@ def _is_docker_registry_access() -> bool:
     try:
         path = f"{Path.home()}/.docker/config.json"
         with open(path, "r") as docker_config_file:
-            return json.load(docker_config_file)["auths"].get(sys.argv[1]) is not None
+            config_file : dict = json.load(docker_config_file)
+            if authorizations := config_file.get("auths"):
+                return authorizations.get(sys.argv[1]) is not None
+            else:
+                return False
     except FileNotFoundError:
         return False
 
@@ -159,7 +165,7 @@ def _login_to_docker_registry() -> None:
         if answer == "y":
             os.system(f"docker login {DOCKER_REGISTRY}")
         else:
-            print("Exiting: can't continue without login to the docker registry.")
+            print_error("Exiting: can't continue without login to the docker registry.")
             sys.exit(1)
 
 
@@ -188,8 +194,10 @@ def main() -> int:
         # arguments for function are passed by using the concatenation of ":" with
         # the function name and arguments e.g: function:arg1:arg2
         function_args = arg.split(":")
-        if (func_name := function_args[0]) in available_functions:
-            available_functions[func_name](*function_args[1:])
+        if (function_name := function_args[0]) in available_functions:
+            available_functions[function_name](*function_args[1:])
+        else:
+            print_warning(f"Missing function with a name: {function_name}")
 
     return 0
 
