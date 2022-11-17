@@ -33,7 +33,7 @@ CONFIG = {
     "license": "proprietary",
     "classifiers": [
         "Development Status :: 3 - Alpha",
-        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "License :: Other/Proprietary License",
     ],
     "scripts": [

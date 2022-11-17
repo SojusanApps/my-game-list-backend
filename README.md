@@ -6,7 +6,7 @@ Application to manage game lists.
 
 ## Basic assumptions
 
-* [Python](https://www.python.org/) >= 3.10
+* [Python](https://www.python.org/) >= 3.11
 * [Django](https://www.djangoproject.com/) >= 4.0
 * REST API based on the [Django REST Framework](https://www.django-rest-framework.org/)
 * Line length 100
@@ -83,7 +83,7 @@ Tag Legend:
 1. Create a new PostgreSQL database in docker:
 
    ```shell
-   docker run --name my_game_list_postgresql -p 5432:5432 -e POSTGRES_DB=my_game_list -e POSTGRES_USER=my_game_list -e POSTGRES_PASSWORD=my_game_list -d postgres:14.4-alpine
+   docker run --name my_game_list_postgresql -p 5432:5432 -e POSTGRES_DB=my_game_list -e POSTGRES_USER=my_game_list -e POSTGRES_PASSWORD=my_game_list -d postgres:15.1-alpine
    ```
 
 1. Create a database:
