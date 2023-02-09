@@ -20,7 +20,8 @@ services:
     image: docker.pkg.github.com/sojusan/my-game-list/app:latest
     restart: "unless-stopped"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     volumes:
       - static_volume:/opt/my_game_list/static
       - media_volume:/opt/my_game_list/media
