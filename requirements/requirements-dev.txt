@@ -1,4 +1,4 @@
 -r requirements-cov.txt
 -r requirements-deploy.txt
 -r requirements-tox.txt
-ipython==8.9.0
+ipython==8.11.0

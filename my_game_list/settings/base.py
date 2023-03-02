@@ -44,9 +44,6 @@ INSTALLED_APPS = [
     f"{MAIN_APP}.users",
     f"{MAIN_APP}.games",
     f"{MAIN_APP}.friendships",
-    # This one must be the last to ensure that exceptions inside other app's
-    # signal handlers do not affect the integrity of file deletions within transactions
-    "django_cleanup.apps.CleanupConfig",
 ]
 
 MIDDLEWARE = [

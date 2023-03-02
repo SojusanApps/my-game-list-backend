@@ -16,3 +16,6 @@ class User(BaseModel, AbstractUser):
     avatar = models.BinaryField(
         _("avatar"), max_length=307200, blank=True, null=True, editable=True
     )
+
+    def __str__(self):
+        return f"{self.username} - {self.email}"

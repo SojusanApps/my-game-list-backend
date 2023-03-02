@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth.password_validation import validate_password as django_validate_password
 from rest_framework import serializers
 
 User = get_user_model()
@@ -14,7 +14,7 @@ class CreateUserSerializer(serializers.ModelSerializer):
         extra_kwargs = {"password": {"write_only": True}}
 
     def validate_password(self, value: str):
-        validate_password(value)
+        django_validate_password(value)
         return value
 
     def create(self, validated_data: dict):

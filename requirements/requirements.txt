@@ -1,5 +1,5 @@
 # Django
-django==4.1.6
+django==4.1.7
 djangorestframework==3.14.0
 django-filter==22.1
 django-extensions==3.2.1
@@ -24,4 +24,3 @@ redis==4.5.1
 colorlog==6.7.0
 drf-spectacular==0.25.1
 pillow==9.4.0
-django-cleanup==6.0.0
