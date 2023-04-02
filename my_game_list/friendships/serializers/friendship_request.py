@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.utils.translation import gettext_lazy as _
 from rest_framework.serializers import ModelSerializer, SlugRelatedField, ValidationError
 
 from my_game_list.friendships.models import FriendshipRequest
@@ -41,15 +42,15 @@ class FriendshipRequestCreateSerializer(ModelSerializer):
         sender = data["sender"]
         receiver = data["receiver"]
         if sender == receiver:
-            raise ValidationError("Can't create friendship request to yourself.")
+            raise ValidationError(_("Can't create friendship request to yourself."))
 
         if sender.friends.are_friends(sender, receiver):
-            raise ValidationError("You are already friends.")
+            raise ValidationError(_("You are already friends."))
 
         if sender.friends.request_is_sent(sender, receiver):
-            raise ValidationError("You already sent a friendship request to this user.")
+            raise ValidationError(_("You already sent a friendship request to this user."))
 
         if sender.friends.request_is_sent(receiver, sender):
-            raise ValidationError("This user already sent a friendship request to you.")
+            raise ValidationError(_("This user already sent a friendship request to you."))
 
         return data

@@ -48,7 +48,7 @@ class FriendshipRequest(BaseModel):
             bool: True after successful operation.
         """
         if self.rejected_at is not None:
-            raise ConflictException("This friendship request is already rejected.")
+            raise ConflictException(_("This friendship request is already rejected."))
         self.rejected_at = timezone.now()
         self.save()
 

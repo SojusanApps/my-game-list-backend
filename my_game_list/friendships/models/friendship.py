@@ -28,7 +28,7 @@ class Friendship(BaseModel):
 
     def save(self, *args, **kwargs):
         if self.user == self.friend:
-            raise ValidationError("The user cannot befriend himself.")
+            raise ValidationError(_("The user cannot befriend himself."))
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):

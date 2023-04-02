@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.utils.translation import gettext_lazy as _
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.mixins import CreateModelMixin, DestroyModelMixin, ListModelMixin, RetrieveModelMixin
@@ -28,7 +29,7 @@ class FriendshipRequestViewSet(ListModelMixin, RetrieveModelMixin, CreateModelMi
         instance: FriendshipRequest = self.get_object()
         instance.accept()
 
-        return Response({"detail": "Success"}, status=status.HTTP_201_CREATED)
+        return Response({"detail": _("Success")}, status=status.HTTP_201_CREATED)
 
     @action(
         detail=True,
@@ -39,4 +40,4 @@ class FriendshipRequestViewSet(ListModelMixin, RetrieveModelMixin, CreateModelMi
         instance: FriendshipRequest = self.get_object()
         instance.reject()
 
-        return Response({"detail": "Success"}, status=status.HTTP_200_OK)
+        return Response({"detail": _("Success")}, status=status.HTTP_200_OK)
