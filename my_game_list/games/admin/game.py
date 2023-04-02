@@ -20,5 +20,5 @@ class GameAdmin(admin.ModelAdmin):
         "platforms__name",
     )
     raw_id_fields = ("publisher", "developer")
-    list_filter = ("creation_time", "last_modified", "release_date")
+    list_filter = ("created_at", "last_modified_at", "release_date")
     list_display = readonly_fields + list_filter + raw_id_fields + ("title", "cover_image")

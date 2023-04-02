@@ -20,6 +20,7 @@ urlpatterns = [
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("api/user/", include("my_game_list.users.urls")),
     path("api/game/", include("my_game_list.games.urls")),
+    path("api/friendship/", include("my_game_list.friendships.urls")),
 ]
 
 if "rosetta" in settings.INSTALLED_APPS:

@@ -8,4 +8,4 @@ class GameFollowSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GameFollow
-        fields = ("id", "creation_time", "game", "user")
+        fields = ("id", "created_at", "game", "user")

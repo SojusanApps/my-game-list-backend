@@ -32,9 +32,7 @@ def clean_up(dist_path: str = "dist") -> None:
             prevents to remove dist directory. Defaults to 'dist'.
     """
     os.system("python setup.py clean --all")
-    os.system(
-        f'rm -rf build/ *.egg-info/ {"" if not dist_path or dist_path == "None" else dist_path}'
-    )
+    os.system(f'rm -rf build/ *.egg-info/ {"" if not dist_path or dist_path == "None" else dist_path}')
 
 
 def remove_whls(path: str = "dist/") -> None:
@@ -154,12 +152,7 @@ def _login_to_docker_registry() -> None:
     """Login to the docker registry if required."""
     if not _is_docker_registry_access():
         answer = (
-            input(
-                (
-                    "Access to the docker registry is required, "
-                    f"do you want to login to '{DOCKER_REGISTRY}' [y/n]?"
-                )
-            )
+            input(("Access to the docker registry is required, " f"do you want to login to '{DOCKER_REGISTRY}' [y/n]?"))
             or "y"
         )
         if answer == "y":

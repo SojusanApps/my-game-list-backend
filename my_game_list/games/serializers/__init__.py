@@ -1,6 +1,6 @@
 # flake8: noqa
 from my_game_list.games.serializers.developer import DeveloperSerializer
-from my_game_list.games.serializers.game import GameSerializer
+from my_game_list.games.serializers.game import GameCreateSerializer, GameSerializer
 from my_game_list.games.serializers.game_follow import GameFollowSerializer
 from my_game_list.games.serializers.game_list import GameListSerializer
 from my_game_list.games.serializers.game_review import GameReviewSerializer

@@ -10,6 +10,6 @@ class GameReviewAdmin(admin.ModelAdmin):
     raw_id_fields = ("game", "user")
     list_filter = (
         "score",
-        "creation_time",
+        "created_at",
     )
     list_display = readonly_fields + list_filter + raw_id_fields

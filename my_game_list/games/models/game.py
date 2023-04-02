@@ -12,8 +12,8 @@ class Game(BaseModel):
     """A model containing data about games."""
 
     title = models.CharField(_("title"), max_length=255, unique=True)
-    creation_time = models.DateTimeField(_("creation time"), auto_now_add=True)
-    last_modified = models.DateTimeField(_("last modified"), auto_now=True)
+    created_at = models.DateTimeField(_("creation time"), auto_now_add=True)
+    last_modified_at = models.DateTimeField(_("last modified"), auto_now=True)
     release_date = models.DateField(_("release date"), blank=True, null=True)
     cover_image = models.BinaryField(_("cover image"), max_length=307200, editable=True)
     description = models.TextField(_("description"), blank=True, max_length=2000)

@@ -8,4 +8,4 @@ class GameReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GameReview
-        fields = ("id", "score", "creation_time", "review", "game", "user")
+        fields = ("id", "score", "created_at", "review", "game", "user")

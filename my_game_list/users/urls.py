@@ -6,7 +6,7 @@ from my_game_list.users.views import UserViewSet
 app_name = "users"
 
 router = routers.SimpleRouter()
-router.register("user", UserViewSet, basename="users")
+router.register("users", UserViewSet, basename="users")
 
 urlpatterns = [
     path("", include(router.urls)),

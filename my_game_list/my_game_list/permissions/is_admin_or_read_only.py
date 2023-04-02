@@ -10,6 +10,4 @@ class IsAdminOrReadOnly(permissions.IsAdminUser):
     """
 
     def has_permission(self, request: Request | HttpRequest, view: ModelViewSet):
-        return bool(
-            request.method in permissions.SAFE_METHODS or super().has_permission(request, view)
-        )
+        return bool(request.method in permissions.SAFE_METHODS or super().has_permission(request, view))

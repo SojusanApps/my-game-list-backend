@@ -3,7 +3,7 @@ from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveMode
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
 
-from my_game_list.users.serializers import CreateUserSerializer, ListUserSerializer
+from my_game_list.users.serializers import UserCreateSerializer, UserSerializer
 
 User = get_user_model()
 
@@ -14,7 +14,7 @@ class UserViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin, CreateMode
     queryset = User.objects.all()
 
     def get_serializer_class(self):
-        return CreateUserSerializer if self.action == "create" else ListUserSerializer
+        return UserCreateSerializer if self.action == "create" else UserSerializer
 
     def get_permissions(self):
         permission_classes = (AllowAny,) if self.action == "create" else (IsAuthenticated,)

@@ -8,4 +8,4 @@ class GameListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GameList
-        fields = ("id", "status", "creation_time", "last_modified", "game", "user")
+        fields = ("id", "status", "created_at", "last_modified_at", "game", "user")

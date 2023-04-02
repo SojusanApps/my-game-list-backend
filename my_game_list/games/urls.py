@@ -15,14 +15,14 @@ from my_game_list.games.views import (
 app_name = "games"
 
 router = routers.SimpleRouter()
-router.register("developer", DeveloperViewSet, basename="developers")
-router.register("game-follow", GameFollowViewSet, basename="game_follows")
-router.register("game-list", GameListViewSet, basename="game_lists")
-router.register("game-review", GameReviewViewSet, basename="game-reviews")
-router.register("game", GameViewSet, basename="games")
-router.register("genre", GenreViewSet, basename="genres")
-router.register("platform", PlatformViewSet, basename="platforms")
-router.register("publisher", PublisherViewSet, basename="publishers")
+router.register("developers", DeveloperViewSet, basename="developers")
+router.register("game-follows", GameFollowViewSet, basename="game_follows")
+router.register("game-lists", GameListViewSet, basename="game_lists")
+router.register("game-reviews", GameReviewViewSet, basename="game-reviews")
+router.register("games", GameViewSet, basename="games")
+router.register("genres", GenreViewSet, basename="genres")
+router.register("platforms", PlatformViewSet, basename="platforms")
+router.register("publishers", PublisherViewSet, basename="publishers")
 
 urlpatterns = [
     path("", include(router.urls)),

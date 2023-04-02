@@ -22,20 +22,16 @@ class GameList(BaseModel):
     """
 
     status = models.CharField(_("status"), max_length=3, choices=GameListStatus.choices)
-    creation_time = models.DateTimeField(_("creation time"), auto_now_add=True)
-    last_modified = models.DateTimeField(_("last modified"), auto_now=True)
+    created_at = models.DateTimeField(_("creation time"), auto_now_add=True)
+    last_modified_at = models.DateTimeField(_("last modified"), auto_now=True)
 
     game = models.ForeignKey(Game, on_delete=models.PROTECT, related_name="game_lists")
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="game_lists"
-    )
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="game_lists")
 
     class Meta(BaseModel.Meta):
         verbose_name = _("game list")
         verbose_name_plural = _("game lists")
-        constraints = (
-            models.UniqueConstraint(fields=("game", "user"), name="unique_game_user_in_game_list"),
-        )
+        constraints = (models.UniqueConstraint(fields=("game", "user"), name="unique_game_user_in_game_list"),)
 
     def __str__(self):
         return f"{self.user.username} - {self.game.title}"

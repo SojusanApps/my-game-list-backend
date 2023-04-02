@@ -5,7 +5,7 @@ from rest_framework import serializers
 User = get_user_model()
 
 
-class CreateUserSerializer(serializers.ModelSerializer):
+class UserCreateSerializer(serializers.ModelSerializer):
     """Serializer used during the user registration process."""
 
     class Meta:
@@ -28,7 +28,7 @@ class CreateUserSerializer(serializers.ModelSerializer):
         return user
 
 
-class ListUserSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     """Serializer for listing the user model."""
 
     class Meta:
