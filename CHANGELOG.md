@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v. 1.0.1
+
+* Added missing `gettext_lazy` marks.
+
 ## v. 1.0.0
 
 * Changed the line length in the project to `120`.
