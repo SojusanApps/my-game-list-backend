@@ -1,10 +1,10 @@
 # Django
-django==4.1.7
+django==4.2
 djangorestframework==3.14.0
-django-filter==22.1
+django-filter==23.1
 django-extensions==3.2.1
 django-redis==5.2.0
-django-cors-headers==3.13.0
+django-cors-headers==3.14.0
 django-rosetta==0.9.8
 
 # Authentication
@@ -13,14 +13,14 @@ PyJWT==2.6.0
 
 # Celery
 celery==5.2.7
-django-celery-results==2.4.0
-django-celery-beat==2.4.0
+django-celery-results==2.5.0
+django-celery-beat==2.5.0
 
 # Others
 gunicorn==20.1.0
-psycopg2-binary==2.9.5
-model-bakery==1.10.1
-redis==4.5.1
+psycopg2-binary==2.9.6
+model-bakery==1.11.0
+redis==4.5.4
 colorlog==6.7.0
-drf-spectacular==0.25.1
-pillow==9.4.0
+drf-spectacular==0.26.1
+pillow==9.5.0
