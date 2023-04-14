@@ -138,7 +138,7 @@ def _is_docker_registry_access() -> bool:
     """Check if a user is logged into the docker registry."""
     try:
         path = f"{Path.home()}/.docker/config.json"
-        with open(path, "r") as docker_config_file:
+        with open(path) as docker_config_file:
             config_file: dict = json.load(docker_config_file)
             if authorizations := config_file.get("auths"):
                 return authorizations.get(sys.argv[1]) is not None
@@ -152,7 +152,7 @@ def _login_to_docker_registry() -> None:
     """Login to the docker registry if required."""
     if not _is_docker_registry_access():
         answer = (
-            input(("Access to the docker registry is required, " f"do you want to login to '{DOCKER_REGISTRY}' [y/n]?"))
+            input("Access to the docker registry is required, " f"do you want to login to '{DOCKER_REGISTRY}' [y/n]?")
             or "y"
         )
         if answer == "y":

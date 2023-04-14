@@ -26,6 +26,11 @@ repos:
     hooks:
       - id: flake8
 
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.3.1
+    hooks:
+    -   id: pyupgrade
+
   - repo: local
     hooks:
       - id: check-version-and-changelog
