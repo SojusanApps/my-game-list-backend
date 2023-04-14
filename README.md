@@ -86,6 +86,12 @@ Tag Legend:
    pre-commit install --hook-type pre-commit --hook-type pre-push
    ```
 
+   To disable checking of certain hooks, you can use the `SKIP` variable, e.g.:
+
+   ```shell
+   SKIP=check-version-and-changelog git push
+   ```
+
 1. Create a new PostgreSQL database in docker:
 
    ```shell
