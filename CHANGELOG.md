@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## v. 1.0.2
+
+* Added configuration for `pre-commit`.
+* Added custom pre-push hook for checking if application version and changelog are updated.
+* Updated dependencies in requirements.
+
 ## v. 1.0.1
 
 * Added missing `gettext_lazy` marks.
