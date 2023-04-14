@@ -80,6 +80,12 @@ Tag Legend:
    pip install -e .
    ```
 
+1. Install the `pre-commit` hooks:
+
+   ```shell
+   pre-commit install --hook-type pre-commit --hook-type pre-push
+   ```
+
 1. Create a new PostgreSQL database in docker:
 
    ```shell
