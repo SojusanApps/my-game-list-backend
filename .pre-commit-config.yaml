@@ -29,7 +29,7 @@ repos:
     hooks:
       - id: check-version-and-changelog
         name: Check version and changelog
-        entry: python .custom_pre_commit_hooks/check_version_and_changelog.py
+        entry: python scripts/check_version_and_changelog.py
         language: python
         pass_filenames: true
         always_run: true
