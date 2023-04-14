@@ -1,6 +1,7 @@
 # MyGameList
 
 [![codecov](https://codecov.io/gh/Sojusan/my-game-list/branch/master/graph/badge.svg?token=knlIznGzJO)](https://codecov.io/gh/Sojusan/my-game-list)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
 
 Application to manage game lists.
 
