@@ -6,6 +6,7 @@
 * Added custom pre-push hook for checking if application version and changelog are updated.
 * Updated dependencies in requirements.
 * Added information in the `README.md` file about installing the `pre-commit` hooks and how to skip the hooks run if needed.
+* Added `pre-commit` badge to `README.md` file.
 
 ## v. 1.0.1
 
