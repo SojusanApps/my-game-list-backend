@@ -17,6 +17,11 @@ DATABASES = {
     }
 }
 
+# Speed up the password hashing in tests
+PASSWORD_HASHERS = [
+    "django.contrib.auth.hashers.MD5PasswordHasher",
+]
+
 STATIC_URL = "/static/"
 STATIC_ROOT = f"/tmp/my-game-list/static/"
 
