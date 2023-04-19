@@ -29,5 +29,6 @@ repos:
         language: python
         pass_filenames: true
         always_run: true
+        require_serial: true
         stages:
           - push
