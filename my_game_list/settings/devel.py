@@ -1,4 +1,5 @@
-from my_game_list.settings.base import *  # noqa
+# ruff: noqa
+from my_game_list.settings.base import *
 
 DEBUG = oeg("DJANGO_DEBUG", "True").lower() == "true"
 

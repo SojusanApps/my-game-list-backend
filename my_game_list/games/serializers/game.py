@@ -16,6 +16,8 @@ class GameSerializer(serializers.ModelSerializer):
     platforms = PlatformSerializer(many=True)
 
     class Meta:
+        """Meta data for game serializer."""
+
         model = Game
         fields = (
             "id",

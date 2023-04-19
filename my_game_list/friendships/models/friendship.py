@@ -19,19 +19,24 @@ class Friendship(BaseModel):
     objects = FriendshipManager()
 
     class Meta(BaseModel.Meta):
+        """Meta data for the friendship model."""
+
         verbose_name = _("friendship")
         verbose_name_plural = _("friendships")
         constraints = (models.UniqueConstraint(fields=("user", "friend"), name="unique_user_friend"),)
 
     def __str__(self):
+        """String representation of the friendship model."""
         return f"User: {self.user.username}, Friend: {self.friend.username}"
 
     def save(self, *args, **kwargs):
+        """This method saves the friendship model."""
         if self.user == self.friend:
             raise ValidationError(_("The user cannot befriend himself."))
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
+        """This method deletes the friendship relationship."""
         user = self.user
         friend = self.friend
         Friendship.objects.filter(user__in=(user, friend), friend__in=(friend, user)).delete()

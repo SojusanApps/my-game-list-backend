@@ -8,7 +8,10 @@ class BaseDictionaryModel(models.Model):
     name = models.CharField(_("name"), max_length=255, unique=True)
 
     class Meta:
+        """Meta data for dictionary models."""
+
         abstract = True
 
     def __str__(self):
+        """String representation of dictionary models."""
         return self.name

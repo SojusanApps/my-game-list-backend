@@ -15,6 +15,8 @@ class FriendshipRequestSerializer(ModelSerializer):
     receiver = UserSerializer()
 
     class Meta:
+        """Meta data for the friendship request serializer."""
+
         model = FriendshipRequest
         fields = (
             "id",
@@ -35,10 +37,13 @@ class FriendshipRequestCreateSerializer(ModelSerializer):
     receiver = SlugRelatedField(queryset=User.objects.all(), slug_field="id")
 
     class Meta(FriendshipRequestSerializer.Meta):
+        """Meta data for the friendship request create serializer."""
+
         model = FriendshipRequest
         fields = ("message", "sender", "receiver")
 
     def validate(self, data: dict):
+        """Validate the data passed in the request."""
         sender = data["sender"]
         receiver = data["receiver"]
         if sender == receiver:

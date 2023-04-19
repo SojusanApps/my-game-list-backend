@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v. 1.0.3
+
+* Changed the linter to `ruff`.
+
 ## v. 1.0.2
 
 * Added configuration for `pre-commit`.

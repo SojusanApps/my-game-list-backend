@@ -6,4 +6,6 @@ class PublisherSerializer(BaseDictionarySerializer):
     """A serializer for publisher model."""
 
     class Meta(BaseDictionarySerializer.Meta):
+        """Meta data for publisher serializer."""
+
         model = Publisher

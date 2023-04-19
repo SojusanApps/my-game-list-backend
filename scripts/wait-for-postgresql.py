@@ -7,7 +7,8 @@ from python_colors import print_error, print_info, print_success
 
 
 def check_database_connection() -> bool:
-    """
+    """Check if database accepts a new connection.
+
     Ping to PostgreSQL database. Database connection parameters should be declared in environment
     variables:
         * POSTGRES_DB - the name of the database,
@@ -28,13 +29,15 @@ def check_database_connection() -> bool:
             port=os.environ.get("POSTGRES_PORT"),
         )
         connection.close()
-        return True
     except psycopg2.OperationalError:
         return False
+    else:
+        return True
 
 
 def wait_for_database_connection() -> None:
-    """
+    """Wait until database connection is established.
+
     Wait for PostgreSQL database connection to be established. The timeout is specified in
     the environment variable POSTGRES_CONNECTION_TIMEOUT.
     """
@@ -49,8 +52,7 @@ def wait_for_database_connection() -> None:
             return
         i += interval
         sleep(interval)
-    else:
-        print_error("FAILED: Connection to PostgreSQL database time out.")
+    print_error("FAILED: Connection to PostgreSQL database time out.")
 
 
 if __name__ == "__main__":

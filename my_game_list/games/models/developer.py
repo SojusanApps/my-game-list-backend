@@ -7,5 +7,7 @@ class Developer(BaseDictionaryModel):
     """Data about developers."""
 
     class Meta(BaseDictionaryModel.Meta):
+        """Meta data for the developer model."""
+
         verbose_name = _("developer")
         verbose_name_plural = _("developers")

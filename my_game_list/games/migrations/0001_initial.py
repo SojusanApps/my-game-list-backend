@@ -7,6 +7,8 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
+    """Initial migration for the games application."""
+
     initial = True
 
     dependencies = [

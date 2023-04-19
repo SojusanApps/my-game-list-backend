@@ -24,8 +24,11 @@ class Game(BaseModel):
     platforms = models.ManyToManyField(Platform, related_name="games")
 
     class Meta(BaseModel.Meta):
+        """Meta data for the game model."""
+
         verbose_name = _("game")
         verbose_name_plural = _("games")
 
     def __str__(self):
+        """String representation of the game model."""
         return self.title

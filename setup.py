@@ -1,4 +1,3 @@
-from os import path
 from pathlib import Path
 
 from setuptools import find_packages, setup
@@ -11,10 +10,12 @@ LONG_DESCRIPTION = (Path(__file__).parent / "README.md").read_text()
 
 
 def get_version():
+    """Get the version of the application."""
     return ".".join(map(str, __version__))
 
 
 def get_packages():
+    """Get the list of packages."""
     packages = [f"{NAME}.{pkg}" for pkg in find_packages(NAME, exclude=("*.tests"))]
     return [NAME, "requirements"] + packages
 
@@ -37,13 +38,13 @@ CONFIG = {
         "License :: Other/Proprietary License",
     ],
     "scripts": [
-        path.join("scripts", "my-game-list-manage.py"),
-        path.join("scripts", "my-game-list-run-tests-with-pg.sh"),
-        path.join("scripts", "my-game-list-run-tests.sh"),
-        path.join("scripts", "colors.sh"),
-        path.join("scripts", "my-game-list-build.py"),
-        path.join("scripts", "wait-for-postgresql.py"),
-        path.join("scripts", "python_colors.py"),
+        (Path("scripts") / "my-game-list-manage.py").as_posix(),
+        (Path("scripts") / "my-game-list-run-tests-with-pg.sh").as_posix(),
+        (Path("scripts") / "my-game-list-run-tests.sh").as_posix(),
+        (Path("scripts") / "colors.sh").as_posix(),
+        (Path("scripts") / "my-game-list-build.py").as_posix(),
+        (Path("scripts") / "wait-for-postgresql.py").as_posix(),
+        (Path("scripts") / "python_colors.py").as_posix(),
     ],
 }
 

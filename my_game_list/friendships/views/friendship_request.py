@@ -21,6 +21,7 @@ class FriendshipRequestViewSet(ListModelMixin, RetrieveModelMixin, CreateModelMi
     permission_classes = (IsAuthenticated,)
 
     def get_serializer_class(self):
+        """Get the serializer class for the request."""
         return FriendshipRequestCreateSerializer if self.action == "create" else FriendshipRequestSerializer
 
     @action(detail=True, methods=("post",))

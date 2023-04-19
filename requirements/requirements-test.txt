@@ -1,10 +1,6 @@
-pytest==7.2.2
+pytest==7.3.1
 pytest-django==4.5.2
 black==23.3.0
 freezegun==1.2.2
 pytest-icdiff==0.6
-isort==5.12.0
-flake8==5.0.4
-flake8-bugbear==23.2.13
-flake8-builtins==2.1.0
-flake8-django==1.1.5
+ruff==0.0.261

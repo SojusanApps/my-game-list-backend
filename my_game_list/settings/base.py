@@ -86,7 +86,7 @@ DATABASES = {
         "PASSWORD": oeg("POSTGRES_PASSWORD", "my_game_list"),
         "HOST": oeg("POSTGRES_HOST", "localhost"),
         "PORT": oeg("POSTGRES_PORT", "5432"),
-    }
+    },
 }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -121,7 +121,7 @@ ROSETTA_MESSAGES_SOURCE_LANGUAGE_CODE = "en"
 ROSETTA_SHOW_AT_ADMIN_PANEL = True
 
 LOCALE_PATHS = [
-    os.path.join(BASE_DIR, "locale"),
+    BASE_DIR / "locale",
 ]
 
 STATIC_URL = "/static/"

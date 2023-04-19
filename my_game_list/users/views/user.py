@@ -13,9 +13,11 @@ class UserViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin, CreateMode
 
     queryset = User.objects.all()
 
-    def get_serializer_class(self):
+    def get_serializer_class(self) -> UserCreateSerializer | UserSerializer:
+        """Get the serializer class for the User model."""
         return UserCreateSerializer if self.action == "create" else UserSerializer
 
     def get_permissions(self):
+        """Get the permissions for the actions."""
         permission_classes = (AllowAny,) if self.action == "create" else (IsAuthenticated,)
         return [permission() for permission in permission_classes]

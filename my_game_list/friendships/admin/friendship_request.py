@@ -5,6 +5,8 @@ from my_game_list.friendships.models import FriendshipRequest
 
 @admin.register(FriendshipRequest)
 class FriendshipRequestAdmin(admin.ModelAdmin):
+    """Admin model for the friendship request model."""
+
     readonly_fields = ("id",)
     search_fields = readonly_fields + ("sender__username", "receiver__username")
     raw_id_fields = ("sender", "receiver")

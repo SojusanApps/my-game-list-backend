@@ -7,5 +7,7 @@ class GameFollowSerializer(serializers.ModelSerializer):
     """A serializer for the game follow model."""
 
     class Meta:
+        """Meta data for game follow serializer."""
+
         model = GameFollow
         fields = ("id", "created_at", "game", "user")

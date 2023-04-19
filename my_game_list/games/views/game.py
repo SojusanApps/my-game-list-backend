@@ -12,4 +12,5 @@ class GameViewSet(ModelViewSet):
     permission_classes = (IsAdminOrReadOnly,)
 
     def get_serializer_class(self):
+        """Get the serializer class for the Game model."""
         return GameCreateSerializer if self.action in ["create", "update", "partial_update"] else GameSerializer

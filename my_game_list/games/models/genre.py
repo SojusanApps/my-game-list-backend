@@ -7,5 +7,7 @@ class Genre(BaseDictionaryModel):
     """Data about game genres."""
 
     class Meta(BaseDictionaryModel.Meta):
+        """Meta data for the genre model."""
+
         verbose_name = _("genre")
         verbose_name_plural = _("genres")

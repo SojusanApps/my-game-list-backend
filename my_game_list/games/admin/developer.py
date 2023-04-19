@@ -7,4 +7,6 @@ from my_game_list.my_game_list.admin import BaseDictionaryModelAdmin
 
 @admin.register(Developer)
 class DeveloperAdmin(BaseDictionaryModelAdmin):
+    """Admin model for the developer model."""
+
     inlines = (GameInline,)

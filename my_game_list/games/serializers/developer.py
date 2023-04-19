@@ -6,4 +6,6 @@ class DeveloperSerializer(BaseDictionarySerializer):
     """A serializer for the developer model."""
 
     class Meta(BaseDictionarySerializer.Meta):
+        """Meta data for developer serializer."""
+
         model = Developer

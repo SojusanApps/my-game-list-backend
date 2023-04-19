@@ -18,15 +18,20 @@ class FriendshipRequest(BaseModel):
 
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="sent_friend_requests")
     receiver = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="received_friend_requests"
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="received_friend_requests",
     )
 
     class Meta(BaseModel.Meta):
+        """Meta data for the friendship request model."""
+
         verbose_name = _("friendship request")
         verbose_name_plural = _("friendship requests")
         constraints = (models.UniqueConstraint(fields=("sender", "receiver"), name="unique_sender_receiver"),)
 
     def __str__(self):
+        """String representation of the friendship request model."""
         return f"From: {self.sender.username} To: {self.receiver.username}"
 
     def accept(self) -> bool:

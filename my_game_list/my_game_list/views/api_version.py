@@ -11,5 +11,6 @@ class ApiVersion(APIView):
     permission_classes = (AllowAny,)
 
     def get(self, *args, **kwargs):
+        """GET method for the version of the application."""
         version = ".".join(map(str, __version__))
         return Response(version)

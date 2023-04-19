@@ -6,8 +6,9 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 
-@pytest.mark.django_db
+@pytest.mark.django_db()
 def test_register_user(api_client: APIClient):
+    """Check if registration process is successful."""
     data = {
         "username": "testuser",
         "password": "testpassword",

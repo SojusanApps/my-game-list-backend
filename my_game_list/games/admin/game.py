@@ -4,6 +4,8 @@ from my_game_list.games.models import Game
 
 
 class GameInline(admin.StackedInline):
+    """Game inline representation used in related admin models."""
+
     raw_id_fields = ("publisher",)
     extra = 0
     model = Game
@@ -11,6 +13,8 @@ class GameInline(admin.StackedInline):
 
 @admin.register(Game)
 class GameAdmin(admin.ModelAdmin):
+    """Admin model for the game model."""
+
     readonly_fields = ("id",)
     search_fields = readonly_fields + (
         "title",

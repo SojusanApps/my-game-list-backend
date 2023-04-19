@@ -7,5 +7,7 @@ class Platform(BaseDictionaryModel):
     """Data about game platforms."""
 
     class Meta(BaseDictionaryModel.Meta):
+        """Meta data for the platform model."""
+
         verbose_name = _("platform")
         verbose_name_plural = _("platforms")

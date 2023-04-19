@@ -6,4 +6,6 @@ class GenreSerializer(BaseDictionarySerializer):
     """A serializer for genre model."""
 
     class Meta(BaseDictionarySerializer.Meta):
+        """Meta data for a genre serializer."""
+
         model = Genre

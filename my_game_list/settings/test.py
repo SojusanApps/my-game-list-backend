@@ -1,7 +1,8 @@
+# ruff: noqa
 import os
 
 os.environ["DJANGO_CORS_ALLOWED_ORIGINS"] = "http://test"
-from my_game_list.settings.base import *  # noqa
+from my_game_list.settings.base import *
 
 DEBUG = oeg("DJANGO_DEBUG", "False").lower() == "true"
 

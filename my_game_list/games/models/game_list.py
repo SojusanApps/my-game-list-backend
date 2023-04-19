@@ -17,9 +17,7 @@ class GameListStatus(models.TextChoices):
 
 
 class GameList(BaseModel):
-    """
-    A game list model. Contains the list of games for user.
-    """
+    """A game list model. Contains the list of games for user."""
 
     status = models.CharField(_("status"), max_length=3, choices=GameListStatus.choices)
     created_at = models.DateTimeField(_("creation time"), auto_now_add=True)
@@ -29,9 +27,12 @@ class GameList(BaseModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="game_lists")
 
     class Meta(BaseModel.Meta):
+        """Meta data for game list model."""
+
         verbose_name = _("game list")
         verbose_name_plural = _("game lists")
         constraints = (models.UniqueConstraint(fields=("game", "user"), name="unique_game_user_in_game_list"),)
 
     def __str__(self):
+        """String representation of the game list model."""
         return f"{self.user.username} - {self.game.title}"

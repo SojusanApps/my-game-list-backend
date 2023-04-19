@@ -6,4 +6,4 @@ from my_game_list.my_game_list.admin import BaseDictionaryModelAdmin
 
 @admin.register(Platform)
 class PlatformAdmin(BaseDictionaryModelAdmin):
-    pass
+    """Admin model for the platform model."""

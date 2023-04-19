@@ -7,4 +7,6 @@ from my_game_list.my_game_list.admin import BaseDictionaryModelAdmin
 
 @admin.register(Publisher)
 class PublisherAdmin(BaseDictionaryModelAdmin):
+    """Admin model for the publisher model."""
+
     inlines = (GameInline,)

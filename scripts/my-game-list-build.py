@@ -14,8 +14,7 @@ DOCKER_REGISTRY_PATH_NGINX = f"{DOCKER_REGISTRY}/sojusan/my-game-list/nginx"
 
 
 def setup_project(path: str = "dist") -> None:
-    """
-    Create whl file for the project.
+    """Create whl file for the project.
 
     Args:
         path (str, optional): Path where .whl will be distributed. Defaults to 'dist'.
@@ -24,8 +23,7 @@ def setup_project(path: str = "dist") -> None:
 
 
 def clean_up(dist_path: str = "dist") -> None:
-    """
-    Cleaning after build project.
+    """Cleaning after build project.
 
     Args:
         dist_path (str, optional): A path where .whl was distributed. A value set to None or 'None'
@@ -36,8 +34,7 @@ def clean_up(dist_path: str = "dist") -> None:
 
 
 def remove_whls(path: str = "dist/") -> None:
-    """
-    Remove all whl files.
+    """Remove all whl files.
 
     Args:
         path (str, optional): Path to whl files. Defaults to 'dist/'.
@@ -46,8 +43,7 @@ def remove_whls(path: str = "dist/") -> None:
 
 
 def build_app(tag: str = "latest", clean: str = "true") -> None:
-    """
-    Build a web application container.
+    """Build a web application container.
 
     Args:
         tag (str, optional): Tag for a built web application container. Defaults to 'latest'.
@@ -66,12 +62,12 @@ def build_app(tag: str = "latest", clean: str = "true") -> None:
             clean_up(None)
             remove_whls(app_directory)
     except ValueError:
-        raise ValueError("Wrong passed parameter for clean. Cleaning won't be executed.")
+        print_error("Wrong passed parameter for clean. Cleaning won't be executed.")
+        raise
 
 
 def build_nginx(tag: str = "latest") -> None:
-    """
-    Build an Nginx container.
+    """Build an Nginx container.
 
     Args:
         tag (str, optional): Tag for a built Nginx container. Defaults to 'latest'.
@@ -80,8 +76,7 @@ def build_nginx(tag: str = "latest") -> None:
 
 
 def build_images(tag: str = "latest") -> None:
-    """
-    Build all containers for a project (app, Nginx).
+    """Build all containers for a project (app, Nginx).
 
     Args:
         tag (str, optional): Tag for built containers. Defaults to 'latest'.
@@ -91,8 +86,7 @@ def build_images(tag: str = "latest") -> None:
 
 
 def push_app(tag: str = "latest") -> None:
-    """
-    Push a docker web container to the registry.
+    """Push a docker web container to the registry.
 
     Args:
         tag (str, optional): Tag for a pushed web container. Defaults to 'latest'.
@@ -102,8 +96,7 @@ def push_app(tag: str = "latest") -> None:
 
 
 def push_nginx(tag: str = "latest") -> None:
-    """
-    Push a docker Nginx container to the registry.
+    """Push a docker Nginx container to the registry.
 
     Args:
         tag (str, optional): Tag for a pushed Nginx container. Defaults to 'latest'.
@@ -113,8 +106,7 @@ def push_nginx(tag: str = "latest") -> None:
 
 
 def push_images(tag: str = "latest") -> None:
-    """
-    Push all built containers(web, Nginx) to the registry.
+    """Push all built containers(web, Nginx) to the registry.
 
     Args:
         tag (str, optional): Tag for built containers. Defaults to 'latest'.
@@ -142,8 +134,7 @@ def _is_docker_registry_access() -> bool:
             config_file: dict = json.load(docker_config_file)
             if authorizations := config_file.get("auths"):
                 return authorizations.get(sys.argv[1]) is not None
-            else:
-                return False
+            return False
     except FileNotFoundError:
         return False
 
@@ -152,7 +143,7 @@ def _login_to_docker_registry() -> None:
     """Login to the docker registry if required."""
     if not _is_docker_registry_access():
         answer = (
-            input("Access to the docker registry is required, " f"do you want to login to '{DOCKER_REGISTRY}' [y/n]?")
+            input(f"Access to the docker registry is required, do you want to login to '{DOCKER_REGISTRY}' [y/n]?")
             or "y"
         )
         if answer == "y":
@@ -163,7 +154,8 @@ def _login_to_docker_registry() -> None:
 
 
 def get_module_functions_names() -> dict[str, object]:
-    """
+    """Get available functions.
+
     Returns all the defined function names in this module.
     In the case of security, users should be allowed to only call functions
     that were defined in this file.
@@ -181,6 +173,7 @@ def get_module_functions_names() -> dict[str, object]:
 
 
 def main() -> int:
+    """Run the build tasks."""
     available_functions = get_module_functions_names()
 
     for arg in sys.argv[1:]:

@@ -11,6 +11,8 @@ class FriendshipSerializer(serializers.ModelSerializer):
     friend = UserSerializer()
 
     class Meta:
+        """Meta data for the friendship serializer."""
+
         model = Friendship
         fields = ("id", "created_at", "user", "friend")
         read_only_fields = ("id", "created_at")

@@ -1,7 +1,10 @@
 # MyGameList
 
+[![MyGameList CI](https://github.com/Sojusan/my-game-list/actions/workflows/my-game-list.yml/badge.svg)](https://github.com/Sojusan/my-game-list/actions/workflows/my-game-list.yml)
 [![codecov](https://codecov.io/gh/Sojusan/my-game-list/branch/master/graph/badge.svg?token=knlIznGzJO)](https://codecov.io/gh/Sojusan/my-game-list)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v1.json)](https://github.com/charliermarsh/ruff)
+[![Black](https://img.shields.io/badge/code%20style-black-black)](https://github.com/psf/black)
 
 Application to manage game lists.
 

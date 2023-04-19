@@ -6,4 +6,6 @@ class PlatformSerializer(BaseDictionarySerializer):
     """A serializer for the platform model."""
 
     class Meta(BaseDictionarySerializer.Meta):
+        """Meta data for the platform serializer."""
+
         model = Platform

@@ -1,5 +1,4 @@
-"""
-ASGI config for my_game_list project.
+"""ASGI config for my_game_list project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
