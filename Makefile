@@ -4,7 +4,7 @@ help:
 	@echo "run - Start the application on the default port."
 	@echo "fresh_run - Use for the first start of the application. It collects the static files,"
 	@echo "            runs the migrations, prompts for superuser creation, and at the end runs the application."
-	@echo "check - Check the correctness of code with black formatter and flake8."
+	@echo "check - Check the correctness of code with black formatter and ruff."
 	@echo "translations - Prepare the translations for supported languages."
 	@echo "coverage - Prepare the coverage report in HTML format."
 

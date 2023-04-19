@@ -43,6 +43,7 @@ ignore = [
 "tests/*" = ["S101"]
 "scripts/*" = ["INP001"]
 "docker/app/gunicorn.conf.py" = ["INP001"]
+"__init__.py" = ["F401"]
 
 [tool.ruff.pydocstyle]
 convention = "google"

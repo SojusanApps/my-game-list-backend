@@ -1,4 +1,3 @@
-# flake8: noqa
 from my_game_list.games.models.developer import Developer
 from my_game_list.games.models.game import Game
 from my_game_list.games.models.game_follow import GameFollow

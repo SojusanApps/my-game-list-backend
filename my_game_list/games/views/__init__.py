@@ -1,4 +1,3 @@
-# flake8: noqa
 from my_game_list.games.views.developer import DeveloperViewSet
 from my_game_list.games.views.game import GameViewSet
 from my_game_list.games.views.game_follow import GameFollowViewSet
