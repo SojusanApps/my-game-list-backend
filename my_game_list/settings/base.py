@@ -18,6 +18,7 @@ SECRET_KEY = oeg("DJANGO_SECRET_KEY", "secret_key_to_change_on_production")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = oeg("DJANGO_DEBUG", "False").lower() == "true"
 
+CORS_ALLOWED_ORIGINS = oeg("DJANGO_CORS_ALLOWED_ORIGINS", "*").split(",")
 ALLOWED_HOSTS = oeg("DJANGO_ALLOWED_HOSTS", "*").split(",")
 
 DOCUMENTATION_ENABLED = oeg("DJANGO_DOCUMENTATION_ENABLED", "True").lower() == "true"
