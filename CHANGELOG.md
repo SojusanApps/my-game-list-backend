@@ -1,5 +1,23 @@
 # CHANGELOG
 
+## v. 1.1.0
+
+* Corrected the Dockerfiles to meet hadolint validation.
+* Added `LABEL` to Dockerfiles to automatically link an image to a GitHub repository.
+* Added Grafana configuration.
+* Added Loki configuration.
+* Added Prometheus configuration.
+* Added Promtail configuration.
+* Created the logging configuration for the application.
+* Added custom prometheus metrics for cpu and memory usage.
+* Added new decorators for metrics usage.
+* Added new dependencies:
+  * docker
+  * django_prometheus
+  * prometheus-client
+  * psutil
+* Improved scripts (limitation of running shell commands.)
+
 ## v. 1.0.3
 
 * Changed the linter to `ruff`.

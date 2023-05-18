@@ -1,16 +1,28 @@
 #!/usr/bin/env python
+# ruff: noqa: S603, S607
+import glob
 import inspect
-import json
-import os
+import shutil
+import subprocess
 import sys
 from distutils.util import strtobool
+from itertools import chain
 from pathlib import Path
 
-from python_colors import print_error, print_warning
+from python_colors import print_error, print_info, print_warning
 
-DOCKER_REGISTRY = "docker.pkg.github.com"
-DOCKER_REGISTRY_PATH_WEB = f"{DOCKER_REGISTRY}/sojusan/my-game-list/app"
+import docker
+from docker.errors import BuildError
+
+DOCKER_LOGS_STREAM_VALUE = "stream"
+DOCKER_LOGS_ERROR_VALUE = "errorDetail"
+DOCKER_REGISTRY = "ghcr.io"
+DOCKER_REGISTRY_PATH_APP = f"{DOCKER_REGISTRY}/sojusan/my-game-list/app"
 DOCKER_REGISTRY_PATH_NGINX = f"{DOCKER_REGISTRY}/sojusan/my-game-list/nginx"
+FAILURE_CODE = 1
+
+
+docker_client = docker.from_env()
 
 
 def setup_project(path: str = "dist") -> None:
@@ -19,7 +31,9 @@ def setup_project(path: str = "dist") -> None:
     Args:
         path (str, optional): Path where .whl will be distributed. Defaults to 'dist'.
     """
-    os.system(f"python setup.py bdist_wheel --dist-dir={path}")
+    print_info("Whl file creation started.")
+    subprocess.Popen(["python", "setup.py", "bdist_wheel", f"--dist-dir={path}"]).wait()
+    print_info("Whl file creation finished.")
 
 
 def clean_up(dist_path: str = "dist") -> None:
@@ -29,17 +43,48 @@ def clean_up(dist_path: str = "dist") -> None:
         dist_path (str, optional): A path where .whl was distributed. A value set to None or 'None'
             prevents to remove dist directory. Defaults to 'dist'.
     """
-    os.system("python setup.py clean --all")
-    os.system(f'rm -rf build/ *.egg-info/ {"" if not dist_path or dist_path == "None" else dist_path}')
+    print_info("Cleaning after build project started.")
+    subprocess.Popen(["python", "setup.py", "clean", "--all"]).wait()
+    build_dir = ("build/",)
+    egg_info_dir = glob.glob("*.egg-info/")
+    dist_dir = () if not dist_path or dist_path == "None" else (dist_path,)
+
+    for dir_path in chain(build_dir, egg_info_dir, dist_dir):
+        if Path(dir_path).is_dir():
+            shutil.rmtree(dir_path)
+
+    print_info("Cleaning finished.")
 
 
-def remove_whls(path: str = "dist/") -> None:
+def remove_whls(path: str = "dist") -> None:
     """Remove all whl files.
 
     Args:
-        path (str, optional): Path to whl files. Defaults to 'dist/'.
+        path (str, optional): Path to whl files. Defaults to 'dist'.
     """
-    os.system(f"rm -f {path}*.whl")
+    print_info("Removing of the whl files started.")
+
+    for whl_file in glob.glob(f"{path}/*.whl"):
+        Path(whl_file).unlink()
+
+    print_info("Removing finished.")
+
+
+def _build_docker_image(path: str, tag: str):
+    print_info("Image building has begun (it will take a while)...")
+    try:
+        image, image_build_logs = docker_client.images.build(path=path, tag=tag)
+    except BuildError as exception:
+        print_error("Something went wrong while building!")
+        for line in exception.build_log:
+            if DOCKER_LOGS_STREAM_VALUE in line:
+                print_error(line[DOCKER_LOGS_STREAM_VALUE].strip())
+        raise
+    else:
+        for line in image_build_logs:
+            if DOCKER_LOGS_STREAM_VALUE in line:
+                print(line[DOCKER_LOGS_STREAM_VALUE].strip())
+        print_info(f"Docker image was build: {image}")
 
 
 def build_app(tag: str = "latest", clean: str = "true") -> None:
@@ -52,11 +97,13 @@ def build_app(tag: str = "latest", clean: str = "true") -> None:
     Raises:
         ValueError: If clean value is incorrect.
     """
-    app_directory = "docker/app/"
+    print_info("Build app container - started.")
+    app_directory = Path("docker", "app")
     clean_up(None)
     remove_whls(app_directory)
     setup_project(app_directory)
-    os.system(f"cd {app_directory} && docker build . -t {DOCKER_REGISTRY_PATH_WEB}:{tag}")
+    _build_docker_image(str(app_directory), f"{DOCKER_REGISTRY_PATH_APP}:{tag}")
+
     try:
         if strtobool(clean):
             clean_up(None)
@@ -65,6 +112,8 @@ def build_app(tag: str = "latest", clean: str = "true") -> None:
         print_error("Wrong passed parameter for clean. Cleaning won't be executed.")
         raise
 
+    print_info("Build app container - finished.")
+
 
 def build_nginx(tag: str = "latest") -> None:
     """Build an Nginx container.
@@ -72,7 +121,10 @@ def build_nginx(tag: str = "latest") -> None:
     Args:
         tag (str, optional): Tag for a built Nginx container. Defaults to 'latest'.
     """
-    os.system(f"cd docker/nginx && docker build . -t {DOCKER_REGISTRY_PATH_NGINX}:{tag}")
+    print_info("Build nginx container - started.")
+    nginx_directory = Path("docker", "nginx")
+    _build_docker_image(str(nginx_directory), f"{DOCKER_REGISTRY_PATH_NGINX}:{tag}")
+    print_info("Build nginx container - finished.")
 
 
 def build_images(tag: str = "latest") -> None:
@@ -85,14 +137,37 @@ def build_images(tag: str = "latest") -> None:
     build_nginx(tag)
 
 
+def _push_docker_image(repository: str, tag: str):
+    print_info("Image pushing has begun (it will take a while)...")
+    response = docker_client.images.push(
+        repository=repository,
+        tag=tag,
+        stream=True,
+        decode=True,
+    )
+
+    for line in response:
+        print(line)
+        if DOCKER_LOGS_ERROR_VALUE in line:
+            print_error(line)
+            print_warning(
+                "Remember that in order to be able to push images on GitHub, you must log in to the registry "
+                "using the `Personal access token` as a password. This token needs to have permission "
+                "to manage packages.",
+            )
+            sys.exit(FAILURE_CODE)
+
+    print_info("Docker image has been pushed.")
+
+
 def push_app(tag: str = "latest") -> None:
     """Push a docker web container to the registry.
 
     Args:
         tag (str, optional): Tag for a pushed web container. Defaults to 'latest'.
     """
-    _login_to_docker_registry()
-    os.system(f"docker push {DOCKER_REGISTRY_PATH_WEB}:{tag}")
+    print_info("Pushing app package ...")
+    _push_docker_image(DOCKER_REGISTRY_PATH_APP, tag)
 
 
 def push_nginx(tag: str = "latest") -> None:
@@ -101,8 +176,8 @@ def push_nginx(tag: str = "latest") -> None:
     Args:
         tag (str, optional): Tag for a pushed Nginx container. Defaults to 'latest'.
     """
-    _login_to_docker_registry()
-    os.system(f"docker push {DOCKER_REGISTRY_PATH_NGINX}:{tag}")
+    print_info("Pushing nginx package ...")
+    _push_docker_image(DOCKER_REGISTRY_PATH_NGINX, tag)
 
 
 def push_images(tag: str = "latest") -> None:
@@ -117,40 +192,14 @@ def push_images(tag: str = "latest") -> None:
 
 def docker_up() -> None:
     """Docker-compose up with default configuration."""
-    os.system("docker-compose -f docker/docker-compose.yml up")
+    docker_compose_path = Path("docker", "docker-compose.yml")
+    subprocess.Popen(["docker", "compose", "-f", f"{str(docker_compose_path)}", "up"]).wait()
 
 
 def docker_build_and_up() -> None:
     """Build all images and docker-compose up with default configuration."""
     build_images()
     docker_up()
-
-
-def _is_docker_registry_access() -> bool:
-    """Check if a user is logged into the docker registry."""
-    try:
-        path = f"{Path.home()}/.docker/config.json"
-        with open(path) as docker_config_file:
-            config_file: dict = json.load(docker_config_file)
-            if authorizations := config_file.get("auths"):
-                return authorizations.get(sys.argv[1]) is not None
-            return False
-    except FileNotFoundError:
-        return False
-
-
-def _login_to_docker_registry() -> None:
-    """Login to the docker registry if required."""
-    if not _is_docker_registry_access():
-        answer = (
-            input(f"Access to the docker registry is required, do you want to login to '{DOCKER_REGISTRY}' [y/n]?")
-            or "y"
-        )
-        if answer == "y":
-            os.system(f"docker login {DOCKER_REGISTRY}")
-        else:
-            print_error("Exiting: can't continue without login to the docker registry.")
-            sys.exit(1)
 
 
 def get_module_functions_names() -> dict[str, object]:
@@ -169,6 +218,7 @@ def get_module_functions_names() -> dict[str, object]:
         for name, obj in inspect.getmembers(sys.modules[__name__])
         if (inspect.isfunction(obj) and obj.__module__ == __name__)
         and name not in ("main", "get_module_functions_names")
+        and not name.startswith("_")
     }
 
 

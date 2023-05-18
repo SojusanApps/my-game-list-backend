@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django_extensions",
     "django_filters",
     "corsheaders",
+    "django_prometheus",
     # Internal apps
     f"{MAIN_APP}.{MAIN_APP}",
     f"{MAIN_APP}.users",
@@ -48,6 +49,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "django_prometheus.middleware.PrometheusBeforeMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
@@ -57,6 +59,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_prometheus.middleware.PrometheusAfterMiddleware",
 ]
 
 ROOT_URLCONF = f"{MAIN_APP}.{MAIN_APP}.urls"
@@ -137,7 +140,7 @@ AUTH_USER_MODEL = "users.User"
 
 CORS_ALLOWED_ORIGINS = oeg("DJANGO_CORS_ALLOWED_ORIGINS", "http://localhost:4200").split(",")
 
-LIMIT_AVATAR_SIZE = int(oeg("MGL_LIMIT_AVATAR_SIZE", 200 * 1024))  # 200 KiB
+LIMIT_AVATAR_SIZE = int(os.environ.get("MGL_LIMIT_AVATAR_SIZE", 200 * 1024))  # 200 KiB
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
@@ -158,4 +161,83 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "Application to manage game lists.",
     "VERSION": ".".join(map(str, __version__)),
     "SCHEMA_PATH_PREFIX": "/api/",
+}
+
+MGL_LOG_DIR_PATH = oeg("MGL_LOG_DIR_PATH", BASE_DIR.parent / "logs")
+MGL_LOG_FILENAME = oeg("MGL_LOG_FILENAME", "my_game_list.log")
+
+if not (log_path := Path(MGL_LOG_DIR_PATH)).is_dir():
+    log_path.mkdir(exist_ok=True)
+
+LOG_FILE_PATH = Path(MGL_LOG_DIR_PATH, MGL_LOG_FILENAME)
+LOGLEVEL = oeg("DJANGO_LOGLEVEL", "INFO").upper()
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "filters": {
+        "require_debug_false": {
+            "()": "django.utils.log.RequireDebugFalse",
+        },
+        "require_debug_true": {
+            "()": "django.utils.log.RequireDebugTrue",
+        },
+    },
+    "formatters": {
+        "color": {
+            "()": "colorlog.ColoredFormatter",
+            "format": "{log_color}[{asctime}] {levelname}\t{module} - {funcName} :: {message}",
+            "style": "{",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+            "log_colors": {
+                "DEBUG": "light_black",
+                "INFO": "cyan",
+                "WARNING": "yellow",
+                "ERROR": "red",
+                "CRITICAL": "red,bg_white",
+            },
+        },
+    },
+    "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "class": "colorlog.StreamHandler",
+            "formatter": "color",
+            "filters": ["require_debug_true"],
+        },
+        "file": {
+            "level": LOGLEVEL,
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "color",
+            "backupCount": 5,
+            "maxBytes": 5242880,  # 5*1024*1024 bytes (5MB)
+            "filename": LOG_FILE_PATH,
+            "encoding": "utf8",
+        },
+    },
+    "loggers": {
+        "root": {
+            "level": "DEBUG",
+            "handlers": ["console", "file"],
+        },
+        "django.db.backends": {
+            "level": "DEBUG",
+            "handlers": ["console", "file"],
+            "propagate": False,
+        },
+        "error": {
+            "level": "DEBUG",
+            "handlers": ["console", "file"],
+            "propagate": False,
+        },
+        "django": {
+            "level": "INFO",
+            "handlers": ["console", "file"],
+            "propagate": False,
+        },
+        "django.server": {
+            "level": "INFO",
+            "handlers": ["console", "file"],
+            "propagate": False,
+        },
+    },
 }

@@ -2,7 +2,8 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:15.1-alpine
+    image: postgres:15.3-alpine
+    container_name: my-game-list-postgres
     restart: "unless-stopped"
     ports:
       - "5432"
@@ -15,9 +16,12 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+    networks:
+      - loki
 
   app: &main_app
-    image: docker.pkg.github.com/sojusan/my-game-list/app:latest
+    image: ghcr.io/sojusan/my-game-list/app:latest
+    container_name: my-game-list-app
     restart: "unless-stopped"
     depends_on:
       postgres:
@@ -25,12 +29,18 @@ services:
     volumes:
       - static_volume:/opt/my_game_list/static
       - media_volume:/opt/my_game_list/media
+      - type: volume
+        source: app_log_volume
+        target: ${MGL_LOG_DIR_PATH}
     env_file:
       - ./.env
     command: gunicorn
+    networks:
+      - loki
 
   set_state:
     <<: *main_app
+    container_name: my-game-list-set-state
     restart: "no"
     depends_on:
       - app
@@ -38,9 +48,12 @@ services:
     command: set_state
     volumes:
       - static_volume:/opt/my_game_list/static
+    networks:
+      - loki
 
   nginx:
-    image: docker.pkg.github.com/sojusan/my-game-list/nginx:latest
+    image: ghcr.io/sojusan/my-game-list/nginx:latest
+    container_name: my-game-list-nginx
     restart: "unless-stopped"
     depends_on:
       - app
@@ -51,9 +64,66 @@ services:
     volumes:
       - static_volume:/opt/my_game_list/static
       - media_volume:/opt/my_game_list/media
+    networks:
+      - loki
 
+  prometheus:
+    image: prom/prometheus:v2.44.0
+    container_name: my-game-list-prometheus
+    restart: "unless-stopped"
+    ports:
+      - "9090:9090"
+    depends_on:
+      - app
+    volumes:
+      - prometheus_data:/prometheus
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - loki
+
+  grafana:
+    image: grafana/grafana:9.5.2
+    container_name: my-game-list-grafana
+    restart: "unless-stopped"
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    env_file:
+      - ./.env
+    networks:
+      - loki
+
+  loki:
+    image: grafana/loki:2.8.2
+    container_name: my-game-list-loki
+    ports:
+      - "3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - loki
+
+  promtail:
+    image: grafana/promtail:2.8.2
+    container_name: my-game-list-promtail
+    volumes:
+      - ./promtail/promtail.yml:/etc/promtail/promtail.yml
+      - app_log_volume:/var/log/my_game_list
+    command: -config.file=/etc/promtail/promtail.yml
+    networks:
+      - loki
 
 volumes:
   postgres_data:
+  prometheus_data:
+  grafana_data:
   static_volume:
   media_volume:
+  app_log_volume:
+
+networks:
+  loki:

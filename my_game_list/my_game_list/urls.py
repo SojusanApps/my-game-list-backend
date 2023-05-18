@@ -4,10 +4,12 @@ from django.urls import include, path, re_path
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
+from my_game_list.my_game_list.metrics import custom_export_to_django_view
 from my_game_list.my_game_list.views import ApiVersion
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("prometheus/metrics", custom_export_to_django_view, name="prometheus-django-metrics"),
     path("version/", ApiVersion.as_view(), name="api-version"),
     path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
