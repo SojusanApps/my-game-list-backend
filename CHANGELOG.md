@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## v. 1.1.1
+
+* Added configuration for SonarCloud analysis tool.
+
 ## v. 1.1.0
 
 * Corrected the Dockerfiles to meet hadolint validation.

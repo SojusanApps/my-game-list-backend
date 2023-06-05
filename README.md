@@ -5,6 +5,7 @@
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v1.json)](https://github.com/charliermarsh/ruff)
 [![Black](https://img.shields.io/badge/code%20style-black-black)](https://github.com/psf/black)
+[![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/summary/new_code?id=MyGameListPlaceholder_my-game-list-backend)
 
 Application to manage game lists.
 
@@ -28,7 +29,7 @@ Application to manage game lists.
 1. I use versioning following the [semver 2.0](https://semver.org/spec/v2.0.0.html)
 1. The `master` and `devel` branches should contain stable and working code.
 1. Workflow:
-    * The developer is preparing a branch with a new functionality or an correction, giving it a name as *[bugfix/feature/hotfix]-[description]*, e.g. *feature-new-document*
+    * The developer is preparing a branch with new functionality or a correction, giving it a name as *[bugfix/feature/hotfix]-[description]*, e.g. *feature-new-document*
     * When the code is ready, the developer prepares MR (Merge Request) for the **devel** branch for new functionalities
     * If all functionalities work, the code is uploaded to the **master** branch
 
@@ -121,11 +122,11 @@ Tag Legend:
    ```
 
 The application is available at [http://127.0.0.1:8000](http://127.0.0.1:8000).
-Access to the admin panel is available at [http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin), you can follow it log in with the data (login and password) provided to the command `my-game-list-manage.py createsuperuser`.
+Access to the admin panel is available at [http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin), you can follow it and log in with the data (login and password) provided to the command `my-game-list-manage.py createsuperuser`.
 
 ## Configuration
 
-* All configuration can be found in `my_game_list/settings/`
+* All configurations can be found in `my_game_list/settings/`
 * **base.py** - contains the base configuration of the application
 * **devel.py** - includes development configuration
 * **test.py** - contains configuration for tests
