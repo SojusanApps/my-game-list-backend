@@ -1,3 +1,4 @@
+"""This module contains the url configuration for the application."""
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path, re_path

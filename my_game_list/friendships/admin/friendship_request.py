@@ -1,3 +1,4 @@
+"""This module contains the admin model for the FriendshipRequest model."""
 from django.contrib import admin
 
 from my_game_list.friendships.models import FriendshipRequest

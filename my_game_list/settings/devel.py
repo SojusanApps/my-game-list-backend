@@ -1,5 +1,6 @@
 # ruff: noqa
-from my_game_list.settings.base import *
+"""This a configuration of the Django application for local development purposes."""
+from my_game_list.settings.base import *  # NOSONAR
 
 DEBUG = oeg("DJANGO_DEBUG", "True").lower() == "true"
 

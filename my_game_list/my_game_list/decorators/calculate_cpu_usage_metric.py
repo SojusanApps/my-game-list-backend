@@ -1,13 +1,17 @@
+"""This module contains the decorators."""
 import functools
+from collections.abc import Callable, Iterable, Mapping
+from typing import Any
 
 import psutil
 
 
-def calculate_cpu_usage_metric(func):
+def calculate_cpu_usage_metric(func: Callable) -> Any:
     """Decorator responsible for calculating CPU usage and setting this value in the `cpu_usage_metric` metric."""
 
     @functools.wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: Iterable[Any], **kwargs: Mapping[str, Any]) -> Any:
+        """This is just a wrapper function that sets the cpu usage."""
         from my_game_list.my_game_list.metrics import Metrics
 
         Metrics.cpu_usage_metric.set(psutil.cpu_percent())

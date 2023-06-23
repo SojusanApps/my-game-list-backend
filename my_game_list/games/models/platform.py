@@ -1,3 +1,4 @@
+"""This module contains the models for the Platform."""
 from django.utils.translation import gettext_lazy as _
 
 from my_game_list.my_game_list.models import BaseDictionaryModel

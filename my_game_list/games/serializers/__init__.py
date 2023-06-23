@@ -1,3 +1,4 @@
+"""This package contains all the serializers used by the games application."""
 from my_game_list.games.serializers.developer import DeveloperSerializer
 from my_game_list.games.serializers.game import GameCreateSerializer, GameSerializer
 from my_game_list.games.serializers.game_follow import GameFollowSerializer

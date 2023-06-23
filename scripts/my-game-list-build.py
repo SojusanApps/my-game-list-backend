@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # ruff: noqa: S603, S607
+"""This module contains features that help you manage the application."""
 import glob
 import inspect
 import shutil
@@ -25,7 +26,7 @@ FAILURE_CODE = 1
 docker_client = docker.from_env()
 
 
-def setup_project(path: str = "dist") -> None:
+def setup_project(path: str | Path = "dist") -> None:
     """Create whl file for the project.
 
     Args:
@@ -36,7 +37,7 @@ def setup_project(path: str = "dist") -> None:
     print_info("Whl file creation finished.")
 
 
-def clean_up(dist_path: str = "dist") -> None:
+def clean_up(dist_path: str | None = "dist") -> None:
     """Cleaning after build project.
 
     Args:
@@ -56,7 +57,7 @@ def clean_up(dist_path: str = "dist") -> None:
     print_info("Cleaning finished.")
 
 
-def remove_whls(path: str = "dist") -> None:
+def remove_whls(path: str | Path = "dist") -> None:
     """Remove all whl files.
 
     Args:
@@ -70,7 +71,13 @@ def remove_whls(path: str = "dist") -> None:
     print_info("Removing finished.")
 
 
-def _build_docker_image(path: str, tag: str):
+def _build_docker_image(path: str, tag: str) -> None:
+    """Build a Docker image.
+
+    Args:
+        path (str): The path to the Dockerfile to be built.
+        tag (str): The tag to be used.
+    """
     print_info("Image building has begun (it will take a while)...")
     try:
         image, image_build_logs = docker_client.images.build(path=path, tag=tag)
@@ -137,7 +144,13 @@ def build_images(tag: str = "latest") -> None:
     build_nginx(tag)
 
 
-def _push_docker_image(repository: str, tag: str):
+def _push_docker_image(repository: str, tag: str) -> None:
+    """Push docker image to the GitHub repository.
+
+    Args:
+        repository (str): The name of the repository to be pushed.
+        tag (str): The tag to be pushed.
+    """
     print_info("Image pushing has begun (it will take a while)...")
     response = docker_client.images.push(
         repository=repository,

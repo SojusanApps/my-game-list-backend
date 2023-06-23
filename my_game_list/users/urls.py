@@ -1,3 +1,4 @@
+"""This module contains the urls used within the user application."""
 from django.urls import include, path
 from rest_framework import routers
 

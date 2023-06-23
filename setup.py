@@ -1,3 +1,4 @@
+"""This module is responsible for configuring the project package."""
 from pathlib import Path
 
 from setuptools import find_packages, setup
@@ -9,12 +10,12 @@ DESCRIPTION = "MyGameList API - Application to manage game lists."
 LONG_DESCRIPTION = (Path(__file__).parent / "README.md").read_text()
 
 
-def get_version():
+def get_version() -> str:
     """Get the version of the application."""
     return ".".join(map(str, __version__))
 
 
-def get_packages():
+def get_packages() -> list[str]:
     """Get the list of packages."""
     packages = [f"{NAME}.{pkg}" for pkg in find_packages(NAME, exclude=("*.tests"))]
     return [NAME, "requirements"] + packages

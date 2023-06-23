@@ -1,3 +1,4 @@
+"""This module contains the viewsets for the Game model."""
 from rest_framework.viewsets import ModelViewSet
 
 from my_game_list.games.models import Game
@@ -11,6 +12,6 @@ class GameViewSet(ModelViewSet):
     queryset = Game.objects.all()
     permission_classes = (IsAdminOrReadOnly,)
 
-    def get_serializer_class(self):
+    def get_serializer_class(self) -> GameCreateSerializer | GameSerializer:
         """Get the serializer class for the Game model."""
         return GameCreateSerializer if self.action in ["create", "update", "partial_update"] else GameSerializer

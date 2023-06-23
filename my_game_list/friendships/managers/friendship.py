@@ -1,6 +1,12 @@
+"""This module contains the managers for the Friendship model."""
+from typing import TYPE_CHECKING
+
 from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.db.models import Manager
+
+if TYPE_CHECKING:
+    from my_game_list.friendships.models import Friendship, FriendshipRequest
 
 User = get_user_model()
 
@@ -8,10 +14,12 @@ User = get_user_model()
 class FriendshipManager(Manager):
     """Manager for friendship."""
 
-    def _get_friendship_model(self):
+    @staticmethod
+    def _get_friendship_model() -> "Friendship":
         return apps.get_model("friendships.Friendship")
 
-    def _get_friendship_request_model(self):
+    @staticmethod
+    def _get_friendship_request_model() -> "FriendshipRequest":
         return apps.get_model("friendships.FriendshipRequest")
 
     def are_friends(self, first_user: User, second_user: User) -> bool:

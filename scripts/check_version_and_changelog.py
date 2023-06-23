@@ -1,3 +1,4 @@
+"""This module is used as a git hook to check if the version and changelog have been changed."""
 import argparse
 from collections.abc import Sequence
 

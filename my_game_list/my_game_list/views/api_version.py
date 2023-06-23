@@ -1,3 +1,7 @@
+"""This module contains the view for api version."""
+from collections.abc import Iterable, Mapping
+from typing import Any
+
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -10,7 +14,7 @@ class ApiVersion(APIView):
 
     permission_classes = (AllowAny,)
 
-    def get(self, *args, **kwargs):
+    def get(self, *args: Iterable[Any], **kwargs: Mapping[str, Any]) -> Response:
         """GET method for the version of the application."""
         version = ".".join(map(str, __version__))
         return Response(version)

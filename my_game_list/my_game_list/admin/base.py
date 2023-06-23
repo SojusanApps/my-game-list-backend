@@ -1,3 +1,4 @@
+"""This module contains the base model class for all admin dictionary models."""
 from django.contrib import admin
 
 

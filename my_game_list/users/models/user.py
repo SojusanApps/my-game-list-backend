@@ -1,3 +1,4 @@
+"""This module contains the User model."""
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -15,6 +16,6 @@ class User(BaseModel, AbstractUser):
 
     avatar = models.BinaryField(_("avatar"), max_length=307200, blank=True, null=True, editable=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return a string representation for this model."""
         return f"{self.username} - {self.email}"

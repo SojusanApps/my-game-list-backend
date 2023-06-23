@@ -1,3 +1,4 @@
+"""This module contains the configuration for the gunicorn."""
 import multiprocessing
 import os
 

@@ -1,3 +1,4 @@
+"""This module contains the viewsets for user model interactions."""
 from django.contrib.auth import get_user_model
 from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveModelMixin
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -17,7 +18,7 @@ class UserViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin, CreateMode
         """Get the serializer class for the User model."""
         return UserCreateSerializer if self.action == "create" else UserSerializer
 
-    def get_permissions(self):
+    def get_permissions(self) -> list[AllowAny | IsAuthenticated]:
         """Get the permissions for the actions."""
         permission_classes = (AllowAny,) if self.action == "create" else (IsAuthenticated,)
         return [permission() for permission in permission_classes]

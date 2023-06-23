@@ -1,3 +1,4 @@
+"""This module contains the viewsets for the Genre model."""
 from rest_framework.viewsets import ModelViewSet
 
 from my_game_list.games.models import Genre

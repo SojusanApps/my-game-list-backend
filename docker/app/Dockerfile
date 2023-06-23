@@ -1,5 +1,8 @@
 FROM python:3.11.3-slim-buster
 
+# Create a new non-root user
+RUN adduser --system --no-cache-home nonroot
+
 # To locally connect your container image to a repository:
 LABEL org.opencontainers.image.source https://github.com/Sojusan/my-game-list
 
@@ -19,5 +22,8 @@ WORKDIR /usr/local/lib/python3.11/site-packages
 RUN  pip install --no-cache-dir -r requirements/requirements.txt
 
 WORKDIR /var/www/my-game-list
+
+# Run application as non-root user
+USER nonroot
 
 ENTRYPOINT ["./entrypoint.sh"]

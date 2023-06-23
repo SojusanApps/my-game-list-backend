@@ -1,3 +1,4 @@
+"""This module contains the admin models for the Publisher."""
 from django.contrib import admin
 
 from my_game_list.games.admin.game import GameInline

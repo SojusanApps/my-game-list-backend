@@ -1,3 +1,4 @@
+"""This module contains the configuration for user application."""
 from django.apps import AppConfig
 
 

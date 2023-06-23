@@ -1,3 +1,4 @@
+"""This module contains the viewsets for the FriendshipRequest model."""
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from rest_framework import status
@@ -20,7 +21,7 @@ class FriendshipRequestViewSet(ListModelMixin, RetrieveModelMixin, CreateModelMi
     queryset = FriendshipRequest.objects.all()
     permission_classes = (IsAuthenticated,)
 
-    def get_serializer_class(self):
+    def get_serializer_class(self) -> FriendshipRequestCreateSerializer | FriendshipRequestSerializer:
         """Get the serializer class for the request."""
         return FriendshipRequestCreateSerializer if self.action == "create" else FriendshipRequestSerializer
 
@@ -32,10 +33,7 @@ class FriendshipRequestViewSet(ListModelMixin, RetrieveModelMixin, CreateModelMi
 
         return Response({"detail": _("Success")}, status=status.HTTP_201_CREATED)
 
-    @action(
-        detail=True,
-        methods=("post",),
-    )
+    @action(detail=True, methods=("post",))
     def reject(self, request: Request, pk: int) -> Response:
         """Reject a friendship request."""
         instance: FriendshipRequest = self.get_object()

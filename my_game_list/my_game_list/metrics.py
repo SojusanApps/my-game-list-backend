@@ -1,3 +1,4 @@
+"""This module contains the custom Prometheus metrics."""
 from django.http import HttpResponse
 from django_prometheus.exports import ExportToDjangoView
 from prometheus_client import Gauge

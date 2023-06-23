@@ -1,3 +1,4 @@
+"""This module contains the base class for all dictionary serializers."""
 from rest_framework import serializers
 
 

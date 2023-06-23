@@ -1,3 +1,4 @@
+"""This module contains the serializers for the Publisher model."""
 from my_game_list.games.models import Publisher
 from my_game_list.my_game_list.serializers import BaseDictionarySerializer
 

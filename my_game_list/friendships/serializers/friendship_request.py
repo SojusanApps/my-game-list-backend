@@ -1,3 +1,7 @@
+"""This module contains the serializers for the FriendshipRequest model."""
+from collections.abc import Mapping
+from typing import Any
+
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from rest_framework.serializers import ModelSerializer, SlugRelatedField, ValidationError
@@ -42,7 +46,7 @@ class FriendshipRequestCreateSerializer(ModelSerializer):
         model = FriendshipRequest
         fields = ("message", "sender", "receiver")
 
-    def validate(self, data: dict):
+    def validate(self, data: Mapping[str, Any]) -> dict[str, Any]:
         """Validate the data passed in the request."""
         sender = data["sender"]
         receiver = data["receiver"]

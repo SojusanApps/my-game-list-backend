@@ -1,3 +1,4 @@
+"""This is a base configuration for MyGameList Django application."""
 import os
 from datetime import timedelta
 from pathlib import Path

@@ -35,7 +35,7 @@ echo_info "Running within CI: $(yes_if_defined "$CI")."
 
 echo_info "Extra pytest args: $extra_pytest_args."
 # Eval is required here so that extra_pytest_args is properly expanded into arguments.
-eval pytest "$extra_pytest_args" --color=yes tests "$@"
+eval pytest "$extra_pytest_args" --color=yes -n auto tests "$@"
 out=$?
 echo_success "Pytest execution time: $(($(date +%s) - start_time))s."
 exit $out

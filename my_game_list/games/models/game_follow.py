@@ -1,3 +1,4 @@
+"""This module contains the models for the GameFollow."""
 from django.conf import settings
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -25,6 +26,6 @@ class GameFollow(BaseModel):
         verbose_name_plural = _("games followed")
         constraints = (models.UniqueConstraint(fields=("game", "user"), name="unique_game_user_in_game_follow"),)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """String representation of the game follow model."""
         return f"{self.user.username} - {self.game.title}"

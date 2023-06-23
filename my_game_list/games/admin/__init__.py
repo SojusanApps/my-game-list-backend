@@ -1,3 +1,4 @@
+"""This package contains all the admin models used by the games application."""
 from my_game_list.games.admin.developer import DeveloperAdmin
 from my_game_list.games.admin.game import GameAdmin, GameInline
 from my_game_list.games.admin.game_follow import GameFollowAdmin

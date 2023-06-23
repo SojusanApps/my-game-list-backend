@@ -1,3 +1,4 @@
+"""This module contains the urls for the friendships application."""
 from django.urls import include, path
 from rest_framework import routers
 

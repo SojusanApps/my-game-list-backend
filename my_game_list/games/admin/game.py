@@ -1,3 +1,4 @@
+"""This module contains the admin models for the Game."""
 from django.contrib import admin
 
 from my_game_list.games.models import Game
