@@ -2,6 +2,11 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [1.1.3] - 26.06.2023
+
+* Activate more ruff rules.
+* `.gitattributes` file added.
+
 ## v. [1.1.2] - 23.06.2023
 
 * Resolve warnings from SonarLint.

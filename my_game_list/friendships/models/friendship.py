@@ -28,17 +28,17 @@ class Friendship(BaseModel):
         verbose_name_plural = _("friendships")
         constraints = (models.UniqueConstraint(fields=("user", "friend"), name="unique_user_friend"),)
 
-    def __str__(self) -> str:
+    def __str__(self: "Friendship") -> str:
         """String representation of the friendship model."""
         return f"User: {self.user.username}, Friend: {self.friend.username}"
 
-    def save(self, *args: Iterable[Any], **kwargs: Mapping[str, Any]) -> None:
+    def save(self: "Friendship", *args: Iterable[Any], **kwargs: Mapping[str, Any]) -> None:
         """This method saves the friendship model."""
         if self.user == self.friend:
             raise ValidationError(_("The user cannot befriend himself."))
         super().save(*args, **kwargs)
 
-    def delete(self, *args: Iterable[Any], **kwargs: Mapping[str, Any]) -> bool:
+    def delete(self: "Friendship", *args: Iterable[Any], **kwargs: Mapping[str, Any]) -> bool:  # noqa: ARG002
         """This method deletes the friendship relationship."""
         user = self.user
         friend = self.friend

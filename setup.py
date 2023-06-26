@@ -18,7 +18,7 @@ def get_version() -> str:
 def get_packages() -> list[str]:
     """Get the list of packages."""
     packages = [f"{NAME}.{pkg}" for pkg in find_packages(NAME, exclude=("*.tests"))]
-    return [NAME, "requirements"] + packages
+    return [NAME, "requirements", *packages]
 
 
 CONFIG = {

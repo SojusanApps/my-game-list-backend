@@ -21,12 +21,14 @@ class FriendshipRequestViewSet(ListModelMixin, RetrieveModelMixin, CreateModelMi
     queryset = FriendshipRequest.objects.all()
     permission_classes = (IsAuthenticated,)
 
-    def get_serializer_class(self) -> FriendshipRequestCreateSerializer | FriendshipRequestSerializer:
+    def get_serializer_class(
+        self: "FriendshipRequestViewSet",
+    ) -> FriendshipRequestCreateSerializer | FriendshipRequestSerializer:
         """Get the serializer class for the request."""
         return FriendshipRequestCreateSerializer if self.action == "create" else FriendshipRequestSerializer
 
     @action(detail=True, methods=("post",))
-    def accept(self, request: Request, pk: int) -> Response:
+    def accept(self: "FriendshipRequestViewSet", request: Request, pk: int) -> Response:  # noqa: ARG002
         """Accept a friendship request."""
         instance: FriendshipRequest = self.get_object()
         instance.accept()
@@ -34,7 +36,7 @@ class FriendshipRequestViewSet(ListModelMixin, RetrieveModelMixin, CreateModelMi
         return Response({"detail": _("Success")}, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=("post",))
-    def reject(self, request: Request, pk: int) -> Response:
+    def reject(self: "FriendshipRequestViewSet", request: Request, pk: int) -> Response:  # noqa: ARG002
         """Reject a friendship request."""
         instance: FriendshipRequest = self.get_object()
         instance.reject()

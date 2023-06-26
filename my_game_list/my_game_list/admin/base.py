@@ -7,4 +7,4 @@ class BaseDictionaryModelAdmin(admin.ModelAdmin):
 
     readonly_fields = ("id",)
     search_fields = ("name",)
-    list_display = readonly_fields + search_fields
+    list_display = (*readonly_fields, *search_fields)

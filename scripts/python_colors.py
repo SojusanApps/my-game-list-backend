@@ -9,7 +9,12 @@ RESET = "\033[0m"
 
 def print_color(color: str, text: str) -> None:
     """Print a text with a given color."""
-    print(f"{color} {text} {RESET}")
+    print(f"{color} {text} {RESET}")  # noqa: T201
+
+
+def print_text(text: str) -> None:
+    """Print text with a white color."""
+    print_color(RESET, text)
 
 
 def print_success(text: str) -> None:

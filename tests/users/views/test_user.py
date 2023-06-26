@@ -36,7 +36,7 @@ def test_unauthorized_access(viewname: str, args: Iterable[int], api_client: API
 
 
 @pytest.mark.django_db()
-def test_list_users(authenticated_api_client: APIClient, admin_user_fixture: User) -> None:
+def test_list_users(authenticated_api_client: APIClient, admin_user_fixture: User) -> None:  # noqa: ARG001
     """Check that authorized user can access the list of users."""
     response = authenticated_api_client.get(reverse("users:users-list"))
     users_ids = User.objects.all().values_list("id", flat=True)

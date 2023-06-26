@@ -25,6 +25,6 @@ class GameReview(BaseModel):
         verbose_name_plural = _("games reviews")
         constraints = (models.UniqueConstraint(fields=("game", "user"), name="unique_game_user_in_game_review"),)
 
-    def __str__(self) -> str:
+    def __str__(self: "GameReview") -> str:
         """String representation of the game review model."""
         return f"{self.user.username} - {self.game.title}"

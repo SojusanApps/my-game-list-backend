@@ -9,7 +9,7 @@ class GameListAdmin(admin.ModelAdmin):
     """Admin model for the game list model."""
 
     readonly_fields = ("id",)
-    search_fields = readonly_fields + ("game__title", "user__username")
+    search_fields = (*readonly_fields, "game__title", "user__username")
     raw_id_fields = ("game", "user")
     list_filter = ("status", "created_at", "last_modified_at")
-    list_display = readonly_fields + list_filter + raw_id_fields
+    list_display = (*readonly_fields, *list_filter, *raw_id_fields)

@@ -9,7 +9,7 @@ class FriendshipRequestAdmin(admin.ModelAdmin):
     """Admin model for the friendship request model."""
 
     readonly_fields = ("id",)
-    search_fields = readonly_fields + ("sender__username", "receiver__username")
+    search_fields = (*readonly_fields, "sender__username", "receiver__username")
     raw_id_fields = ("sender", "receiver")
     list_filter = ("created_at", "last_modified_at", "rejected_at")
-    list_display = readonly_fields + list_filter + raw_id_fields
+    list_display = (*readonly_fields, *list_filter, *raw_id_fields)

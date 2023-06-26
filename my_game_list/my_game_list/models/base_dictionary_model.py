@@ -14,6 +14,6 @@ class BaseDictionaryModel(models.Model):
         abstract = True
         ordering = ("id",)
 
-    def __str__(self) -> str:
+    def __str__(self: "BaseDictionaryModel") -> str:
         """String representation of dictionary models."""
         return self.name

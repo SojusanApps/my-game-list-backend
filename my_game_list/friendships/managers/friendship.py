@@ -22,7 +22,7 @@ class FriendshipManager(Manager):
     def _get_friendship_request_model() -> "FriendshipRequest":
         return apps.get_model("friendships.FriendshipRequest")
 
-    def are_friends(self, first_user: User, second_user: User) -> bool:
+    def are_friends(self: "FriendshipManager", first_user: User, second_user: User) -> bool:
         """Check if the given users are friends.
 
         Args:
@@ -35,7 +35,7 @@ class FriendshipManager(Manager):
         friendship = self._get_friendship_model()
         return friendship.objects.filter(user=first_user, friend=second_user).exists()
 
-    def request_is_sent(self, first_user: User, second_user: User) -> bool:
+    def request_is_sent(self: "FriendshipManager", first_user: User, second_user: User) -> bool:
         """Check if the friendship request is sent to the user by a given user.
 
         Args:

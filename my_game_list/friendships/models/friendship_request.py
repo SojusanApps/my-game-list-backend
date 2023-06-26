@@ -31,11 +31,11 @@ class FriendshipRequest(BaseModel):
         verbose_name_plural = _("friendship requests")
         constraints = (models.UniqueConstraint(fields=("sender", "receiver"), name="unique_sender_receiver"),)
 
-    def __str__(self) -> str:
+    def __str__(self: "FriendshipRequest") -> str:
         """String representation of the friendship request model."""
         return f"From: {self.sender.username} To: {self.receiver.username}"
 
-    def accept(self) -> bool:
+    def accept(self: "FriendshipRequest") -> bool:
         """Accept this friendship request.
 
         Returns:
@@ -47,7 +47,7 @@ class FriendshipRequest(BaseModel):
 
         return True
 
-    def reject(self) -> bool:
+    def reject(self: "FriendshipRequest") -> bool:
         """Reject this friendship request.
 
         Returns:

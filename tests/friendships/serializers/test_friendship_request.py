@@ -24,7 +24,7 @@ def test_friendship_to_myself(user_fixture: User) -> None:
 def test_users_are_already_friends(
     user_fixture: User,
     admin_user_fixture: User,
-    user_and_admin_friendship_fixture: Friendship,
+    user_and_admin_friendship_fixture: Friendship,  # noqa: ARG001
 ) -> None:
     """Test that users cant create a duplicated relationship."""
     serializer = FriendshipRequestCreateSerializer(data={"sender": user_fixture.pk, "receiver": admin_user_fixture.pk})
@@ -39,7 +39,7 @@ def test_users_are_already_friends(
 def test_you_already_sent_friendship_request(
     user_fixture: User,
     admin_user_fixture: User,
-    user_and_admin_friendship_request_fixture: FriendshipRequest,
+    user_and_admin_friendship_request_fixture: FriendshipRequest,  # noqa: ARG001
 ) -> None:
     """Test that user can't send a another friendship request to the same user."""
     serializer = FriendshipRequestCreateSerializer(data={"sender": user_fixture.pk, "receiver": admin_user_fixture.pk})
@@ -56,7 +56,7 @@ def test_you_already_sent_friendship_request(
 def test_user_already_sent_friendship_request(
     user_fixture: User,
     admin_user_fixture: User,
-    user_and_admin_friendship_request_fixture: FriendshipRequest,
+    user_and_admin_friendship_request_fixture: FriendshipRequest,  # noqa: ARG001
 ) -> None:
     """Test that user can't send a another friendship request to the same user."""
     serializer = FriendshipRequestCreateSerializer(data={"sender": admin_user_fixture.pk, "receiver": user_fixture.pk})

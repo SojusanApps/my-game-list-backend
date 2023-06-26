@@ -12,31 +12,43 @@ select = [
     "N",  # pep8-naming
     "D",  # pydocstyle
     "UP",  # pyupgrade
+    "C90",  # mccabe
     "S",  # flake8-bandit
     "BLE",  # flake8-blind-except
     "FBT",  # flake8-boolean-trap
     "B",  # flake8-bugbear
+    "ASYNC",  # flake8-async
+    "ANN",  # flake8-annotations
     "A",  # flake8-builtins
     "COM",  # flake8-commas
     "C4",  # flake8-comprehensions
     "DJ",  # flake8-django
     "ISC",  # flake8-implicit-str-concat
+    "T20",  # flake8-print
     "INP",  # flake8-no-pep420
     "PIE",  # flake8-pie
+    "SLF",  # flake8-self
     "PT",  # flake8-pytest-style
+    "PYI",  # flake8-pyi
+    "ARG",  # flake8-unused-arguments
+    "SLOT",  # flake8-slots
     "Q",  # flake8-quotes
     "RSE",  # flake8-raise
     "RET",  # flake8-return
     "SIM",  # flake8-simplify
     "TCH",  # flake8-type-checking
+    "TD",  # flake8-todos
+    "ERA",  # eradicate
     "PTH",  # flake8-use-pathlib
+    "PGH",  # pygrep-hooks
+    "PERF",  # Perflint
+    "RUF",  # Ruff-specific-rules
     "PL", "PLC", "PLE", "PLR", "PLW",  # Pylint
     "TRY",  # tryceratops
 ]
 ignore = [
     "D203",  # in conflict with D211
     "D212",  # in conflict with D213
-    "TRY003",  # ignore long messages for errors
 ]
 extend-exclude = [
     "*/migrations/*"

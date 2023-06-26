@@ -30,6 +30,6 @@ class Game(BaseModel):
         verbose_name = _("game")
         verbose_name_plural = _("games")
 
-    def __str__(self) -> str:
+    def __str__(self: "Game") -> str:
         """String representation of the game model."""
         return self.title

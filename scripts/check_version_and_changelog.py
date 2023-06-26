@@ -14,7 +14,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     return_value = 0
     for filename in FILENAMES_TO_BE_MODIFIED:
         if filename not in args.filenames:
-            print(f"Missing required file: {filename}")
+            print(f"Missing required file: {filename}")  # noqa: T201
             return_value = 1
     return return_value
 

@@ -34,6 +34,6 @@ class GameList(BaseModel):
         verbose_name_plural = _("game lists")
         constraints = (models.UniqueConstraint(fields=("game", "user"), name="unique_game_user_in_game_list"),)
 
-    def __str__(self) -> str:
+    def __str__(self: "GameList") -> str:
         """String representation of the game list model."""
         return f"{self.user.username} - {self.game.title}"

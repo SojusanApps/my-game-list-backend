@@ -10,7 +10,7 @@ from distutils.util import strtobool
 from itertools import chain
 from pathlib import Path
 
-from python_colors import print_error, print_info, print_warning
+from python_colors import print_error, print_info, print_text, print_warning
 
 import docker
 from docker.errors import BuildError
@@ -90,7 +90,7 @@ def _build_docker_image(path: str, tag: str) -> None:
     else:
         for line in image_build_logs:
             if DOCKER_LOGS_STREAM_VALUE in line:
-                print(line[DOCKER_LOGS_STREAM_VALUE].strip())
+                print_text(line[DOCKER_LOGS_STREAM_VALUE].strip())
         print_info(f"Docker image was build: {image}")
 
 
@@ -160,7 +160,7 @@ def _push_docker_image(repository: str, tag: str) -> None:
     )
 
     for line in response:
-        print(line)
+        print_text(line)
         if DOCKER_LOGS_ERROR_VALUE in line:
             print_error(line)
             print_warning(
@@ -206,7 +206,7 @@ def push_images(tag: str = "latest") -> None:
 def docker_up() -> None:
     """Docker-compose up with default configuration."""
     docker_compose_path = Path("docker", "docker-compose.yml")
-    subprocess.Popen(["docker", "compose", "-f", f"{str(docker_compose_path)}", "up"]).wait()
+    subprocess.Popen(["docker", "compose", "-f", f"{docker_compose_path}", "up"]).wait()
 
 
 def docker_build_and_up() -> None:

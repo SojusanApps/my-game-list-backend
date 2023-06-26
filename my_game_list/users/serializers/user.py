@@ -1,6 +1,6 @@
 """This model contains the serializers for User model."""
 from collections.abc import Mapping
-from typing import Any
+from typing import Any, ClassVar
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password as django_validate_password
@@ -17,14 +17,14 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
         model = User
         fields = ("username", "password", "email", "avatar")
-        extra_kwargs = {"password": {"write_only": True}}
+        extra_kwargs: ClassVar[dict[str, dict[str, bool]]] = {"password": {"write_only": True}}
 
-    def validate_password(self, value: str) -> str:
+    def validate_password(self: "UserCreateSerializer", value: str) -> str:
         """The validation function for password."""
         django_validate_password(value)
         return value
 
-    def create(self, validated_data: Mapping[str, Any]) -> User:
+    def create(self: "UserCreateSerializer", validated_data: Mapping[str, Any]) -> User:
         """Create a new User instance."""
         user = User(
             username=validated_data["username"],

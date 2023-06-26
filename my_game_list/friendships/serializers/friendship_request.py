@@ -46,7 +46,7 @@ class FriendshipRequestCreateSerializer(ModelSerializer):
         model = FriendshipRequest
         fields = ("message", "sender", "receiver")
 
-    def validate(self, data: Mapping[str, Any]) -> dict[str, Any]:
+    def validate(self: "FriendshipRequestCreateSerializer", data: Mapping[str, Any]) -> dict[str, Any]:
         """Validate the data passed in the request."""
         sender = data["sender"]
         receiver = data["receiver"]
