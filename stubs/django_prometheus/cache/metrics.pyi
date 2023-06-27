@@ -1,0 +1,7 @@
+from _typeshed import Incomplete
+from django_prometheus.conf import NAMESPACE as NAMESPACE
+
+django_cache_get_total: Incomplete
+django_cache_hits_total: Incomplete
+django_cache_misses_total: Incomplete
+django_cache_get_fail_total: Incomplete

@@ -27,6 +27,7 @@ fresh_run:
 check:
 	black .
 	ruff check .
+	mypy . --strict
 
 coverage:
 	coverage html

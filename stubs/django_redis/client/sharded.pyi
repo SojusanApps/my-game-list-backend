@@ -1,0 +1,93 @@
+from ..exceptions import ConnectionInterrupted as ConnectionInterrupted
+from ..hash_ring import HashRing as HashRing
+from ..util import CacheKey as CacheKey
+from .default import DefaultClient as DefaultClient
+from _typeshed import Incomplete
+from datetime import datetime
+from typing import Union
+
+class ShardClient(DefaultClient):
+    def __init__(self, *args: Incomplete, **kwargs: Incomplete) -> None: ...
+    def get_client(self, *args: Incomplete, **kwargs: Incomplete) -> None: ...
+    def connect(self, index: int = ...) -> Incomplete: ...
+    def get_server_name(self, _key: Incomplete) -> Incomplete: ...
+    def get_server(self, key: Incomplete) -> Incomplete: ...
+    def add(
+        self,
+        key: Incomplete,
+        value: Incomplete,
+        timeout: Incomplete = ...,
+        version: Incomplete | None = ...,
+        client: Incomplete | None = ...,
+    ) -> Incomplete: ...
+    def get(
+        self,
+        key: Incomplete,
+        default: Incomplete | None = ...,
+        version: Incomplete | None = ...,
+        client: Incomplete | None = ...,
+    ) -> Incomplete: ...
+    def get_many(self, keys: Incomplete, version: Incomplete | None = ...) -> Incomplete: ...  # type: ignore[override]
+    def set(self, key: Incomplete, value: Incomplete, timeout: Incomplete = ..., version: Incomplete | None = ..., client: Incomplete | None = ..., nx: bool = ...) -> Incomplete: ...  # type: ignore[override]
+    def set_many(self, data: Incomplete, timeout: Incomplete = ..., version: Incomplete | None = ...) -> None: ...  # type: ignore[override]
+    def has_key(
+        self, key: Incomplete, version: Incomplete | None = ..., client: Incomplete | None = ...
+    ) -> Incomplete: ...
+    def delete(self, key: Incomplete, version: Incomplete | None = ..., client: Incomplete | None = ...) -> Incomplete: ...  # type: ignore[override]
+    def ttl(self, key: Incomplete, version: Incomplete | None = ..., client: Incomplete | None = ...) -> Incomplete: ...
+    def pttl(
+        self, key: Incomplete, version: Incomplete | None = ..., client: Incomplete | None = ...
+    ) -> Incomplete: ...
+    def persist(
+        self, key: Incomplete, version: Incomplete | None = ..., client: Incomplete | None = ...
+    ) -> Incomplete: ...
+    def expire(
+        self, key: Incomplete, timeout: Incomplete, version: Incomplete | None = ..., client: Incomplete | None = ...
+    ) -> Incomplete: ...
+    def pexpire(
+        self, key: Incomplete, timeout: Incomplete, version: Incomplete | None = ..., client: Incomplete | None = ...
+    ) -> Incomplete: ...
+    def pexpire_at(
+        self,
+        key: Incomplete,
+        when: Union[datetime, int],
+        version: Incomplete | None = ...,
+        client: Incomplete | None = ...,
+    ) -> Incomplete: ...
+    def expire_at(
+        self,
+        key: Incomplete,
+        when: Union[datetime, int],
+        version: Incomplete | None = ...,
+        client: Incomplete | None = ...,
+    ) -> Incomplete: ...
+    def lock(
+        self,
+        key: Incomplete,
+        version: Incomplete | None = ...,
+        timeout: Incomplete | None = ...,
+        sleep: float = ...,
+        blocking_timeout: Incomplete | None = ...,
+        client: Incomplete | None = ...,
+        thread_local: bool = ...,
+    ) -> Incomplete: ...
+    def delete_many(self, keys: Incomplete, version: Incomplete | None = ...) -> Incomplete: ...  # type: ignore[override]
+    def incr_version(
+        self, key: Incomplete, delta: int = ..., version: Incomplete | None = ..., client: Incomplete | None = ...
+    ) -> Incomplete: ...
+    def incr(self, key: Incomplete, delta: int = ..., version: Incomplete | None = ..., client: Incomplete | None = ...) -> Incomplete: ...  # type: ignore[override]
+    def decr(
+        self, key: Incomplete, delta: int = ..., version: Incomplete | None = ..., client: Incomplete | None = ...
+    ) -> Incomplete: ...
+    def iter_keys(self, key: Incomplete, version: Incomplete | None = ...) -> None: ...  # type: ignore[override]
+    def keys(self, search: Incomplete, version: Incomplete | None = ...) -> Incomplete: ...  # type: ignore[override]
+    def delete_pattern(self, pattern: Incomplete, version: Incomplete | None = ..., client: Incomplete | None = ..., itersize: Incomplete | None = ..., prefix: Incomplete | None = ...) -> Incomplete: ...  # type: ignore[override]
+    def do_close_clients(self) -> None: ...
+    def touch(
+        self,
+        key: Incomplete,
+        timeout: Incomplete = ...,
+        version: Incomplete | None = ...,
+        client: Incomplete | None = ...,
+    ) -> Incomplete: ...
+    def clear(self, client: Incomplete | None = ...) -> None: ...

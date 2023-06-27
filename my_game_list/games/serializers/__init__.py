@@ -7,3 +7,15 @@ from my_game_list.games.serializers.game_review import GameReviewSerializer
 from my_game_list.games.serializers.genre import GenreSerializer
 from my_game_list.games.serializers.platform import PlatformSerializer
 from my_game_list.games.serializers.publisher import PublisherSerializer
+
+__all__ = [
+    "DeveloperSerializer",
+    "GameCreateSerializer",
+    "GameSerializer",
+    "GameFollowSerializer",
+    "GameListSerializer",
+    "GameReviewSerializer",
+    "GenreSerializer",
+    "PlatformSerializer",
+    "PublisherSerializer",
+]

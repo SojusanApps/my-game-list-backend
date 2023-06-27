@@ -6,7 +6,7 @@ from my_game_list.games.serializers import PlatformSerializer
 from my_game_list.my_game_list.permissions import IsAdminOrReadOnly
 
 
-class PlatformViewSet(ModelViewSet):
+class PlatformViewSet(ModelViewSet[Platform]):
     """A ViewSet for the Platform model."""
 
     queryset = Platform.objects.all()

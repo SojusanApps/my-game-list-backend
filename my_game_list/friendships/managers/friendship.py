@@ -1,5 +1,5 @@
 """This module contains the managers for the Friendship model."""
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
 from django.apps import apps
 from django.contrib.auth import get_user_model
@@ -7,22 +7,23 @@ from django.db.models import Manager
 
 if TYPE_CHECKING:
     from my_game_list.friendships.models import Friendship, FriendshipRequest
+    from my_game_list.users.models import User as UserType
 
-User = get_user_model()
+User: type["UserType"] = get_user_model()
 
 
-class FriendshipManager(Manager):
+class FriendshipManager(Manager["Friendship"]):
     """Manager for friendship."""
 
     @staticmethod
-    def _get_friendship_model() -> "Friendship":
+    def _get_friendship_model() -> type["Friendship"]:
         return apps.get_model("friendships.Friendship")
 
     @staticmethod
-    def _get_friendship_request_model() -> "FriendshipRequest":
+    def _get_friendship_request_model() -> type["FriendshipRequest"]:
         return apps.get_model("friendships.FriendshipRequest")
 
-    def are_friends(self: "FriendshipManager", first_user: User, second_user: User) -> bool:
+    def are_friends(self: Self, first_user: "UserType", second_user: "UserType") -> bool:
         """Check if the given users are friends.
 
         Args:
@@ -35,7 +36,7 @@ class FriendshipManager(Manager):
         friendship = self._get_friendship_model()
         return friendship.objects.filter(user=first_user, friend=second_user).exists()
 
-    def request_is_sent(self: "FriendshipManager", first_user: User, second_user: User) -> bool:
+    def request_is_sent(self: Self, first_user: "UserType", second_user: "UserType") -> bool:
         """Check if the friendship request is sent to the user by a given user.
 
         Args:

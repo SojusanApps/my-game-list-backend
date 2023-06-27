@@ -1,24 +1,29 @@
 """This module contains the viewsets for user model interactions."""
+from typing import TYPE_CHECKING, Self
+
 from django.contrib.auth import get_user_model
 from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveModelMixin
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
 
 from my_game_list.users.serializers import UserCreateSerializer, UserSerializer
 
-User = get_user_model()
+if TYPE_CHECKING:
+    from my_game_list.users.models import User as UserType
+
+User: type["UserType"] = get_user_model()
 
 
-class UserViewSet(GenericViewSet, ListModelMixin, RetrieveModelMixin, CreateModelMixin):
+class UserViewSet(GenericViewSet["UserType"], ListModelMixin, RetrieveModelMixin, CreateModelMixin):
     """ViewSet is responsible for creating, listing, and retrieving user information."""
 
     queryset = User.objects.all()
 
-    def get_serializer_class(self: "UserViewSet") -> UserCreateSerializer | UserSerializer:
+    def get_serializer_class(self: Self) -> type[UserCreateSerializer] | type[UserSerializer]:
         """Get the serializer class for the User model."""
         return UserCreateSerializer if self.action == "create" else UserSerializer
 
-    def get_permissions(self: "UserViewSet") -> list[AllowAny | IsAuthenticated]:
+    def get_permissions(self: Self) -> list[BasePermission]:
         """Get the permissions for the actions."""
         permission_classes = (AllowAny,) if self.action == "create" else (IsAuthenticated,)
         return [permission() for permission in permission_classes]

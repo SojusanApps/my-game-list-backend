@@ -2,6 +2,10 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [1.1.4] - 29.06.2023
+
+* Added `mypy`.
+
 ## v. [1.1.3] - 26.06.2023
 
 * Activate more ruff rules.

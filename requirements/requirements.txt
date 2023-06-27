@@ -26,5 +26,17 @@ drf-spectacular==0.26.3
 pillow==9.5.0
 docker==6.1.3
 django_prometheus==2.3.1
+pip-prometheus==1.2.1
 prometheus-client==0.17.0
 psutil==5.9.5
+
+# Type hints
+mypy==1.4.1
+django-stubs==4.2.2
+django-stubs-ext==4.2.2
+djangorestframework-stubs==3.14.2
+types-setuptools==68.0.0.0
+types-psycopg2==2.9.21.10
+types-psutil==5.9.5.15
+types-redis==4.5.5.2
+django_memcached_consul==0.2.0

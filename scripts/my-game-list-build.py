@@ -9,6 +9,7 @@ import sys
 from distutils.util import strtobool
 from itertools import chain
 from pathlib import Path
+from types import FunctionType
 
 from python_colors import print_error, print_info, print_text, print_warning
 
@@ -215,7 +216,7 @@ def docker_build_and_up() -> None:
     docker_up()
 
 
-def get_module_functions_names() -> dict[str, object]:
+def get_module_functions_names() -> dict[str, FunctionType]:
     """Get available functions.
 
     Returns all the defined function names in this module.

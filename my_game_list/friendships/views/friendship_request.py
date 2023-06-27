@@ -1,4 +1,6 @@
 """This module contains the viewsets for the FriendshipRequest model."""
+from typing import Self
+
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from rest_framework import status
@@ -15,20 +17,26 @@ from my_game_list.friendships.serializers import FriendshipRequestCreateSerializ
 User = get_user_model()
 
 
-class FriendshipRequestViewSet(ListModelMixin, RetrieveModelMixin, CreateModelMixin, DestroyModelMixin, GenericViewSet):
+class FriendshipRequestViewSet(
+    ListModelMixin,
+    RetrieveModelMixin,
+    CreateModelMixin,
+    DestroyModelMixin,
+    GenericViewSet["FriendshipRequest"],
+):
     """All views related to friendship requests."""
 
     queryset = FriendshipRequest.objects.all()
     permission_classes = (IsAuthenticated,)
 
     def get_serializer_class(
-        self: "FriendshipRequestViewSet",
-    ) -> FriendshipRequestCreateSerializer | FriendshipRequestSerializer:
+        self: Self,
+    ) -> type[FriendshipRequestCreateSerializer] | type[FriendshipRequestSerializer]:
         """Get the serializer class for the request."""
         return FriendshipRequestCreateSerializer if self.action == "create" else FriendshipRequestSerializer
 
     @action(detail=True, methods=("post",))
-    def accept(self: "FriendshipRequestViewSet", request: Request, pk: int) -> Response:  # noqa: ARG002
+    def accept(self: Self, request: Request, pk: int) -> Response:  # noqa: ARG002
         """Accept a friendship request."""
         instance: FriendshipRequest = self.get_object()
         instance.accept()
@@ -36,7 +44,7 @@ class FriendshipRequestViewSet(ListModelMixin, RetrieveModelMixin, CreateModelMi
         return Response({"detail": _("Success")}, status=status.HTTP_201_CREATED)
 
     @action(detail=True, methods=("post",))
-    def reject(self: "FriendshipRequestViewSet", request: Request, pk: int) -> Response:  # noqa: ARG002
+    def reject(self: Self, request: Request, pk: int) -> Response:  # noqa: ARG002
         """Reject a friendship request."""
         instance: FriendshipRequest = self.get_object()
         instance.reject()

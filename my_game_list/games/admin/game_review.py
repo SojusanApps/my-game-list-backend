@@ -5,7 +5,7 @@ from my_game_list.games.models import GameReview
 
 
 @admin.register(GameReview)
-class GameReviewAdmin(admin.ModelAdmin):
+class GameReviewAdmin(admin.ModelAdmin[GameReview]):
     """Admin model for the game review model."""
 
     readonly_fields = ("id",)

@@ -1,6 +1,5 @@
 """This module contains the serializers for the FriendshipRequest model."""
-from collections.abc import Mapping
-from typing import Any
+from typing import TYPE_CHECKING, ClassVar, Self, TypedDict
 
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
@@ -9,10 +8,13 @@ from rest_framework.serializers import ModelSerializer, SlugRelatedField, Valida
 from my_game_list.friendships.models import FriendshipRequest
 from my_game_list.users.serializers import UserSerializer
 
-User = get_user_model()
+if TYPE_CHECKING:
+    from my_game_list.users.models import User as UserType
+
+User: type["UserType"] = get_user_model()
 
 
-class FriendshipRequestSerializer(ModelSerializer):
+class FriendshipRequestSerializer(ModelSerializer[FriendshipRequest]):
     """Serializer for listing the friendship requests."""
 
     sender = UserSerializer()
@@ -22,7 +24,7 @@ class FriendshipRequestSerializer(ModelSerializer):
         """Meta data for the friendship request serializer."""
 
         model = FriendshipRequest
-        fields = (
+        fields: ClassVar[list[str]] = [
             "id",
             "rejected_at",
             "created_at",
@@ -30,11 +32,19 @@ class FriendshipRequestSerializer(ModelSerializer):
             "message",
             "sender",
             "receiver",
-        )
+        ]
         read_only_fields = ("id", "created_at")
 
 
-class FriendshipRequestCreateSerializer(ModelSerializer):
+class FriendshipRequestCreateSerializerDataType(TypedDict):
+    """TypedDict representing the data structure for FriendshipRequestCreateSerializer."""
+
+    message: str
+    sender: "UserType"
+    receiver: "UserType"
+
+
+class FriendshipRequestCreateSerializer(ModelSerializer[FriendshipRequest]):
     """A serializer for creating a friendship request."""
 
     sender = SlugRelatedField(queryset=User.objects.all(), slug_field="id")
@@ -44,9 +54,12 @@ class FriendshipRequestCreateSerializer(ModelSerializer):
         """Meta data for the friendship request create serializer."""
 
         model = FriendshipRequest
-        fields = ("message", "sender", "receiver")
+        fields: ClassVar[list[str]] = ["message", "sender", "receiver"]
 
-    def validate(self: "FriendshipRequestCreateSerializer", data: Mapping[str, Any]) -> dict[str, Any]:
+    def validate(
+        self: Self,
+        data: FriendshipRequestCreateSerializerDataType,
+    ) -> FriendshipRequestCreateSerializerDataType:
         """Validate the data passed in the request."""
         sender = data["sender"]
         receiver = data["receiver"]

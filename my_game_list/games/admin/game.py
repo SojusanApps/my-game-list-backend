@@ -1,10 +1,12 @@
 """This module contains the admin models for the Game."""
+from typing import Any
+
 from django.contrib import admin
 
 from my_game_list.games.models import Game
 
 
-class GameInline(admin.StackedInline):
+class GameInline(admin.StackedInline[Any, Game]):
     """Game inline representation used in related admin models."""
 
     raw_id_fields = ("publisher",)
@@ -13,7 +15,7 @@ class GameInline(admin.StackedInline):
 
 
 @admin.register(Game)
-class GameAdmin(admin.ModelAdmin):
+class GameAdmin(admin.ModelAdmin[Game]):
     """Admin model for the game model."""
 
     readonly_fields = ("id",)

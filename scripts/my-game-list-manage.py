@@ -2,12 +2,13 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+from typing import Self
 
 
 class DjangoImportError(Exception):
     """Django import error."""
 
-    def __init__(self: "DjangoImportError") -> None:
+    def __init__(self: Self) -> None:
         """Set a error message."""
         super().__init__(
             "Couldn't import Django. Are you sure it's installed and available on your PYTHONPATH environment "

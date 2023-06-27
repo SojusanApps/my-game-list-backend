@@ -10,7 +10,7 @@ from my_game_list.friendships.serializers import FriendshipSerializer
 User = get_user_model()
 
 
-class FriendshipViewSet(ListModelMixin, RetrieveModelMixin, DestroyModelMixin, GenericViewSet):
+class FriendshipViewSet(ListModelMixin, RetrieveModelMixin, DestroyModelMixin, GenericViewSet["Friendship"]):
     """All views related to friendship."""
 
     queryset = Friendship.objects.all()

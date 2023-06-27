@@ -8,7 +8,7 @@ from my_game_list.games.serializers.platform import PlatformSerializer
 from my_game_list.games.serializers.publisher import PublisherSerializer
 
 
-class GameSerializer(serializers.ModelSerializer):
+class GameSerializer(serializers.ModelSerializer[Game]):
     """A serializer for the game model."""
 
     publisher = PublisherSerializer()
@@ -35,7 +35,7 @@ class GameSerializer(serializers.ModelSerializer):
         )
 
 
-class GameCreateSerializer(GameSerializer):
+class GameCreateSerializer(serializers.ModelSerializer[Game]):
     """A serializer for creating a game item."""
 
     publisher = serializers.SlugRelatedField(
@@ -56,3 +56,21 @@ class GameCreateSerializer(GameSerializer):
         slug_field="id",
         many=True,
     )
+
+    class Meta:
+        """Meta data for game create serializer."""
+
+        model = Game
+        fields = (
+            "id",
+            "title",
+            "created_at",
+            "last_modified_at",
+            "release_date",
+            "cover_image",
+            "description",
+            "publisher",
+            "developer",
+            "genres",
+            "platforms",
+        )

@@ -4,7 +4,7 @@ from rest_framework import serializers
 from my_game_list.games.models import GameReview
 
 
-class GameReviewSerializer(serializers.ModelSerializer):
+class GameReviewSerializer(serializers.ModelSerializer[GameReview]):
     """A serializer for the game review model."""
 
     class Meta:

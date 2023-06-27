@@ -5,7 +5,7 @@ from my_game_list.friendships.models import Friendship
 from my_game_list.users.serializers import UserSerializer
 
 
-class FriendshipSerializer(serializers.ModelSerializer):
+class FriendshipSerializer(serializers.ModelSerializer[Friendship]):
     """Serializer for listing friendships."""
 
     user = UserSerializer()

@@ -1,4 +1,6 @@
 """This module contains the models for the Game."""
+from typing import Self
+
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -30,6 +32,6 @@ class Game(BaseModel):
         verbose_name = _("game")
         verbose_name_plural = _("games")
 
-    def __str__(self: "Game") -> str:
+    def __str__(self: Self) -> str:
         """String representation of the game model."""
         return self.title

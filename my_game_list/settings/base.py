@@ -242,3 +242,5 @@ LOGGING = {
         },
     },
 }
+
+MYPYPATH = BASE_DIR / "stubs"

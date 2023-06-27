@@ -1,4 +1,6 @@
 """This module contains the tests for the friendship request views."""
+from typing import TYPE_CHECKING
+
 import pytest
 from django.contrib.auth import get_user_model
 from freezegun import freeze_time
@@ -7,16 +9,19 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
-from my_game_list.friendships.models import FriendshipRequest
+from my_game_list.friendships.models import Friendship, FriendshipRequest
 
-User = get_user_model()
+if TYPE_CHECKING:
+    from my_game_list.users.models import User as UserType
+
+User: type["UserType"] = get_user_model()
 
 
 @freeze_time("2023-06-22 22:20:01")
 @pytest.mark.django_db()
 def test_create_model(
-    user_fixture: User,
-    admin_user_fixture: User,
+    user_fixture: "UserType",
+    admin_user_fixture: "UserType",
     admin_authenticated_api_client: APIClient,
 ) -> None:
     """Check if creation of the new friendship request model is working properly."""
@@ -43,8 +48,13 @@ def test_custom_action_accept(admin_authenticated_api_client: APIClient) -> None
 
     assert response.status_code == status.HTTP_201_CREATED
     assert response.json() == {"detail": "Success"}
-    assert sender_user.friends.first().friend == receiver_user
-    assert receiver_user.friends.first().friend == sender_user
+    sender_friend: Friendship | None
+    receiver_friend: Friendship | None
+    if (sender_friend := sender_user.friends.first()) and (receiver_friend := receiver_user.friends.first()):
+        assert sender_friend.friend == receiver_user
+        assert receiver_friend.friend == sender_user
+    else:
+        raise Friendship.DoesNotExist
     assert FriendshipRequest.objects.count() == 0
 
 

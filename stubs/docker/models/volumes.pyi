@@ -1,0 +1,16 @@
+from ..api import APIClient as APIClient
+from .resource import Collection as Collection, Model as Model
+from _typeshed import Incomplete
+
+class Volume(Model):
+    id_attribute: str
+    @property
+    def name(self) -> Incomplete: ...
+    def remove(self, force: bool = ...) -> Incomplete: ...
+
+class VolumeCollection(Collection):
+    model = Volume
+    def create(self, name: Incomplete | None = ..., **kwargs: Incomplete) -> Incomplete: ...  # type: ignore[override]
+    def get(self, volume_id: Incomplete) -> Incomplete: ...
+    def list(self, **kwargs: Incomplete) -> Incomplete: ...
+    def prune(self, filters: Incomplete | None = ...) -> Incomplete: ...

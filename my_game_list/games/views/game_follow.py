@@ -6,7 +6,7 @@ from my_game_list.games.models import GameFollow
 from my_game_list.games.serializers import GameFollowSerializer
 
 
-class GameFollowViewSet(ModelViewSet):
+class GameFollowViewSet(ModelViewSet[GameFollow]):
     """A ViewSet for the GameFollow model."""
 
     queryset = GameFollow.objects.all()

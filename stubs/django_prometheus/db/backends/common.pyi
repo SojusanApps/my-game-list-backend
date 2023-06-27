@@ -1,0 +1,3 @@
+from _typeshed import Incomplete
+
+def get_postgres_cursor_class() -> Incomplete: ...

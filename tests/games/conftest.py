@@ -1,4 +1,6 @@
 """The fixtures used within games test module."""
+from typing import TYPE_CHECKING
+
 import pytest
 from django.contrib.auth import get_user_model
 from freezegun import freeze_time
@@ -15,7 +17,10 @@ from my_game_list.games.models import (
     Publisher,
 )
 
-User = get_user_model()
+if TYPE_CHECKING:
+    from my_game_list.users.models import User as UserType
+
+User: type["UserType"] = get_user_model()
 
 
 @pytest.fixture()
@@ -67,7 +72,7 @@ def game_fixture(
 
 @pytest.fixture()
 @freeze_time("2023-06-22 16:47:12")
-def game_review_fixture(user_fixture: User, game_fixture: Game) -> GameReview:
+def game_review_fixture(user_fixture: "UserType", game_fixture: Game) -> GameReview:
     """A fixture with a test game review."""
     return GameReview.objects.create(
         score=1,
@@ -79,7 +84,7 @@ def game_review_fixture(user_fixture: User, game_fixture: Game) -> GameReview:
 
 @pytest.fixture()
 @freeze_time("2023-06-22 16:47:12")
-def game_list_fixture(user_fixture: User, game_fixture: Game) -> GameList:
+def game_list_fixture(user_fixture: "UserType", game_fixture: Game) -> GameList:
     """A fixture with a test game list."""
     return GameList.objects.create(
         status=GameListStatus.PLAN_TO_PLAY,
@@ -90,6 +95,6 @@ def game_list_fixture(user_fixture: User, game_fixture: Game) -> GameList:
 
 @pytest.fixture()
 @freeze_time("2023-06-22 16:47:12")
-def game_follow_fixture(user_fixture: User, game_fixture: Game) -> GameFollow:
+def game_follow_fixture(user_fixture: "UserType", game_fixture: Game) -> GameFollow:
     """A fixture with a test game follow."""
     return GameFollow.objects.create(game=game_fixture, user=user_fixture)

@@ -14,7 +14,7 @@ class Metrics:
     memory_usage_metric = Gauge("memory_usage_percent", "Percentage of memory usage.")
 
 
-@calculate_memory_usage_metric
+@calculate_memory_usage_metric  # type: ignore[operator]
 @calculate_cpu_usage_metric
 def custom_export_to_django_view(request: Request) -> HttpResponse:
     """A wrapper for a function that returns metrics for Prometheus.

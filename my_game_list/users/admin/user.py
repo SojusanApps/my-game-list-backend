@@ -5,7 +5,7 @@ from my_game_list.users.models import User
 
 
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(admin.ModelAdmin[User]):
     """Admin model for the User model."""
 
     readonly_fields = ("id",)

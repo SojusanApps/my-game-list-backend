@@ -4,3 +4,9 @@ from my_game_list.friendships.serializers.friendship_request import (
     FriendshipRequestCreateSerializer,
     FriendshipRequestSerializer,
 )
+
+__all__ = [
+    "FriendshipSerializer",
+    "FriendshipRequestCreateSerializer",
+    "FriendshipRequestSerializer",
+]

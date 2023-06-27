@@ -5,7 +5,7 @@ from my_game_list.friendships.models import Friendship
 
 
 @admin.register(Friendship)
-class FriendshipAdmin(admin.ModelAdmin):
+class FriendshipAdmin(admin.ModelAdmin[Friendship]):
     """Admin model for the friendship model."""
 
     readonly_fields = ("id", "created_at")

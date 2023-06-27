@@ -21,24 +21,24 @@ def get_packages() -> list[str]:
     return [NAME, "requirements", *packages]
 
 
-CONFIG = {
-    "name": "my-game-list",
-    "version": get_version(),
-    "description": DESCRIPTION,
-    "long_description": LONG_DESCRIPTION,
-    "long_description_content_type": "text/markdown",
-    "packages": get_packages(),
-    "include_package_data": True,
-    "author": "Sojusan",
-    "author_email": "grzegorczyk1rafal@gmail.com",
-    "url": "https://github.com/Sojusan/my-game-list",
-    "license": "proprietary",
-    "classifiers": [
+setup(
+    name="my-game-list",
+    version=get_version(),
+    description=DESCRIPTION,
+    long_description=LONG_DESCRIPTION,
+    long_description_content_type="text/markdown",
+    packages=get_packages(),
+    include_package_data=True,
+    author="Sojusan",
+    author_email="grzegorczyk1rafal@gmail.com",
+    url="https://github.com/Sojusan/my-game-list",
+    license="proprietary",
+    classifiers=[
         "Development Status :: 3 - Alpha",
         "Programming Language :: Python :: 3.11",
         "License :: Other/Proprietary License",
     ],
-    "scripts": [
+    scripts=[
         (Path("scripts") / "my-game-list-manage.py").as_posix(),
         (Path("scripts") / "my-game-list-run-tests-with-pg.sh").as_posix(),
         (Path("scripts") / "my-game-list-run-tests.sh").as_posix(),
@@ -47,6 +47,4 @@ CONFIG = {
         (Path("scripts") / "wait-for-postgresql.py").as_posix(),
         (Path("scripts") / "python_colors.py").as_posix(),
     ],
-}
-
-setup(**CONFIG)
+)

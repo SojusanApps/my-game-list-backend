@@ -1,6 +1,6 @@
 """This module contains the models for the Friendship."""
-from collections.abc import Iterable, Mapping
-from typing import Any
+from collections.abc import Iterable
+from typing import ClassVar, Self
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -26,22 +26,22 @@ class Friendship(BaseModel):
 
         verbose_name = _("friendship")
         verbose_name_plural = _("friendships")
-        constraints = (models.UniqueConstraint(fields=("user", "friend"), name="unique_user_friend"),)
+        constraints: ClassVar[list[models.BaseConstraint]] = [
+            models.UniqueConstraint(fields=("user", "friend"), name="unique_user_friend"),
+        ]
 
-    def __str__(self: "Friendship") -> str:
+    def __str__(self: Self) -> str:
         """String representation of the friendship model."""
         return f"User: {self.user.username}, Friend: {self.friend.username}"
 
-    def save(self: "Friendship", *args: Iterable[Any], **kwargs: Mapping[str, Any]) -> None:
+    def save(self: Self, *args: Iterable[str] | str | bool | None, **kwargs: Iterable[str] | str | bool | None) -> None:
         """This method saves the friendship model."""
         if self.user == self.friend:
             raise ValidationError(_("The user cannot befriend himself."))
-        super().save(*args, **kwargs)
+        super().save(*args, **kwargs)  # type: ignore[arg-type]
 
-    def delete(self: "Friendship", *args: Iterable[Any], **kwargs: Mapping[str, Any]) -> bool:  # noqa: ARG002
+    def delete(self: Self, *args: bool | None, **kwargs: bool | None) -> tuple[int, dict[str, int]]:  # noqa: ARG002
         """This method deletes the friendship relationship."""
         user = self.user
         friend = self.friend
-        Friendship.objects.filter(user__in=(user, friend), friend__in=(friend, user)).delete()
-
-        return True
+        return Friendship.objects.filter(user__in=(user, friend), friend__in=(friend, user)).delete()

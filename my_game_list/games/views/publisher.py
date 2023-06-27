@@ -6,7 +6,7 @@ from my_game_list.games.serializers import PublisherSerializer
 from my_game_list.my_game_list.permissions import IsAdminOrReadOnly
 
 
-class PublisherViewSet(ModelViewSet):
+class PublisherViewSet(ModelViewSet[Publisher]):
     """A ViewSet for the Publisher model."""
 
     queryset = Publisher.objects.all()

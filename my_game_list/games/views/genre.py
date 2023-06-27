@@ -6,7 +6,7 @@ from my_game_list.games.serializers import GenreSerializer
 from my_game_list.my_game_list.permissions import IsAdminOrReadOnly
 
 
-class GenreViewSet(ModelViewSet):
+class GenreViewSet(ModelViewSet[Genre]):
     """A ViewSet for the Genre model."""
 
     queryset = Genre.objects.all()

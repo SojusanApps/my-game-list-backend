@@ -1,15 +1,20 @@
 """Tests for friendship request model."""
+from typing import TYPE_CHECKING
+
 import pytest
 from django.contrib.auth import get_user_model
 
 from my_game_list.friendships.models import FriendshipRequest
 from my_game_list.my_game_list.exceptions import ConflictException
 
-User = get_user_model()
+if TYPE_CHECKING:
+    from my_game_list.users.models import User as UserType
+
+User: type["UserType"] = get_user_model()
 
 
 @pytest.mark.django_db()
-def test_friendship_request_dunder_str(user_fixture: User, admin_user_fixture: User) -> None:
+def test_friendship_request_dunder_str(user_fixture: "UserType", admin_user_fixture: "UserType") -> None:
     """Test the `FriendshipRequest` dunder str method."""
     friendship_request = FriendshipRequest.objects.create(sender=user_fixture, receiver=admin_user_fixture)
     assert str(friendship_request) == (
@@ -18,7 +23,7 @@ def test_friendship_request_dunder_str(user_fixture: User, admin_user_fixture: U
 
 
 @pytest.mark.django_db()
-def test_double_rejection_error(user_fixture: User, admin_user_fixture: User) -> None:
+def test_double_rejection_error(user_fixture: "UserType", admin_user_fixture: "UserType") -> None:
     """Check for double rejection error."""
     friendship_request = FriendshipRequest.objects.create(sender=user_fixture, receiver=admin_user_fixture)
     friendship_request.reject()

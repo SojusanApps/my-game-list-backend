@@ -1,4 +1,6 @@
 """This module contains the model for the FriendshipRequest."""
+from typing import ClassVar, Self
+
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
@@ -29,13 +31,15 @@ class FriendshipRequest(BaseModel):
 
         verbose_name = _("friendship request")
         verbose_name_plural = _("friendship requests")
-        constraints = (models.UniqueConstraint(fields=("sender", "receiver"), name="unique_sender_receiver"),)
+        constraints: ClassVar[list[models.BaseConstraint]] = [
+            models.UniqueConstraint(fields=("sender", "receiver"), name="unique_sender_receiver"),
+        ]
 
-    def __str__(self: "FriendshipRequest") -> str:
+    def __str__(self: Self) -> str:
         """String representation of the friendship request model."""
         return f"From: {self.sender.username} To: {self.receiver.username}"
 
-    def accept(self: "FriendshipRequest") -> bool:
+    def accept(self: Self) -> bool:
         """Accept this friendship request.
 
         Returns:
@@ -47,7 +51,7 @@ class FriendshipRequest(BaseModel):
 
         return True
 
-    def reject(self: "FriendshipRequest") -> bool:
+    def reject(self: Self) -> bool:
         """Reject this friendship request.
 
         Returns:
