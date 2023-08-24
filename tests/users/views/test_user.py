@@ -63,7 +63,7 @@ def test_list_users(authenticated_api_client: APIClient, admin_user_fixture: "Us
             {
                 "id": users_ids[1],
                 "username": "test_admin",
-                "email": "",
+                "email": "test_admin@email.com",
                 "last_login": None,
                 "date_joined": "2023-05-25T14:21:13Z",
                 "avatar": None,

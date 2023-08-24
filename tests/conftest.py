@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 import pytest
 from django.contrib.auth import get_user_model
 from freezegun import freeze_time
+from model_bakery import baker
 from rest_framework.test import APIClient
 
 if TYPE_CHECKING:
@@ -23,7 +24,7 @@ def user_fixture() -> "UserType":
     Returns:
         User: a created user instance
     """
-    return User.objects.create_user(username="test_user", email="test@email.com", password="test")  # noqa: S106
+    return baker.make(User, username="test_user", email="test@email.com", password="test")  # noqa: S106
 
 
 @pytest.fixture()
@@ -37,7 +38,14 @@ def admin_user_fixture() -> "UserType":
     Returns:
         User: a created user instance
     """
-    return User.objects.create_superuser(username="test_admin", email=None, password="test")  # noqa: S106
+    return baker.make(
+        User,
+        username="test_admin",
+        email="test_admin@email.com",
+        password="test",  # noqa: S106
+        is_staff=True,
+        is_superuser=True,
+    )
 
 
 @pytest.fixture()

@@ -2,6 +2,11 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [2.0.1] - 24.08.2023
+
+* Update project dependencies.
+* Add stubs for `py`.
+
 ## v. [2.0.0] - 14.07.2023
 
 * Changed the username field from `username` to `email`.

@@ -1,0 +1,3 @@
+from _typeshed import Incomplete
+
+def format_exception_only(etype: Incomplete, value: Incomplete) -> Incomplete: ...

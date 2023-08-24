@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # ruff: noqa: S603, S607
 """This module contains features that help you manage the application."""
-import glob
 import inspect
 import shutil
 import subprocess
@@ -48,10 +47,11 @@ def clean_up(dist_path: str | None = "dist") -> None:
     print_info("Cleaning after build project started.")
     subprocess.Popen(["python", "setup.py", "clean", "--all"]).wait()
     build_dir = ("build/",)
-    egg_info_dir = glob.glob("*.egg-info/")
+    egg_info_dir = Path().glob("*.egg-info/")
     dist_dir = () if not dist_path or dist_path == "None" else (dist_path,)
 
-    for dir_path in chain(build_dir, egg_info_dir, dist_dir):
+    dir_path: Path | str
+    for dir_path in chain(build_dir, egg_info_dir, dist_dir):  # type: ignore[assignment]
         if Path(dir_path).is_dir():
             shutil.rmtree(dir_path)
 
@@ -66,7 +66,7 @@ def remove_whls(path: str | Path = "dist") -> None:
     """
     print_info("Removing of the whl files started.")
 
-    for whl_file in glob.glob(f"{path}/*.whl"):
+    for whl_file in Path().glob(f"{path}/*.whl"):
         Path(whl_file).unlink()
 
     print_info("Removing finished.")
