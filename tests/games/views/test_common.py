@@ -211,6 +211,7 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
                         "game": ANY,
                         "user": ANY,
                         "status": GameListStatus.PLAN_TO_PLAY,
+                        "status_full_name": GameListStatus.PLAN_TO_PLAY.label,
                         "last_modified_at": "2023-06-22T16:47:12Z",
                         "created_at": "2023-06-22T16:47:12Z",
                     },
@@ -360,6 +361,7 @@ def test_list_model(
                 "game": ANY,
                 "user": ANY,
                 "status": GameListStatus.PLAN_TO_PLAY,
+                "status_full_name": GameListStatus.PLAN_TO_PLAY.label,
                 "last_modified_at": "2023-06-22T16:47:12Z",
                 "created_at": "2023-06-22T16:47:12Z",
             },
@@ -471,6 +473,7 @@ def test_get_model_detail(
             },
             {
                 "id": ANY,
+                "status_full_name": GameListStatus.PLAN_TO_PLAY.label,
                 "created_at": "2023-06-22T22:20:01Z",
                 "last_modified_at": "2023-06-22T22:20:01Z",
             },
@@ -606,6 +609,7 @@ def test_create_model(  # ruff: noqa: PLR0913
                 "status": GameListStatus.COMPLETED.value,
             },
             {
+                "status_full_name": GameListStatus.COMPLETED.label,
                 "created_at": "2023-06-22T16:47:12Z",
                 "last_modified_at": "2023-06-22T22:20:01Z",
             },

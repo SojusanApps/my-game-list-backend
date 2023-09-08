@@ -1,7 +1,10 @@
 """This module contains the models for the Game."""
+from base64 import b64encode
 from typing import Self
 
+from django.contrib import admin
 from django.db import models
+from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
 from my_game_list.games.models.developer import Developer
@@ -35,3 +38,12 @@ class Game(BaseModel):
     def __str__(self: Self) -> str:
         """String representation of the game model."""
         return self.title
+
+    @property
+    @admin.display(description="Cover image preview")
+    def cover_image_tag(self: Self) -> str:
+        """Used in admin model to have a image preview."""
+        return format_html(
+            '<img src = "data: image/png; base64, {}" width="250" height="300">',
+            b64encode(self.cover_image).decode("utf-8"),
+        )

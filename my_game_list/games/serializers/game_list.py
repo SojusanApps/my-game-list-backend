@@ -7,8 +7,10 @@ from my_game_list.games.models import GameList
 class GameListSerializer(serializers.ModelSerializer[GameList]):
     """A serializer for the game list model."""
 
+    status_full_name = serializers.CharField(source="get_status_display", read_only=True)
+
     class Meta:
         """Meta data for the game list serializer."""
 
         model = GameList
-        fields = ("id", "status", "created_at", "last_modified_at", "game", "user")
+        fields = ("id", "status", "status_full_name", "created_at", "last_modified_at", "game", "user")

@@ -2,6 +2,13 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [2.1.0] -
+
+* Added image preview to admin panels.
+* Added filters to all endpoints.
+* Added `django-filter-stubs` to project dependencies.
+* Added `status_full_name` to return game list status as human readable string.
+
 ## v. [2.0.1] - 24.08.2023
 
 * Update project dependencies.

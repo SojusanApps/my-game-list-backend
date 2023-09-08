@@ -11,6 +11,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
+from my_game_list.friendships.filters import FriendshipRequestFilterSet
 from my_game_list.friendships.models import FriendshipRequest
 from my_game_list.friendships.serializers import FriendshipRequestCreateSerializer, FriendshipRequestSerializer
 
@@ -28,6 +29,7 @@ class FriendshipRequestViewSet(
 
     queryset = FriendshipRequest.objects.all()
     permission_classes = (IsAuthenticated,)
+    filterset_class = FriendshipRequestFilterSet
 
     def get_serializer_class(
         self: Self,

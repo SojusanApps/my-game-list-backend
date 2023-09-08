@@ -1,9 +1,11 @@
 """This module contains the admin models for the Game."""
-from typing import Any
+from typing import Any, ClassVar
 
 from django.contrib import admin
+from django.db import models
 
 from my_game_list.games.models import Game
+from my_game_list.my_game_list.forms import BinaryFieldWithUpload
 
 
 class GameInline(admin.StackedInline[Any, Game]):
@@ -18,9 +20,14 @@ class GameInline(admin.StackedInline[Any, Game]):
 class GameAdmin(admin.ModelAdmin[Game]):
     """Admin model for the game model."""
 
-    readonly_fields = ("id",)
+    formfield_overrides: ClassVar[dict[type[models.Field[Any, Any]], dict[str, Any]]] = {  # type: ignore[misc]
+        models.BinaryField: {
+            "form_class": BinaryFieldWithUpload,
+        },
+    }
+    readonly_fields = ("id", "cover_image_tag")
     search_fields = (
-        *readonly_fields,
+        "id",
         "title",
         "publisher__name",
         "developer__name",

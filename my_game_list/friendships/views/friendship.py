@@ -4,6 +4,7 @@ from rest_framework.mixins import DestroyModelMixin, ListModelMixin, RetrieveMod
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
 
+from my_game_list.friendships.filters import FriendshipFilterSet
 from my_game_list.friendships.models import Friendship
 from my_game_list.friendships.serializers import FriendshipSerializer
 
@@ -16,3 +17,4 @@ class FriendshipViewSet(ListModelMixin, RetrieveModelMixin, DestroyModelMixin, G
     queryset = Friendship.objects.all()
     permission_classes = (IsAuthenticated,)
     serializer_class = FriendshipSerializer
+    filterset_class = FriendshipFilterSet

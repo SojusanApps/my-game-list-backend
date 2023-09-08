@@ -6,6 +6,7 @@ from rest_framework.mixins import CreateModelMixin, ListModelMixin, RetrieveMode
 from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
 
+from my_game_list.users.filters import UserFilterSet
 from my_game_list.users.serializers import UserCreateSerializer, UserSerializer
 
 if TYPE_CHECKING:
@@ -18,6 +19,7 @@ class UserViewSet(GenericViewSet["UserType"], ListModelMixin, RetrieveModelMixin
     """ViewSet is responsible for creating, listing, and retrieving user information."""
 
     queryset = User.objects.all()
+    filterset_class = UserFilterSet
 
     def get_serializer_class(self: Self) -> type[UserCreateSerializer] | type[UserSerializer]:
         """Get the serializer class for the User model."""
