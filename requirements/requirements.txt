@@ -29,6 +29,7 @@ django_prometheus==2.3.1
 pip-prometheus==1.2.1
 prometheus-client==0.17.1
 psutil==5.9.5
+PyYAML==5.3.1
 
 # Type hints
 mypy==1.5.1

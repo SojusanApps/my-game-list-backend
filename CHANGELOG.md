@@ -2,7 +2,7 @@
 
 > Date format is DD.MM.YYYY.
 
-## v. [2.1.0] -
+## v. [2.1.0] - 08.09.2023
 
 * Added image preview to admin panels.
 * Added filters to all endpoints.
