@@ -24,7 +24,7 @@ class User(BaseModel, AbstractUser):
     avatar = models.BinaryField(_("avatar"), max_length=307200, blank=True, null=True, editable=True)
 
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS: ClassVar[list[str]] = ["username"]  # type: ignore[misc]
+    REQUIRED_FIELDS: ClassVar[list[str]] = ["username"]
 
     def __str__(self: Self) -> str:
         """Return a string representation for this model."""

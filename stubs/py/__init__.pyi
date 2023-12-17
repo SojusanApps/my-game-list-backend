@@ -1,4 +1,4 @@
-import apipkg as apipkg  # type: ignore[import]
+import apipkg as apipkg  # type: ignore[import-not-found]
 
 # Names in __all__ with no definition:
 #   _pydir

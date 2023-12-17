@@ -2,6 +2,10 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [2.1.1] - 17.12.2023
+
+* Upgrade project dependencies.
+
 ## v. [2.1.0] - 08.09.2023
 
 * Added image preview to admin panels.

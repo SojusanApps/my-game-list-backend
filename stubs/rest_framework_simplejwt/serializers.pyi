@@ -16,7 +16,7 @@ class PasswordField(serializers.CharField):
 class TokenObtainSerializer(serializers.Serializer[Incomplete]):
     username_field: Incomplete
     token_class: Incomplete
-    default_error_messages: Incomplete
+    default_error_messages: Incomplete  # type: ignore[misc]
     def __init__(self, *args: Incomplete, **kwargs: Incomplete) -> None: ...
     user: Incomplete
     def validate(self, attrs: Mapping[str, Incomplete]) -> dict[Incomplete, Incomplete]: ...
