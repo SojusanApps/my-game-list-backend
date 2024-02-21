@@ -63,13 +63,6 @@ jobs:
           POSTGRES_HOST: localhost
           POSTGRES_EXTERNAL_PORT: 5432
 
-      - name: Report coverage to codecov
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./coverage-reports/coverage.xml
-          fail_ci_if_error: true
-
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
