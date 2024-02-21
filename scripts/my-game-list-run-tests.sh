@@ -20,7 +20,7 @@ start_time="$(date +%s)"
 
 extra_pytest_args=""
 [ -z "$CI" ] && extra_pytest_args="$extra_pytest_args -vv"
-[ -z "$NO_COVERAGE" ] && extra_pytest_args="$extra_pytest_args --cov=my_game_list --cov-report=xml --cov-report=term"
+[ -z "$NO_COVERAGE" ] && extra_pytest_args="$extra_pytest_args --cov=my_game_list --cov-report=xml:coverage-reports/coverage.xml --cov-report=term"
 
 [ -z "$DJANGO_DB_ENGINE" ] && \
     DJANGO_DB_ENGINE="django.db.backends.sqlite3" && \

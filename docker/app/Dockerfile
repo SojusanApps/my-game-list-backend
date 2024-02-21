@@ -1,4 +1,4 @@
-FROM python:3.11.3-slim-buster
+FROM python:3.12.1-slim-bullseye
 
 # Create a new non-root user
 RUN adduser --system --no-cache-home nonroot
@@ -18,7 +18,7 @@ COPY settings.py gunicorn.conf.py entrypoint.sh *.whl ./
 
 # Install Django app
 RUN pip install --no-cache-dir -U ./*.whl
-WORKDIR /usr/local/lib/python3.11/site-packages
+WORKDIR /usr/local/lib/python3.12/site-packages
 RUN  pip install --no-cache-dir -r requirements/requirements.txt
 
 WORKDIR /var/www/my-game-list
