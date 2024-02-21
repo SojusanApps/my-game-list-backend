@@ -2,6 +2,7 @@
 
 [![MyGameList CI](https://github.com/Sojusan/my-game-list/actions/workflows/my-game-list.yml/badge.svg)](https://github.com/Sojusan/my-game-list/actions/workflows/my-game-list.yml)
 [![codecov](https://codecov.io/gh/Sojusan/my-game-list/branch/master/graph/badge.svg?token=knlIznGzJO)](https://codecov.io/gh/Sojusan/my-game-list)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=MyGameListPlaceholder_my-game-list-backend&metric=coverage)](https://sonarcloud.io/summary/new_code?id=MyGameListPlaceholder_my-game-list-backend)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v1.json)](https://github.com/charliermarsh/ruff)
 [![Black](https://img.shields.io/badge/code%20style-black-black)](https://github.com/psf/black)
@@ -11,7 +12,7 @@ Application to manage game lists.
 
 ## Basic assumptions
 
-* [Python](https://www.python.org/) >= 3.11
+* [Python](https://www.python.org/) >= 3.12
 * [Django](https://www.djangoproject.com/) >= 4.0
 * REST API based on the [Django REST Framework](https://www.django-rest-framework.org/)
 * Line length 100
