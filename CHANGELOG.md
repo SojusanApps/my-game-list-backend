@@ -4,8 +4,9 @@
 
 ## v. [2.1.2] - 21.02.2024
 
-* Update Python version to 3.12.
-* Enable coverage reporting in SonarCloud.
+* Updated the Python version to 3.12.
+* Enabled coverage reporting in the SonarCloud.
+* Removed Codecov from the project.
 
 ## v. [2.1.1] - 17.12.2023
 
