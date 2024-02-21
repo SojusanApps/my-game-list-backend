@@ -2,6 +2,11 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [2.1.2] - 21.02.2024
+
+* Update Python version to 3.12.
+* Enable coverage reporting in SonarCloud.
+
 ## v. [2.1.1] - 17.12.2023
 
 * Upgrade project dependencies.
