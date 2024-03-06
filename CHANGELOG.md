@@ -2,6 +2,10 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [2.1.3] - 06.03.2024
+
+* Added user details to GameReview endpoint.
+
 ## v. [2.1.2] - 21.02.2024
 
 * Updated the Python version to 3.12.
