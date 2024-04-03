@@ -2,7 +2,7 @@
 from my_game_list.games.serializers.developer import DeveloperSerializer
 from my_game_list.games.serializers.game import GameCreateSerializer, GameSerializer
 from my_game_list.games.serializers.game_follow import GameFollowSerializer
-from my_game_list.games.serializers.game_list import GameListSerializer
+from my_game_list.games.serializers.game_list import GameListCreateSerializer, GameListSerializer
 from my_game_list.games.serializers.game_review import GameReviewCreateSerializer, GameReviewSerializer
 from my_game_list.games.serializers.genre import GenreSerializer
 from my_game_list.games.serializers.platform import PlatformSerializer
@@ -14,6 +14,7 @@ __all__ = [
     "GameSerializer",
     "GameFollowSerializer",
     "GameListSerializer",
+    "GameListCreateSerializer",
     "GameReviewCreateSerializer",
     "GameReviewSerializer",
     "GenreSerializer",

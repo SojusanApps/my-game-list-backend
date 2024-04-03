@@ -7,7 +7,7 @@ from rest_framework.permissions import AllowAny, BasePermission, IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
 
 from my_game_list.users.filters import UserFilterSet
-from my_game_list.users.serializers import UserCreateSerializer, UserSerializer
+from my_game_list.users.serializers import UserCreateSerializer, UserDetailSerializer, UserSerializer
 
 if TYPE_CHECKING:
     from my_game_list.users.models import User as UserType
@@ -21,9 +21,15 @@ class UserViewSet(GenericViewSet["UserType"], ListModelMixin, RetrieveModelMixin
     queryset = User.objects.all()
     filterset_class = UserFilterSet
 
-    def get_serializer_class(self: Self) -> type[UserCreateSerializer] | type[UserSerializer]:
+    def get_serializer_class(
+        self: Self,
+    ) -> type[UserCreateSerializer] | type[UserSerializer] | type[UserDetailSerializer]:
         """Get the serializer class for the User model."""
-        return UserCreateSerializer if self.action == "create" else UserSerializer
+        if self.action == "retrieve":
+            return UserDetailSerializer
+        if self.action == "create":
+            return UserCreateSerializer
+        return UserSerializer
 
     def get_permissions(self: Self) -> list[BasePermission]:
         """Get the permissions for the actions."""

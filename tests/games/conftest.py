@@ -75,7 +75,6 @@ def game_fixture(
 def game_review_fixture(user_fixture: "UserType", game_fixture: Game) -> GameReview:
     """A fixture with a test game review."""
     return GameReview.objects.create(
-        score=1,
         review="test_review",
         game=game_fixture,
         user=user_fixture,
@@ -87,6 +86,7 @@ def game_review_fixture(user_fixture: "UserType", game_fixture: Game) -> GameRev
 def game_list_fixture(user_fixture: "UserType", game_fixture: Game) -> GameList:
     """A fixture with a test game list."""
     return GameList.objects.create(
+        score=5,
         status=GameListStatus.PLAN_TO_PLAY,
         game=game_fixture,
         user=user_fixture,

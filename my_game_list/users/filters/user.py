@@ -1,12 +1,13 @@
 """Filters for user model."""
 from django_filters import rest_framework as filters
 
-from my_game_list.users.models import User
+from my_game_list.users.models import Gender, User
 
 
 class UserFilterSet(filters.FilterSet):
     """FilterSet for user model."""
 
+    gender = filters.MultipleChoiceFilter(choices=Gender.choices)
     username = filters.CharFilter(lookup_expr="icontains")
     is_active = filters.BooleanFilter()
 
@@ -16,6 +17,7 @@ class UserFilterSet(filters.FilterSet):
         model = User
         fields = (
             "id",
+            "gender",
             "username",
             "is_active",
         )

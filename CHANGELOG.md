@@ -2,6 +2,16 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [2.2.0] - 03.04.2024
+
+* Updated few models and serializers:
+  * GameReview
+  * GameList
+  * User
+* Moved `score` from `GameReview` to `GameList`.
+* Added `GameListCreateSerializer`.
+* Added `Gender` to `User` model.
+
 ## v. [2.1.3] - 06.03.2024
 
 * Added user details to GameReview endpoint.

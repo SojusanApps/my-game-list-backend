@@ -2,6 +2,7 @@
 from typing import ClassVar, Self
 
 from django.conf import settings
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -22,6 +23,12 @@ class GameListStatus(models.TextChoices):
 class GameList(BaseModel):
     """A game list model. Contains the list of games for user."""
 
+    score = models.PositiveIntegerField(
+        _("score"),
+        validators=[MinValueValidator(1), MaxValueValidator(10)],
+        null=True,
+        blank=True,
+    )
     status = models.CharField(_("status"), max_length=3, choices=GameListStatus.choices)
     created_at = models.DateTimeField(_("creation time"), auto_now_add=True)
     last_modified_at = models.DateTimeField(_("last modified"), auto_now=True)
