@@ -11,10 +11,19 @@ from django.utils.translation import gettext_lazy as _
 from my_game_list.my_game_list.models import BaseModel
 
 
+class Gender(models.TextChoices):
+    """The choices for the gender of the user."""
+
+    MALE = "M", _("Male")
+    FEMALE = "F", _("Female")
+    PREFER_NOT_TO_SAY = "X", _("Prefer not to say")
+
+
 class User(BaseModel, AbstractUser):
     """A model for the application user."""
 
     email = models.EmailField(_("email address"), unique=True)
+    gender = models.CharField(_("gender"), max_length=1, choices=Gender.choices, default=Gender.PREFER_NOT_TO_SAY)
 
     # Delete the unwanted fields from the `AbstractUser`
     # first and last name of the user are sensitive data that will not be used in the application

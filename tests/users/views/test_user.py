@@ -9,6 +9,8 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
+from my_game_list.users.models import Gender
+
 if TYPE_CHECKING:
     from my_game_list.users.models import User as UserType
 
@@ -55,6 +57,7 @@ def test_list_users(authenticated_api_client: APIClient, admin_user_fixture: "Us
                 "id": users_ids[0],
                 "username": "test_user",
                 "email": "test@email.com",
+                "gender": Gender.PREFER_NOT_TO_SAY.label,
                 "last_login": None,
                 "date_joined": "2023-05-25T12:01:12Z",
                 "avatar": None,
@@ -64,6 +67,7 @@ def test_list_users(authenticated_api_client: APIClient, admin_user_fixture: "Us
                 "id": users_ids[1],
                 "username": "test_admin",
                 "email": "test_admin@email.com",
+                "gender": Gender.PREFER_NOT_TO_SAY.label,
                 "last_login": None,
                 "date_joined": "2023-05-25T14:21:13Z",
                 "avatar": None,
@@ -85,11 +89,21 @@ def test_get_user(authenticated_api_client: APIClient) -> None:
     assert response.json() == {
         "id": user.pk,
         "username": "test_user",
-        "email": "test@email.com",
+        "gender": Gender.PREFER_NOT_TO_SAY.label,
         "last_login": None,
         "date_joined": "2023-05-25T12:01:12Z",
         "avatar": None,
-        "is_active": True,
+        "friends": [],
+        "latest_game_list_updates": [],
+        "game_list_statistics": {
+            "completed": 0,
+            "dropped": 0,
+            "mean_score": None,
+            "on_hold": 0,
+            "plan_to_play": 0,
+            "playing": 0,
+            "total": 0,
+        },
     }
 
 

@@ -208,10 +208,11 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
                 "results": [
                     {
                         "id": ANY,
-                        "game": ANY,
+                        "title": "test_game",
+                        "game_cover_image": ANY,
                         "user": ANY,
-                        "status": GameListStatus.PLAN_TO_PLAY,
-                        "status_full_name": GameListStatus.PLAN_TO_PLAY.label,
+                        "score": 5,
+                        "status": GameListStatus.PLAN_TO_PLAY.label,
                         "last_modified_at": "2023-06-22T16:47:12Z",
                         "created_at": "2023-06-22T16:47:12Z",
                     },
@@ -231,8 +232,8 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
                         "id": ANY,
                         "game": ANY,
                         "user": ANY,
+                        "score": None,
                         "review": "test_review",
-                        "score": 1,
                         "created_at": "2023-06-22T16:47:12Z",
                     },
                 ],
@@ -358,10 +359,11 @@ def test_list_model(
             "game_list_fixture",
             {
                 "id": ANY,
-                "game": ANY,
+                "title": "test_game",
+                "game_cover_image": ANY,
                 "user": ANY,
-                "status": GameListStatus.PLAN_TO_PLAY,
-                "status_full_name": GameListStatus.PLAN_TO_PLAY.label,
+                "score": 5,
+                "status": GameListStatus.PLAN_TO_PLAY.label,
                 "last_modified_at": "2023-06-22T16:47:12Z",
                 "created_at": "2023-06-22T16:47:12Z",
             },
@@ -375,7 +377,7 @@ def test_list_model(
                 "game": ANY,
                 "user": ANY,
                 "review": "test_review",
-                "score": 1,
+                "score": None,
                 "created_at": "2023-06-22T16:47:12Z",
             },
             id="Get the game review by id.",
@@ -470,10 +472,12 @@ def test_get_model_detail(
             "games:game-lists-list",
             {
                 "status": GameListStatus.PLAN_TO_PLAY.value,
+                "score": 1,
             },
             {
                 "id": ANY,
-                "status_full_name": GameListStatus.PLAN_TO_PLAY.label,
+                "score": 1,
+                "status": GameListStatus.PLAN_TO_PLAY.value,
                 "created_at": "2023-06-22T22:20:01Z",
                 "last_modified_at": "2023-06-22T22:20:01Z",
             },
@@ -482,7 +486,6 @@ def test_get_model_detail(
         pytest.param(
             "games:game-reviews-list",
             {
-                "score": 5,
                 "review": "test review - new",
             },
             {
@@ -606,10 +609,12 @@ def test_create_model(  # ruff: noqa: PLR0913
             "games:game-lists-detail",
             "game_list_fixture",
             {
+                "score": 10,
                 "status": GameListStatus.COMPLETED.value,
             },
             {
-                "status_full_name": GameListStatus.COMPLETED.label,
+                "score": 10,
+                "status": GameListStatus.COMPLETED.value,
                 "created_at": "2023-06-22T16:47:12Z",
                 "last_modified_at": "2023-06-22T22:20:01Z",
             },
@@ -619,7 +624,6 @@ def test_create_model(  # ruff: noqa: PLR0913
             "games:game-reviews-detail",
             "game_review_fixture",
             {
-                "score": 10,
                 "review": "Updated review.",
             },
             {
