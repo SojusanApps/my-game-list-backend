@@ -29,8 +29,8 @@ Application to manage game lists.
 1. I use versioning following the [semver 2.0](https://semver.org/spec/v2.0.0.html)
 1. The `master` and `devel` branches should contain stable and working code.
 1. Workflow:
-    * The developer is preparing a branch with new functionality or a correction, giving it a name as *[bugfix/feature/hotfix]-[description]*, e.g. *feature-new-document*
-    * When the code is ready, the developer prepares MR (Merge Request) for the **devel** branch for new functionalities
+    * The developer is preparing a branch with new functionality or a correction, giving it a name as *[bugfix/feature/hotfix]/[description]*, e.g. *feature/new-document*
+    * When the code is ready, the developer prepares PR (Pull Request) for the **devel** branch for new functionalities
     * If all functionalities work, the code is uploaded to the **master** branch
 
 Tag Legend:
@@ -49,7 +49,7 @@ Tag Legend:
 
 ## Local installation
 
-1. Clone the repository from GitLab with the command:
+1. Clone the repository from GitHub with the command:
 
    ```shell
    https://github.com/Sojusan/my-game-list.git
@@ -103,7 +103,7 @@ Tag Legend:
    docker run --name my_game_list_postgresql -p 5432:5432 -e POSTGRES_DB=my_game_list -e POSTGRES_USER=my_game_list -e POSTGRES_PASSWORD=my_game_list -d postgres:15.3-alpine
    ```
 
-1. Create a database:
+1. Run database migrations:
 
    ```shell
    my-game-list-manage.py migrate

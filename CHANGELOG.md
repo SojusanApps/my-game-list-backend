@@ -2,6 +2,17 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [3.0.0] - 09.05.2024
+
+* Changed `BinaryField` to `ImageField` for `game_cover` and `avatar`.
+* Added `average_score`, `scores_count`, `rank_position`, `members_count`, and `popularity` to `Game` models.
+* Added new dependency `django-cleanup` to automatically cleanup media files.
+* Added new setting `LIMIT_FILE_SIZE`, to control the size of the uploaded images.
+* Added `FileSizeValidator` - validator of the uploaded file size.
+* Added development setting for working with media files.
+* Added ordering settings for `Game` views.
+* Added `GameQuerySet`.
+
 ## v. [2.2.0] - 03.04.2024
 
 * Updated few models and serializers:

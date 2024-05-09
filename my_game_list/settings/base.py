@@ -47,6 +47,9 @@ INSTALLED_APPS = [
     f"{MAIN_APP}.users",
     f"{MAIN_APP}.games",
     f"{MAIN_APP}.friendships",
+    # This must be the last to ensure that exceptions inside other app's
+    # signal handlers do not affect the integrity of file deletions within transactions
+    "django_cleanup.apps.CleanupConfig",
 ]
 
 MIDDLEWARE = [
@@ -141,12 +144,12 @@ AUTH_USER_MODEL = "users.User"
 
 CORS_ALLOWED_ORIGINS = oeg("DJANGO_CORS_ALLOWED_ORIGINS", "http://localhost:4200").split(",")
 
-LIMIT_AVATAR_SIZE = int(os.environ.get("MGL_LIMIT_AVATAR_SIZE", 200 * 1024))  # 200 KiB
+LIMIT_FILE_SIZE = int(os.environ.get("MGL_LIMIT_FILE_SIZE", 200 * 1024))  # 200 KiB
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
-    "PAGE_SIZE": 50,
+    "PAGE_SIZE": 25,
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
     "DEFAULT_PERMISSION_CLASSES": "rest_framework.permissions.IsAuthenticated",

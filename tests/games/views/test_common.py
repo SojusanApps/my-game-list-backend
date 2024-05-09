@@ -5,6 +5,7 @@ from unittest.mock import ANY
 
 import pytest
 from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import SimpleUploadedFile
 from freezegun import freeze_time
 from model_bakery import baker
 from rest_framework import status
@@ -249,7 +250,7 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
                 "previous": None,
                 "results": [
                     {
-                        "cover_image": "",
+                        "cover_image": ANY,
                         "created_at": "2023-06-22T16:47:12Z",
                         "description": "",
                         "developer": {"id": ANY, "name": "test_developer"},
@@ -260,6 +261,11 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
                         "publisher": {"id": ANY, "name": "test_publisher"},
                         "release_date": None,
                         "title": "test_game",
+                        "average_score": None,
+                        "members_count": 0,
+                        "popularity": 1,
+                        "rank_position": 1,
+                        "scores_count": 0,
                     },
                 ],
             },
@@ -386,7 +392,7 @@ def test_list_model(
             "games:games-detail",
             "game_fixture",
             {
-                "cover_image": "",
+                "cover_image": ANY,
                 "created_at": "2023-06-22T16:47:12Z",
                 "description": "",
                 "developer": {"id": ANY, "name": "test_developer"},
@@ -397,6 +403,11 @@ def test_list_model(
                 "publisher": {"id": ANY, "name": "test_publisher"},
                 "release_date": None,
                 "title": "test_game",
+                "average_score": None,
+                "members_count": 0,
+                "popularity": 1,
+                "rank_position": 1,
+                "scores_count": 0,
             },
             id="Get the game by id.",
         ),
@@ -498,10 +509,10 @@ def test_get_model_detail(
             "games:games-list",
             {
                 "title": "New created game",
-                "cover_image": "",
             },
             {
                 "id": ANY,
+                "cover_image": ANY,
                 "created_at": "2023-06-22T22:20:01Z",
                 "last_modified_at": "2023-06-22T22:20:01Z",
                 "release_date": None,
@@ -553,10 +564,12 @@ def test_create_model(  # ruff: noqa: PLR0913
     platform_fixture: Platform,
     game_fixture: Game,
     admin_authenticated_api_client: APIClient,
+    test_image: SimpleUploadedFile,
 ) -> None:
     """Check if creation of the new dictionary model is working properly."""
     if viewname == "games:games-list":
         initial_data |= {
+            "cover_image": test_image,
             "developer": developer_fixture.pk,
             "publisher": publisher_fixture.pk,
             "genres": [genre_fixture.pk],
@@ -636,13 +649,13 @@ def test_create_model(  # ruff: noqa: PLR0913
             "game_fixture",
             {
                 "title": "Updated title",
-                "cover_image": "",
             },
             {
                 "created_at": "2023-06-22T16:47:12Z",
                 "last_modified_at": "2023-06-22T22:20:01Z",
                 "release_date": None,
                 "description": "",
+                "cover_image": ANY,
             },
             id="Update a game.",
         ),
@@ -684,10 +697,12 @@ def test_update_model(
     update_data: dict[str, Any],
     expected_result: dict[str, Any],
     admin_authenticated_api_client: APIClient,
+    test_image: SimpleUploadedFile,
 ) -> None:
     """Check if updates method works properly for game models."""
     if viewname == "games:games-detail":
         update_data |= {
+            "cover_image": test_image,
             "developer": baker.make(Developer).pk,
             "publisher": baker.make(Publisher).pk,
             "genres": [baker.make(Genre).pk],

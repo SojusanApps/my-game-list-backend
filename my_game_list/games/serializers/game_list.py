@@ -1,7 +1,4 @@
 """This module contains the serializers for the GameList model."""
-import base64
-from typing import Any, Self
-
 from rest_framework import serializers
 
 from my_game_list.games.models import GameList
@@ -28,13 +25,6 @@ class GameListSerializer(serializers.ModelSerializer[GameList]):
             "game_cover_image",
             "user",
         )
-
-    def to_representation(self: Self, instance: GameList) -> dict[str, Any]:
-        """Object instance -> Dict of primitive datatypes."""
-        representation = super().to_representation(instance)
-        # Convert binary data to base64 encoded string
-        representation["game_cover_image"] = base64.b64encode(instance.game.cover_image).decode("utf-8")
-        return representation
 
 
 class GameListCreateSerializer(serializers.ModelSerializer[GameList]):
