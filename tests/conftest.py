@@ -1,8 +1,10 @@
 """Includes global scope fixtures. They can be used in all tests."""
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pytest
 from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import SimpleUploadedFile
 from freezegun import freeze_time
 from model_bakery import baker
 from rest_framework.test import APIClient
@@ -68,3 +70,14 @@ def admin_authenticated_api_client(admin_user_fixture: "UserType", api_client: A
     api_client.force_authenticate(admin_user_fixture)
 
     return api_client
+
+
+@pytest.fixture()
+def test_image() -> SimpleUploadedFile:
+    """Fixture providing a test image."""
+    with Path("tests/resources/test_image.png").open("rb") as file:
+        return SimpleUploadedFile(
+            name="test_image.jpg",
+            content=file.read(),
+            content_type="image/jpg",
+        )

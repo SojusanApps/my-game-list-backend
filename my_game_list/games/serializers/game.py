@@ -32,6 +32,11 @@ class GameSerializer(serializers.ModelSerializer[Game]):
             "developer",
             "genres",
             "platforms",
+            "average_score",
+            "scores_count",
+            "rank_position",
+            "members_count",
+            "popularity",
         )
 
 

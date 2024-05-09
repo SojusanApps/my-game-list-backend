@@ -12,9 +12,11 @@ from my_game_list.my_game_list.permissions import IsAdminOrReadOnly
 class GameViewSet(ModelViewSet[Game]):
     """A ViewSet for the Game model."""
 
-    queryset = Game.objects.all()
+    queryset = Game.objects.all().prefetch_related("game_lists").with_rank_position().with_popularity()
     permission_classes = (IsAdminOrReadOnly,)
     filterset_class = GameFilterSet
+    ordering_fields = ("release_date",)
+    ordering = ("release_date",)
 
     def get_serializer_class(self: Self) -> type[GameCreateSerializer] | type[GameSerializer]:
         """Get the serializer class for the Game model."""

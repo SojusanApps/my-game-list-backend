@@ -1,5 +1,4 @@
 """This module contains the User model."""
-from base64 import b64encode
 from typing import ClassVar, Self
 
 from django.contrib import admin
@@ -9,6 +8,7 @@ from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
 from my_game_list.my_game_list.models import BaseModel
+from my_game_list.my_game_list.validators import FileSizeValidator
 
 
 class Gender(models.TextChoices):
@@ -30,7 +30,14 @@ class User(BaseModel, AbstractUser):
     first_name = None  # type: ignore[assignment]
     last_name = None  # type: ignore[assignment]
 
-    avatar = models.BinaryField(_("avatar"), max_length=307200, blank=True, null=True, editable=True)
+    avatar = models.ImageField(
+        _("avatar"),
+        upload_to="avatars/",
+        blank=True,
+        null=True,
+        editable=True,
+        validators=[FileSizeValidator()],
+    )
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS: ClassVar[list[str]] = ["username"]
@@ -45,7 +52,7 @@ class User(BaseModel, AbstractUser):
         """Used in admin model to have a image preview."""
         if self.avatar:
             return format_html(
-                '<img src = "data: image/png; base64, {}" width="125" height="150">',
-                b64encode(self.avatar).decode("utf-8"),
+                '<img src={} width="125" height="150">',
+                self.avatar.url,
             )
         return ""

@@ -1,10 +1,10 @@
 """Tests for user app views."""
-import base64
 from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
 import pytest
 from django.contrib.auth import get_user_model
+from django.core.files.uploadedfile import SimpleUploadedFile
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
@@ -108,13 +108,13 @@ def test_get_user(authenticated_api_client: APIClient) -> None:
 
 
 @pytest.mark.django_db()
-def test_register_user(api_client: APIClient) -> None:
+def test_register_user(api_client: APIClient, test_image: SimpleUploadedFile) -> None:
     """Check if registration process is successful."""
     data = {
         "username": "testuser",
         "password": "testpassword",
         "email": "test@test.com",
-        "avatar": base64.b64encode(b"Test").decode("utf-8"),
+        "avatar": test_image,
     }
     response = api_client.post(reverse("users:users-list"), data)
 
