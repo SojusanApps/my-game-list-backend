@@ -151,3 +151,11 @@ Swagger is available at: [http://127.0.0.1:8000/api/my-game-list/](http://127.0.
    ```shell
    tox
    ```
+
+## Development
+
+There is a make command to populate the local database with some initial data to start work with the application.
+
+```shell
+make load_development_data
+```
