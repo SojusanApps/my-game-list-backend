@@ -2,6 +2,11 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [3.0.1] - 10.05.2024
+
+* Calculation of the rank position is fixed. Right now the average store will have `0` instead of `none` when there is no scores for the game.
+* Added `load_development_data` - new make command to load development data.
+
 ## v. [3.0.0] - 09.05.2024
 
 * Changed `BinaryField` to `ImageField` for `game_cover` and `avatar`.

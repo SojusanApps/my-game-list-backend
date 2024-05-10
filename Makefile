@@ -10,6 +10,7 @@ help:
 	@echo "test_db - Run a Docker container with test database."
 	@echo "app_db - Run a Docker container with app database."
 	@echo "test - Run all tests for the application."
+	@echo "load_development_data - Load development data into the local database."
 
 run:
 	my-game-list-manage.py runserver
@@ -40,6 +41,10 @@ test_db:
 
 test:
 	pytest -n auto
+
+load_development_data:
+	cp -r development/cover_images media/
+	my-game-list-manage.py loaddata development/development-data.json
 
 # .PHONY defines parts of the makefile that are not dependant on any specific file
 # This is most often used to store functions

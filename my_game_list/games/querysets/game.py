@@ -2,7 +2,7 @@
 from typing import TYPE_CHECKING, Self
 
 from django.db.models import Avg, Count, DecimalField, ExpressionWrapper, QuerySet, Window
-from django.db.models.functions import Round, RowNumber
+from django.db.models.functions import Coalesce, Round, RowNumber
 
 if TYPE_CHECKING:
     from my_game_list.games.models import Game  # noqa: F401
@@ -18,8 +18,12 @@ class GameQuerySet(QuerySet["Game"]):
     def with_average_score(self: Self) -> Self:
         """Annotate the average score for the game."""
         return self.annotate(
-            average_score=ExpressionWrapper(
-                Round(Avg("game_lists__score"), 2),
+            average_score=Coalesce(
+                ExpressionWrapper(
+                    Round(Avg("game_lists__score"), 2),
+                    output_field=DecimalField(max_digits=4, decimal_places=2),
+                ),
+                0,
                 output_field=DecimalField(max_digits=4, decimal_places=2),
             ),
         )
