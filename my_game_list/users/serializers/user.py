@@ -115,10 +115,14 @@ class UserDetailSerializer(serializers.ModelSerializer["UserType"]):
         """Get the list of friends for the user."""
         friendships = instance.friends.all()[:5]
         friends = [friendship.friend for friendship in friendships]
-        return UserSimpleSerializer(friends, many=True).data
+        return UserSimpleSerializer(friends, many=True, context=self.context).data
 
     def get_latest_game_list_updates(self: Self, instance: "UserType") -> ReturnDict[Any, Any]:
         """Get the latest game list updates for the user."""
         from my_game_list.games.serializers.game_list import GameListSerializer
 
-        return GameListSerializer(instance.game_lists.all().order_by("last_modified_at")[:5], many=True).data
+        return GameListSerializer(
+            instance.game_lists.all().order_by("last_modified_at")[:5],
+            many=True,
+            context=self.context,
+        ).data
