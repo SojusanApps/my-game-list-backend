@@ -2,6 +2,12 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [3.1.0] - 13.05.2024
+
+* Fixed `GameListSerializer` to return the cover image url.
+* Fixed `UserDetailSerializer` to return the image urls for nested objects.
+* Added `logged_in_user` - new action for the `user` endpoint to get the details of the logged in user.
+
 ## v. [3.0.1] - 10.05.2024
 
 * Calculation of the rank position is fixed. Right now the average store will have `0` instead of `none` when there is no scores for the game.
