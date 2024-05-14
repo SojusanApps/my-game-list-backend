@@ -1,0 +1,22 @@
+meta {
+  name: Update Game-List
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{protocol}}/{{host}}:{{port}}/api/game/game-lists/11/
+  body: multipartForm
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+body:multipart-form {
+  status: C
+  game: 3
+  user: 2
+}

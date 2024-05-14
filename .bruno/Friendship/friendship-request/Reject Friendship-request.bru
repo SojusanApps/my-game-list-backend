@@ -1,0 +1,16 @@
+meta {
+  name: Reject Friendship-request
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{protocol}}/{{host}}:{{port}}/api/friendship/friendship-requests/1/reject/
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}

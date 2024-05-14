@@ -1,0 +1,23 @@
+meta {
+  name: Update Game
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{protocol}}/{{host}}:{{port}}/api/game/games/32/
+  body: multipartForm
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+body:multipart-form {
+  title: Test Game 2
+  publisher: 1
+  developer: 2
+  cover_image: @file(D:\VSCode_Images\shinobu2.png)
+}

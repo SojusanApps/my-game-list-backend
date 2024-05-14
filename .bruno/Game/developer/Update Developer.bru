@@ -1,0 +1,20 @@
+meta {
+  name: Update Developer
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{protocol}}/{{host}}:{{port}}/api/game/developers/28/
+  body: multipartForm
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+body:multipart-form {
+  name: Test Dev
+}

@@ -1,0 +1,22 @@
+meta {
+  name: Create Game-List
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{protocol}}/{{host}}:{{port}}/api/game/game-lists/
+  body: multipartForm
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+body:multipart-form {
+  status: C
+  game: 5
+  user: 1
+}

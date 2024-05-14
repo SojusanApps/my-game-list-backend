@@ -1,0 +1,16 @@
+meta {
+  name: Get Developer
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{protocol}}/{{host}}:{{port}}/api/game/developers/28
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}

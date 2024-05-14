@@ -1,0 +1,16 @@
+meta {
+  name: Delete Publisher
+  type: http
+  seq: 6
+}
+
+delete {
+  url: {{protocol}}/{{host}}:{{port}}/api/game/publishers/23/
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}

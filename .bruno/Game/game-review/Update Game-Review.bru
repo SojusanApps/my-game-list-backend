@@ -1,0 +1,21 @@
+meta {
+  name: Update Game-Review
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{protocol}}/{{host}}:{{port}}/api/game/game-reviews/7/
+  body: multipartForm
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+body:multipart-form {
+  game: 1
+  user: 4
+}

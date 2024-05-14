@@ -1,0 +1,16 @@
+meta {
+  name: Delete Friendship-request
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{protocol}}/{{host}}:{{port}}/api/friendship/friendship-requests/1
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
