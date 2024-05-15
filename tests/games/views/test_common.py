@@ -210,6 +210,7 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
                     {
                         "id": ANY,
                         "title": "test_game",
+                        "game_id": ANY,
                         "game_cover_image": ANY,
                         "user": ANY,
                         "score": 5,
@@ -367,6 +368,7 @@ def test_list_model(
             {
                 "id": ANY,
                 "title": "test_game",
+                "game_id": ANY,
                 "game_cover_image": ANY,
                 "user": ANY,
                 "score": 5,

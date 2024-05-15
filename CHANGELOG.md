@@ -2,10 +2,12 @@
 
 > Date format is DD.MM.YYYY.
 
-## v. [3.1.1] - 14.05.2024
+## v. [3.2.0] - 15.05.2024
 
 * Added `Bruno` endpoints for development.
 * Added `status_code` to game list endpoints.
+* Added `game_id` to the `GameListSerializer`.
+* Removed `logged_in_user` action for the `user` endpoint.
 
 ## v. [3.1.0] - 13.05.2024
 
