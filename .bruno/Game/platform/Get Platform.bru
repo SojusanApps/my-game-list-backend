@@ -1,0 +1,16 @@
+meta {
+  name: Get Platform
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{protocol}}/{{host}}:{{port}}/api/game/platforms/12
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}

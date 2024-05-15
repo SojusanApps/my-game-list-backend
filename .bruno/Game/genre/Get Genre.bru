@@ -1,0 +1,16 @@
+meta {
+  name: Get Genre
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{protocol}}/{{host}}:{{port}}/api/game/genres/20
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}

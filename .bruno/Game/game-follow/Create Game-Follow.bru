@@ -1,0 +1,21 @@
+meta {
+  name: Create Game-Follow
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{protocol}}/{{host}}:{{port}}/api/game/game-follows/
+  body: multipartForm
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+body:multipart-form {
+  game: 1
+  user: 1
+}

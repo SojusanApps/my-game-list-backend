@@ -1,0 +1,16 @@
+meta {
+  name: Get Games
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{protocol}}/{{host}}:{{port}}/api/game/games
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}

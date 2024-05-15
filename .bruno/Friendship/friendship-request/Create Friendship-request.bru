@@ -1,0 +1,24 @@
+meta {
+  name: Create Friendship-request
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{protocol}}/{{host}}:{{port}}/api/friendship/friendship-requests/
+  body: json
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+body:json {
+  {
+    "message": "Notice me Senpai <3",
+    "sender": 5,
+    "receiver": 1
+  }
+}

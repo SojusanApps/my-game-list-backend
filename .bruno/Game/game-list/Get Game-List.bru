@@ -1,0 +1,16 @@
+meta {
+  name: Get Game-List
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{protocol}}/{{host}}:{{port}}/api/game/game-lists/11/
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}

@@ -8,6 +8,8 @@ class GameListSerializer(serializers.ModelSerializer[GameList]):
     """A serializer for the game list model."""
 
     status = serializers.CharField(source="get_status_display", read_only=True)
+    status_code = serializers.CharField(source="status")
+    game_id = serializers.IntegerField(source="game.id", read_only=True)
     title = serializers.CharField(source="game.title", read_only=True)
     game_cover_image = serializers.FileField(source="game.cover_image", read_only=True)
 
@@ -18,9 +20,11 @@ class GameListSerializer(serializers.ModelSerializer[GameList]):
         fields = (
             "id",
             "status",
+            "status_code",
             "score",
             "created_at",
             "last_modified_at",
+            "game_id",
             "title",
             "game_cover_image",
             "user",

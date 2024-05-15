@@ -1,0 +1,16 @@
+meta {
+  name: Get Friendship-requests
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{protocol}}/{{host}}:{{port}}/api/friendship/friendship-requests
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}

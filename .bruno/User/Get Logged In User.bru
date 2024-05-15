@@ -1,0 +1,16 @@
+meta {
+  name: Get Logged In User
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{protocol}}/{{host}}:{{port}}/api/user/users/logged_in_user
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}

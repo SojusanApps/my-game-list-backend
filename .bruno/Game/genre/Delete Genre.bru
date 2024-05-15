@@ -1,0 +1,16 @@
+meta {
+  name: Delete Genre
+  type: http
+  seq: 6
+}
+
+delete {
+  url: {{protocol}}/{{host}}:{{port}}/api/game/genres/20/
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}

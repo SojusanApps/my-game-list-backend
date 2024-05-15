@@ -1,0 +1,20 @@
+meta {
+  name: Partial Update Platform
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{protocol}}/{{host}}:{{port}}/api/game/platforms/12/
+  body: multipartForm
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+body:multipart-form {
+  name: Test Platform
+}

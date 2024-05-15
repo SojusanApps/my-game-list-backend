@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "Sojusan_GameList",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

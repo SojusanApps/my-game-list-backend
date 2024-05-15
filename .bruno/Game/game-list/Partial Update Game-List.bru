@@ -1,0 +1,20 @@
+meta {
+  name: Partial Update Game-List
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{protocol}}/{{host}}:{{port}}/api/game/game-lists/11/
+  body: multipartForm
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+body:multipart-form {
+  status: P
+}
