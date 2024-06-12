@@ -11,3 +11,5 @@ class DeveloperAdmin(BaseDictionaryModelAdmin):
     """Admin model for the developer model."""
 
     inlines = (GameInline,)
+    readonly_fields = (*BaseDictionaryModelAdmin.readonly_fields, "developer_logo_tag")
+    list_display = (*BaseDictionaryModelAdmin.list_display, "developer_logo_tag")

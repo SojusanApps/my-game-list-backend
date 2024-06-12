@@ -10,4 +10,4 @@ class BaseDictionarySerializer(serializers.ModelSerializer[Any]):
     class Meta:
         """Meta data for dictionary models."""
 
-        fields = ("id", "name")
+        fields: tuple[str, ...] = ("id", "name")

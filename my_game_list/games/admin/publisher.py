@@ -11,3 +11,5 @@ class PublisherAdmin(BaseDictionaryModelAdmin):
     """Admin model for the publisher model."""
 
     inlines = (GameInline,)
+    readonly_fields = (*BaseDictionaryModelAdmin.readonly_fields, "publisher_logo_tag")
+    list_display = (*BaseDictionaryModelAdmin.list_display, "publisher_logo_tag")

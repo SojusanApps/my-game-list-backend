@@ -2,6 +2,11 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [3.3.0] - 12.06.2024
+
+* Added new development data regarding the developers and publishers.
+* Added a new field for the company logo for developers and publishers.
+
 ## v. [3.2.0] - 15.05.2024
 
 * Added `Bruno` endpoints for development.

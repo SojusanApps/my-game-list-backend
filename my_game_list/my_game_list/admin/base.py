@@ -7,6 +7,6 @@ from my_game_list.my_game_list.models import BaseDictionaryModel
 class BaseDictionaryModelAdmin(admin.ModelAdmin[BaseDictionaryModel]):
     """Base admin model for dictionary."""
 
-    readonly_fields = ("id",)
-    search_fields = ("name",)
-    list_display = (*readonly_fields, *search_fields)
+    readonly_fields: tuple[str, ...] = ("id",)
+    search_fields: tuple[str, ...] = ("name",)
+    list_display: tuple[str, ...] = (*readonly_fields, *search_fields)
