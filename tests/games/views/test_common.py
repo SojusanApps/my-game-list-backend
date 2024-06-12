@@ -176,6 +176,7 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
                     {
                         "id": ANY,
                         "name": "test_developer",
+                        "developer_logo": None,
                     },
                 ],
             },
@@ -255,12 +256,12 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
                         "cover_image": ANY,
                         "created_at": "2023-06-22T16:47:12Z",
                         "description": "",
-                        "developer": {"id": ANY, "name": "test_developer"},
+                        "developer": {"id": ANY, "name": "test_developer", "developer_logo": None},
                         "genres": [{"id": ANY, "name": "test_genre"}],
                         "id": ANY,
                         "last_modified_at": "2023-06-22T16:47:12Z",
                         "platforms": [{"id": ANY, "name": "test_platform"}],
-                        "publisher": {"id": ANY, "name": "test_publisher"},
+                        "publisher": {"id": ANY, "name": "test_publisher", "publisher_logo": None},
                         "release_date": None,
                         "title": "test_game",
                         "average_score": 0.0,
@@ -316,6 +317,7 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
                     {
                         "id": ANY,
                         "name": "test_publisher",
+                        "publisher_logo": None,
                     },
                 ],
             },
@@ -348,6 +350,7 @@ def test_list_model(
             {
                 "id": ANY,
                 "name": "test_developer",
+                "developer_logo": None,
             },
             id="Get the developer by id.",
         ),
@@ -399,12 +402,12 @@ def test_list_model(
                 "cover_image": ANY,
                 "created_at": "2023-06-22T16:47:12Z",
                 "description": "",
-                "developer": {"id": ANY, "name": "test_developer"},
+                "developer": {"id": ANY, "name": "test_developer", "developer_logo": None},
                 "genres": [{"id": ANY, "name": "test_genre"}],
                 "id": ANY,
                 "last_modified_at": "2023-06-22T16:47:12Z",
                 "platforms": [{"id": ANY, "name": "test_platform"}],
-                "publisher": {"id": ANY, "name": "test_publisher"},
+                "publisher": {"id": ANY, "name": "test_publisher", "publisher_logo": None},
                 "release_date": None,
                 "title": "test_game",
                 "average_score": 0.0,
@@ -439,6 +442,7 @@ def test_list_model(
             {
                 "id": ANY,
                 "name": "test_publisher",
+                "publisher_logo": None,
             },
             id="Get the publisher by id.",
         ),
@@ -471,6 +475,7 @@ def test_get_model_detail(
             },
             {
                 "id": ANY,
+                "developer_logo": None,
             },
             id="Creation of the developer.",
         ),
@@ -551,6 +556,7 @@ def test_get_model_detail(
             },
             {
                 "id": ANY,
+                "publisher_logo": None,
             },
             id="Creation of the publisher.",
         ),
@@ -610,7 +616,9 @@ def test_create_model(  # ruff: noqa: PLR0913
             {
                 "name": "created_developer",
             },
-            {},
+            {
+                "developer_logo": None,
+            },
             id="Update of the developer.",
         ),
         pytest.param(
@@ -687,7 +695,9 @@ def test_create_model(  # ruff: noqa: PLR0913
             {
                 "name": "updated_publisher",
             },
-            {},
+            {
+                "publisher_logo": None,
+            },
             id="Update of the publisher.",
         ),
     ],
