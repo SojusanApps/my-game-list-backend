@@ -44,6 +44,8 @@ test:
 
 load_development_data:
 	cp -r development/cover_images media/
+	cp -r development/developer_logos media/
+	cp -r development/publisher_logos media/
 	my-game-list-manage.py loaddata development/development-data.json
 
 # .PHONY defines parts of the makefile that are not dependant on any specific file
