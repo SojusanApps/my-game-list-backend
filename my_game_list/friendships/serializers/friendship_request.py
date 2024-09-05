@@ -1,4 +1,5 @@
 """This module contains the serializers for the FriendshipRequest model."""
+
 from typing import TYPE_CHECKING, ClassVar, Self, TypedDict
 
 from django.contrib.auth import get_user_model

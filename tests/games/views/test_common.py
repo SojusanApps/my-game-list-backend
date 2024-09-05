@@ -1,4 +1,5 @@
 """This module contains tests for the common functionality for the viewsets in the game application."""
+
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any
 from unittest.mock import ANY

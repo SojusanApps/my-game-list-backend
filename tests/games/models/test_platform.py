@@ -1,4 +1,5 @@
 """Tests for platform model."""
+
 import pytest
 
 from my_game_list.games.models import Platform

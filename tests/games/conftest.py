@@ -1,4 +1,5 @@
 """The fixtures used within games test module."""
+
 from typing import TYPE_CHECKING
 
 import pytest

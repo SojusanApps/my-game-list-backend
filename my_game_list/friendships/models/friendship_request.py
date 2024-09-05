@@ -1,4 +1,5 @@
 """This module contains the model for the FriendshipRequest."""
+
 from typing import ClassVar, Self
 
 from django.conf import settings

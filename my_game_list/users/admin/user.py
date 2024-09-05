@@ -1,4 +1,5 @@
 """This module contains the admin model for the User model."""
+
 from django.contrib import admin
 
 from my_game_list.users.models import User

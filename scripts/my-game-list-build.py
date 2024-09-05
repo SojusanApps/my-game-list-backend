@@ -5,7 +5,7 @@ import inspect
 import shutil
 import subprocess
 import sys
-from distutils.util import strtobool  # type: ignore[import-not-found]
+from distutils.util import strtobool
 from itertools import chain
 from pathlib import Path
 from types import FunctionType

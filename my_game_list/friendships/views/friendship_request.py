@@ -1,4 +1,5 @@
 """This module contains the viewsets for the FriendshipRequest model."""
+
 from typing import Self
 
 from django.contrib.auth import get_user_model

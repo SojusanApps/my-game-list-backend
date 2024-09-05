@@ -1,4 +1,5 @@
 """This model contains the serializers for User model."""
+
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, ClassVar, Self
 

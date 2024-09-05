@@ -1,4 +1,5 @@
 """This package contains all the filters used by the games application."""
+
 from my_game_list.games.filters.developer import DeveloperFilterSet
 from my_game_list.games.filters.game import GameFilterSet
 from my_game_list.games.filters.game_follow import GameFollowFilterSet

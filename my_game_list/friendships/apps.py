@@ -1,4 +1,5 @@
 """This module contains the configuration for the friendships application."""
+
 from django.apps import AppConfig
 
 

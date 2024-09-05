@@ -1,4 +1,5 @@
 """Tests for genre model."""
+
 import pytest
 
 from my_game_list.games.models import Genre

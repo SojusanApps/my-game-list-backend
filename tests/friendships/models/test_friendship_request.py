@@ -1,4 +1,5 @@
 """Tests for friendship request model."""
+
 from typing import TYPE_CHECKING
 
 import pytest

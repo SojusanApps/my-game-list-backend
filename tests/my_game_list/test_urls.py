@@ -1,4 +1,5 @@
 """Tests for my_game_list app urls."""
+
 import importlib
 
 from django.test import override_settings

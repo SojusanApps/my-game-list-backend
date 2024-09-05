@@ -1,4 +1,5 @@
 """The validator for size of the file in the file field."""
+
 from typing import Self
 
 from django.conf import settings

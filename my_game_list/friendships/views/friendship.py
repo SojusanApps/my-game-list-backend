@@ -1,4 +1,5 @@
 """This module contains the viewsets for the Friendship model."""
+
 from django.contrib.auth import get_user_model
 from rest_framework.mixins import DestroyModelMixin, ListModelMixin, RetrieveModelMixin
 from rest_framework.permissions import IsAuthenticated

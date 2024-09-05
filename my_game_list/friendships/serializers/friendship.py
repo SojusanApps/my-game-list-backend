@@ -1,4 +1,5 @@
 """This module contains serializers for the Friendship model."""
+
 from rest_framework import serializers
 
 from my_game_list.friendships.models import Friendship

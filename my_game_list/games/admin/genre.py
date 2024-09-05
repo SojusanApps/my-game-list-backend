@@ -1,4 +1,5 @@
 """This module contains the admin models for the Genre."""
+
 from django.contrib import admin
 
 from my_game_list.games.models import Genre

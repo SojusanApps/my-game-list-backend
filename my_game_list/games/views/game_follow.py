@@ -1,4 +1,5 @@
 """This module contains the viewsets for the GameFollow model."""
+
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 

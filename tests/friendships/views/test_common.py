@@ -1,4 +1,5 @@
 """Tests for common functionalities in the friendship application."""
+
 from typing import Any
 from unittest.mock import ANY
 

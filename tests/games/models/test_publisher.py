@@ -1,4 +1,5 @@
 """Tests for publisher model."""
+
 import pytest
 
 from my_game_list.games.models import Publisher

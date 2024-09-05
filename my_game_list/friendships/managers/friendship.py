@@ -1,4 +1,5 @@
 """This module contains the managers for the Friendship model."""
+
 from typing import TYPE_CHECKING, Self
 
 from django.apps import apps

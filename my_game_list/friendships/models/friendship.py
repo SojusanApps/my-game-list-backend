@@ -1,4 +1,5 @@
 """This module contains the models for the Friendship."""
+
 from collections.abc import Iterable
 from typing import ClassVar, Self
 
@@ -34,7 +35,11 @@ class Friendship(BaseModel):
         """String representation of the friendship model."""
         return f"User: {self.user.username}, Friend: {self.friend.username}"
 
-    def save(self: Self, *args: Iterable[str] | str | bool | None, **kwargs: Iterable[str] | str | bool | None) -> None:
+    def save(  # type: ignore[override]
+        self: Self,
+        *args: Iterable[str] | str | bool | None,
+        **kwargs: Iterable[str] | str | bool | None,
+    ) -> None:
         """This method saves the friendship model."""
         if self.user == self.friend:
             raise ValidationError(_("The user cannot befriend himself."))

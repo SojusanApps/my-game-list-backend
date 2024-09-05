@@ -1,4 +1,5 @@
 """Tests for developer model."""
+
 import pytest
 
 from my_game_list.games.models import Developer

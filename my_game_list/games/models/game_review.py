@@ -1,4 +1,5 @@
 """This module contains the models for the GameReview."""
+
 from typing import ClassVar, Self
 
 from django.conf import settings

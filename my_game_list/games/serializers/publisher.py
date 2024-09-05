@@ -1,4 +1,5 @@
 """This module contains the serializers for the Publisher model."""
+
 from rest_framework import serializers
 
 from my_game_list.games.models import Publisher

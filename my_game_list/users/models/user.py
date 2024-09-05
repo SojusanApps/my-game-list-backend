@@ -1,4 +1,5 @@
 """This module contains the User model."""
+
 from typing import ClassVar, Self
 
 from django.contrib import admin

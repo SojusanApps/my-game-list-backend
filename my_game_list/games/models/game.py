@@ -1,4 +1,5 @@
 """This module contains the models for the Game."""
+
 from typing import Self
 
 from django.contrib import admin

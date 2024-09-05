@@ -1,4 +1,5 @@
 """Base filters for dictionary models."""
+
 from django_filters import rest_framework as filters
 
 
