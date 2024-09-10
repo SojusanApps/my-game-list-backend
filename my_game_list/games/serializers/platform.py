@@ -11,3 +11,4 @@ class PlatformSerializer(BaseDictionarySerializer):
         """Meta data for the platform serializer."""
 
         model = Platform
+        fields = (*BaseDictionarySerializer.Meta.fields, "abbreviation", "igdb_id")

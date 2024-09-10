@@ -2,18 +2,17 @@
 
 from rest_framework import serializers
 
-from my_game_list.games.models import Developer, Game, Genre, Platform, Publisher
-from my_game_list.games.serializers.developer import DeveloperSerializer
+from my_game_list.games.models import Company, Game, Genre, Platform
+from my_game_list.games.serializers.company import CompanySerializer
 from my_game_list.games.serializers.genre import GenreSerializer
 from my_game_list.games.serializers.platform import PlatformSerializer
-from my_game_list.games.serializers.publisher import PublisherSerializer
 
 
 class GameSerializer(serializers.ModelSerializer[Game]):
     """A serializer for the game model."""
 
-    publisher = PublisherSerializer()
-    developer = DeveloperSerializer()
+    publisher = CompanySerializer()
+    developer = CompanySerializer()
     genres = GenreSerializer(many=True)
     platforms = PlatformSerializer(many=True)
 
@@ -27,9 +26,10 @@ class GameSerializer(serializers.ModelSerializer[Game]):
             "created_at",
             "last_modified_at",
             "release_date",
-            "cover_image",
-            "description",
+            "cover_image_id",
+            "summary",
             "publisher",
+            "igdb_id",
             "developer",
             "genres",
             "platforms",
@@ -45,11 +45,11 @@ class GameCreateSerializer(serializers.ModelSerializer[Game]):
     """A serializer for creating a game item."""
 
     publisher = serializers.SlugRelatedField(
-        queryset=Publisher.objects.all(),
+        queryset=Company.objects.all(),
         slug_field="id",
     )
     developer = serializers.SlugRelatedField(
-        queryset=Developer.objects.all(),
+        queryset=Company.objects.all(),
         slug_field="id",
     )
     genres = serializers.SlugRelatedField(
@@ -73,8 +73,9 @@ class GameCreateSerializer(serializers.ModelSerializer[Game]):
             "created_at",
             "last_modified_at",
             "release_date",
-            "cover_image",
-            "description",
+            "cover_image_id",
+            "igdb_id",
+            "summary",
             "publisher",
             "developer",
             "genres",

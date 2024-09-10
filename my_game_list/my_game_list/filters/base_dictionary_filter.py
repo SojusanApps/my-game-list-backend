@@ -11,4 +11,4 @@ class BaseDictionaryFilterSet(filters.FilterSet):
     class Meta:
         """Meta class for BaseDictionaryFilterSet."""
 
-        fields = ("id", "name")
+        fields: tuple[str, ...] = ("id", "name")

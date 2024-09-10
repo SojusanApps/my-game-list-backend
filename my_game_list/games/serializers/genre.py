@@ -11,3 +11,4 @@ class GenreSerializer(BaseDictionarySerializer):
         """Meta data for a genre serializer."""
 
         model = Genre
+        fields = (*BaseDictionarySerializer.Meta.fields, "igdb_id")

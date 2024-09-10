@@ -1,0 +1,20 @@
+meta {
+  name: Get Cover
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{igdb_api_base_url}}/covers/
+  body: text
+  auth: none
+}
+
+headers {
+  Client-ID: {{igdb_client_id}}
+  Authorization: Bearer {{igdb_access_token}}
+}
+
+body:text {
+  fields image_id; where id = 267633;
+}

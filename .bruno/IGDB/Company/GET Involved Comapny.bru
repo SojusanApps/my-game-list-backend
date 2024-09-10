@@ -1,0 +1,24 @@
+meta {
+  name: GET Involved Comapny
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{igdb_api_base_url}}/involved_companies
+  body: text
+  auth: none
+}
+
+headers {
+  Client-ID: {{igdb_client_id}}
+  Authorization: Bearer {{igdb_access_token}}
+}
+
+body:text {
+  fields company.name, developer, publisher;
+  limit 500;
+  offset 0;
+  sort id;
+  where id = 4177;
+}
