@@ -1,4 +1,5 @@
 """Tests for game follow model."""
+
 import pytest
 
 from my_game_list.games.models import GameFollow

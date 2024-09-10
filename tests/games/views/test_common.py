@@ -1,11 +1,11 @@
 """This module contains tests for the common functionality for the viewsets in the game application."""
+
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any
 from unittest.mock import ANY
 
 import pytest
 from django.contrib.auth import get_user_model
-from django.core.files.uploadedfile import SimpleUploadedFile
 from freezegun import freeze_time
 from model_bakery import baker
 from rest_framework import status
@@ -13,12 +13,11 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
 from my_game_list.games.models import (
-    Developer,
+    Company,
     Game,
     GameListStatus,
     Genre,
     Platform,
-    Publisher,
 )
 
 if TYPE_CHECKING:
@@ -38,8 +37,8 @@ GAME_USER_DEPENDENT_DETAIL_VIEWNAMES = [
     "viewname",
     [
         pytest.param(
-            "games:developers-list",
-            id="Check forbidden access for the creation of developer.",
+            "games:companies-list",
+            id="Check forbidden access for the creation of company.",
         ),
         pytest.param(
             "games:games-list",
@@ -52,10 +51,6 @@ GAME_USER_DEPENDENT_DETAIL_VIEWNAMES = [
         pytest.param(
             "games:platforms-list",
             id="Check forbidden access for the creation of platform.",
-        ),
-        pytest.param(
-            "games:publishers-list",
-            id="Check forbidden access for the creation of publisher.",
         ),
     ],
 )
@@ -106,8 +101,8 @@ def test_unauthorized_access_list(viewname: str, api_client: APIClient) -> None:
     "viewname",
     [
         pytest.param(
-            "games:developers-detail",
-            id="Check forbidden access for the developer with given id.",
+            "games:companies-detail",
+            id="Check forbidden access for the company with given id.",
         ),
         pytest.param(
             "games:games-detail",
@@ -120,10 +115,6 @@ def test_unauthorized_access_list(viewname: str, api_client: APIClient) -> None:
         pytest.param(
             "games:platforms-detail",
             id="Check forbidden access for the platform with given id.",
-        ),
-        pytest.param(
-            "games:publishers-detail",
-            id="Check forbidden access for the publisher with given id.",
         ),
     ],
 )
@@ -166,7 +157,7 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
     ("viewname", "fixture_name", "expected_result"),
     [
         pytest.param(
-            "games:developers-list",
+            "games:companies-list",
             "developer_fixture",
             {
                 "count": 1,
@@ -175,12 +166,13 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
                 "results": [
                     {
                         "id": ANY,
-                        "name": "test_developer",
-                        "developer_logo": None,
+                        "name": ANY,
+                        "company_logo_id": "",
+                        "igdb_id": ANY,
                     },
                 ],
             },
-            id="Test list endpoint for developer.",
+            id="Test list endpoint for company.",
         ),
         pytest.param(
             "games:game-follows-list",
@@ -210,7 +202,7 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
                 "results": [
                     {
                         "id": ANY,
-                        "title": "test_game",
+                        "title": ANY,
                         "game_id": ANY,
                         "game_cover_image": ANY,
                         "user": ANY,
@@ -253,17 +245,18 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
                 "previous": None,
                 "results": [
                     {
-                        "cover_image": ANY,
+                        "igdb_id": ANY,
+                        "cover_image_id": ANY,
                         "created_at": "2023-06-22T16:47:12Z",
-                        "description": "",
-                        "developer": {"id": ANY, "name": "test_developer", "developer_logo": None},
-                        "genres": [{"id": ANY, "name": "test_genre"}],
+                        "summary": "",
+                        "developer": {"id": ANY, "name": ANY, "company_logo_id": "", "igdb_id": ANY},
+                        "genres": [{"id": ANY, "name": ANY, "igdb_id": ANY}],
                         "id": ANY,
                         "last_modified_at": "2023-06-22T16:47:12Z",
-                        "platforms": [{"id": ANY, "name": "test_platform"}],
-                        "publisher": {"id": ANY, "name": "test_publisher", "publisher_logo": None},
+                        "platforms": [{"id": ANY, "name": ANY, "igdb_id": ANY}],
+                        "publisher": {"id": ANY, "name": ANY, "company_logo_id": ANY, "igdb_id": ANY},
                         "release_date": None,
-                        "title": "test_game",
+                        "title": ANY,
                         "average_score": 0.0,
                         "members_count": 0,
                         "popularity": 1,
@@ -284,7 +277,8 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
                 "results": [
                     {
                         "id": ANY,
-                        "name": "test_genre",
+                        "name": ANY,
+                        "igdb_id": ANY,
                     },
                 ],
             },
@@ -300,28 +294,12 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
                 "results": [
                     {
                         "id": ANY,
-                        "name": "test_platform",
+                        "name": ANY,
+                        "igdb_id": ANY,
                     },
                 ],
             },
             id="Test list endpoint for platform.",
-        ),
-        pytest.param(
-            "games:publishers-list",
-            "publisher_fixture",
-            {
-                "count": 1,
-                "next": None,
-                "previous": None,
-                "results": [
-                    {
-                        "id": ANY,
-                        "name": "test_publisher",
-                        "publisher_logo": None,
-                    },
-                ],
-            },
-            id="Test list endpoint for publisher.",
         ),
     ],
 )
@@ -345,14 +323,15 @@ def test_list_model(
     ("viewname", "fixture_name", "expected_result"),
     [
         pytest.param(
-            "games:developers-detail",
+            "games:companies-detail",
             "developer_fixture",
             {
                 "id": ANY,
-                "name": "test_developer",
-                "developer_logo": None,
+                "name": ANY,
+                "company_logo_id": "",
+                "igdb_id": ANY,
             },
-            id="Get the developer by id.",
+            id="Get the company by id.",
         ),
         pytest.param(
             "games:game-follows-detail",
@@ -370,7 +349,7 @@ def test_list_model(
             "game_list_fixture",
             {
                 "id": ANY,
-                "title": "test_game",
+                "title": ANY,
                 "game_id": ANY,
                 "game_cover_image": ANY,
                 "user": ANY,
@@ -399,17 +378,18 @@ def test_list_model(
             "games:games-detail",
             "game_fixture",
             {
-                "cover_image": ANY,
+                "cover_image_id": ANY,
                 "created_at": "2023-06-22T16:47:12Z",
-                "description": "",
-                "developer": {"id": ANY, "name": "test_developer", "developer_logo": None},
-                "genres": [{"id": ANY, "name": "test_genre"}],
+                "summary": "",
+                "igdb_id": ANY,
+                "developer": {"id": ANY, "name": ANY, "company_logo_id": "", "igdb_id": ANY},
+                "genres": [{"id": ANY, "name": ANY, "igdb_id": ANY}],
                 "id": ANY,
                 "last_modified_at": "2023-06-22T16:47:12Z",
-                "platforms": [{"id": ANY, "name": "test_platform"}],
-                "publisher": {"id": ANY, "name": "test_publisher", "publisher_logo": None},
+                "platforms": [{"id": ANY, "name": ANY, "igdb_id": ANY}],
+                "publisher": {"id": ANY, "name": ANY, "company_logo_id": "", "igdb_id": ANY},
                 "release_date": None,
-                "title": "test_game",
+                "title": ANY,
                 "average_score": 0.0,
                 "members_count": 0,
                 "popularity": 1,
@@ -423,7 +403,8 @@ def test_list_model(
             "genre_fixture",
             {
                 "id": ANY,
-                "name": "test_genre",
+                "name": ANY,
+                "igdb_id": ANY,
             },
             id="Get the genre by id.",
         ),
@@ -432,19 +413,10 @@ def test_list_model(
             "platform_fixture",
             {
                 "id": ANY,
-                "name": "test_platform",
+                "name": ANY,
+                "igdb_id": ANY,
             },
             id="Get the platform by id.",
-        ),
-        pytest.param(
-            "games:publishers-detail",
-            "publisher_fixture",
-            {
-                "id": ANY,
-                "name": "test_publisher",
-                "publisher_logo": None,
-            },
-            id="Get the publisher by id.",
         ),
     ],
 )
@@ -469,15 +441,16 @@ def test_get_model_detail(
     ("viewname", "initial_data", "expected_result"),
     [
         pytest.param(
-            "games:developers-list",
+            "games:companies-list",
             {
                 "name": "created_developer",
+                "igdb_id": 123,
             },
             {
                 "id": ANY,
-                "developer_logo": None,
+                "company_logo_id": "",
             },
-            id="Creation of the developer.",
+            id="Creation of the company.",
         ),
         pytest.param(
             "games:game-follows-list",
@@ -518,14 +491,15 @@ def test_get_model_detail(
             "games:games-list",
             {
                 "title": "New created game",
+                "igdb_id": 123,
             },
             {
                 "id": ANY,
-                "cover_image": ANY,
+                "cover_image_id": ANY,
                 "created_at": "2023-06-22T22:20:01Z",
                 "last_modified_at": "2023-06-22T22:20:01Z",
                 "release_date": None,
-                "description": "",
+                "summary": "",
             },
             id="Create a new game.",
         ),
@@ -533,6 +507,7 @@ def test_get_model_detail(
             "games:genres-list",
             {
                 "name": "created_genre",
+                "igdb_id": 123,
             },
             {
                 "id": ANY,
@@ -543,43 +518,31 @@ def test_get_model_detail(
             "games:platforms-list",
             {
                 "name": "created_platform",
+                "igdb_id": 123,
             },
             {
                 "id": ANY,
             },
             id="Creation of the platform.",
         ),
-        pytest.param(
-            "games:publishers-list",
-            {
-                "name": "created_publisher",
-            },
-            {
-                "id": ANY,
-                "publisher_logo": None,
-            },
-            id="Creation of the publisher.",
-        ),
     ],
 )
 @pytest.mark.django_db()
-def test_create_model(  # ruff: noqa: PLR0913
+def test_create_model(
     viewname: str,
     initial_data: dict[str, Any],
     expected_result: dict[str, Any],
     admin_user_fixture: "UserType",
-    developer_fixture: Developer,
-    publisher_fixture: Publisher,
+    developer_fixture: Company,
+    publisher_fixture: Company,
     genre_fixture: Genre,
     platform_fixture: Platform,
     game_fixture: Game,
     admin_authenticated_api_client: APIClient,
-    test_image: SimpleUploadedFile,
 ) -> None:
     """Check if creation of the new dictionary model is working properly."""
     if viewname == "games:games-list":
         initial_data |= {
-            "cover_image": test_image,
             "developer": developer_fixture.pk,
             "publisher": publisher_fixture.pk,
             "genres": [genre_fixture.pk],
@@ -599,11 +562,11 @@ def test_create_model(  # ruff: noqa: PLR0913
     [
         pytest.param(
             "put",
-            id="PUT update publisher test.",
+            id="PUT update test.",
         ),
         pytest.param(
             "patch",
-            id="PATCH update publisher test.",
+            id="PATCH update test.",
         ),
     ],
 )
@@ -611,15 +574,16 @@ def test_create_model(  # ruff: noqa: PLR0913
     ("viewname", "fixture_name", "update_data", "expected_result"),
     [
         pytest.param(
-            "games:developers-detail",
+            "games:companies-detail",
             "developer_fixture",
             {
                 "name": "created_developer",
+                "igdb_id": 123,
             },
             {
-                "developer_logo": None,
+                "company_logo_id": "",
             },
-            id="Update of the developer.",
+            id="Update of the company.",
         ),
         pytest.param(
             "games:game-follows-detail",
@@ -661,13 +625,14 @@ def test_create_model(  # ruff: noqa: PLR0913
             "game_fixture",
             {
                 "title": "Updated title",
+                "igdb_id": 123,
             },
             {
                 "created_at": "2023-06-22T16:47:12Z",
                 "last_modified_at": "2023-06-22T22:20:01Z",
                 "release_date": None,
-                "description": "",
-                "cover_image": ANY,
+                "summary": "",
+                "cover_image_id": ANY,
             },
             id="Update a game.",
         ),
@@ -676,6 +641,7 @@ def test_create_model(  # ruff: noqa: PLR0913
             "genre_fixture",
             {
                 "name": "updated_genre",
+                "igdb_id": 123,
             },
             {},
             id="Update of the genre.",
@@ -685,20 +651,10 @@ def test_create_model(  # ruff: noqa: PLR0913
             "platform_fixture",
             {
                 "name": "updated_platform",
+                "igdb_id": 123,
             },
             {},
             id="Update of the platform.",
-        ),
-        pytest.param(
-            "games:publishers-detail",
-            "publisher_fixture",
-            {
-                "name": "updated_publisher",
-            },
-            {
-                "publisher_logo": None,
-            },
-            id="Update of the publisher.",
         ),
     ],
 )
@@ -711,14 +667,12 @@ def test_update_model(
     update_data: dict[str, Any],
     expected_result: dict[str, Any],
     admin_authenticated_api_client: APIClient,
-    test_image: SimpleUploadedFile,
 ) -> None:
     """Check if updates method works properly for game models."""
     if viewname == "games:games-detail":
         update_data |= {
-            "cover_image": test_image,
-            "developer": baker.make(Developer).pk,
-            "publisher": baker.make(Publisher).pk,
+            "developer": baker.make(Company).pk,
+            "publisher": baker.make(Company).pk,
             "genres": [baker.make(Genre).pk],
             "platforms": [baker.make(Platform).pk],
         }
@@ -741,9 +695,9 @@ def test_update_model(
     ("viewname", "fixture_name"),
     [
         pytest.param(
-            "games:developers-detail",
+            "games:companies-detail",
             "developer_fixture",
-            id="Delete the developer.",
+            id="Delete the company.",
         ),
         pytest.param(
             "games:game-follows-detail",
@@ -774,11 +728,6 @@ def test_update_model(
             "games:platforms-detail",
             "platform_fixture",
             id="Delete the platform.",
-        ),
-        pytest.param(
-            "games:publishers-detail",
-            "publisher_fixture",
-            id="Delete the publisher.",
         ),
     ],
 )

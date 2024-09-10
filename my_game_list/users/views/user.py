@@ -1,4 +1,5 @@
 """This module contains the viewsets for user model interactions."""
+
 from typing import TYPE_CHECKING, Self
 
 from django.contrib.auth import get_user_model

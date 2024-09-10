@@ -1,4 +1,5 @@
 """Includes global scope fixtures. They can be used in all tests."""
+
 from pathlib import Path
 from typing import TYPE_CHECKING
 

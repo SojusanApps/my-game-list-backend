@@ -1,4 +1,5 @@
 """This module contains tests for the friendship request serializers."""
+
 from typing import TYPE_CHECKING
 
 import pytest
@@ -69,7 +70,7 @@ def test_you_already_sent_friendship_request(
     if isinstance(exc_detail, list):
         raise SerializerValidationDetailError
     if isinstance(exc_list_detail := exc_detail["non_field_errors"], list):
-        assert str(exc_list_detail[0]) == ("You already sent a friendship request to this user.")
+        assert str(exc_list_detail[0]) == ("The fields sender, receiver must make a unique set.")
     else:
         raise SerializerValidationDetailError
 

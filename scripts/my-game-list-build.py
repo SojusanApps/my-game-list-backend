@@ -5,10 +5,11 @@ import inspect
 import shutil
 import subprocess
 import sys
-from distutils.util import strtobool  # type: ignore[import-not-found]
+from distutils.util import strtobool
 from itertools import chain
 from pathlib import Path
 from types import FunctionType
+from typing import cast
 
 from python_colors import print_error, print_info, print_text, print_warning
 
@@ -89,9 +90,10 @@ def _build_docker_image(path: str, tag: str) -> None:
                 print_error(line[DOCKER_LOGS_STREAM_VALUE].strip())
         raise
     else:
-        for line in image_build_logs:
-            if DOCKER_LOGS_STREAM_VALUE in line:
-                print_text(line[DOCKER_LOGS_STREAM_VALUE].strip())
+        for build_line in image_build_logs:
+            if isinstance(build_line, dict) and DOCKER_LOGS_STREAM_VALUE in build_line:
+                stream = cast(str, build_line[DOCKER_LOGS_STREAM_VALUE])
+                print_text(stream.strip())
         print_info(f"Docker image was build: {image}")
 
 

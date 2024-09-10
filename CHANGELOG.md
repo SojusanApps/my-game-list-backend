@@ -2,6 +2,26 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.0.0] - 10.09.2024
+
+* Integrated with the IGDB database.
+* Removed the development example data as the process is changed in favor of the IGDB database.
+* Updated dependencies in requirements.
+* Removed the `requirements-deploy.txt` file.
+* Updated `Bruno` endpoints.
+* Fixed `ruff` configuration.
+* Added new environment variables to `example.env` (`IGDB_CLIENT_ID` and `IGDB_CLIENT_SECRET`).
+* Added new model `Company`.
+* Removed old models for `Developer` and `Publisher`, they are now in the new `Company` model.
+* Changed the `Genre`, `Game`, `Platform` and `Company` models to be compatible with IGDB data.
+* Changed the `game_cover_image` field in the `GameListSerializer` to be `CharField` instead of `FileField`.
+* Added `igdb_id` field to the `Game`, `Company`, `Genre` and `Platform` models, as those are now objects integrated with external IGDB database.
+* Renamed the `dictionary` field into `summary` in the `Game` model.
+* Added `abbreviations` field to the `Platform` model.
+* Removed the `django_cleanup` dependency.
+* Updated tests to reflect the changes made to models.
+* Updated dependencies in the `pre-commit` configuration.
+
 ## v. [3.3.0] - 12.06.2024
 
 * Added new development data regarding the developers and publishers.
@@ -103,7 +123,7 @@
 
 ## v. [1.1.0] - 19.05.2023
 
-* Corrected the Dockerfiles to meet hadolint validation.
+* Corrected the Dockerfiles to be compatible with hadolint validation.
 * Added `LABEL` to Dockerfiles to automatically link an image to a GitHub repository.
 * Added Grafana configuration.
 * Added Loki configuration.

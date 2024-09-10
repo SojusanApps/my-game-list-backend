@@ -1,4 +1,5 @@
 """This module contains the fixture for the friendships application."""
+
 from typing import TYPE_CHECKING
 
 import pytest

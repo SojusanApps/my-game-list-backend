@@ -1,4 +1,5 @@
 """This module contains the view for api version."""
+
 from collections.abc import Iterable, Mapping
 from typing import Any, Self
 

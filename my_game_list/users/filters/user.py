@@ -1,4 +1,5 @@
 """Filters for user model."""
+
 from django_filters import rest_framework as filters
 
 from my_game_list.users.models import Gender, User

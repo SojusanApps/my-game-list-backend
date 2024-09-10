@@ -1,4 +1,5 @@
 """This module contains the decorators."""
+
 import functools
 from collections.abc import Callable, Mapping, Sequence
 from typing import Any

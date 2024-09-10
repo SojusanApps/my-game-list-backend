@@ -1,4 +1,5 @@
 """This module contains the viewsets for the GameReview model."""
+
 from typing import Self
 
 from rest_framework.permissions import IsAuthenticated

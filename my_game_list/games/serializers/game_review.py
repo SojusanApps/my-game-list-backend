@@ -1,4 +1,5 @@
 """This module contains the serializers for the GameReview model."""
+
 from typing import Self
 
 from django.contrib.auth import get_user_model

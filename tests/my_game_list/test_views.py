@@ -1,4 +1,5 @@
 """Test the my_game_list app views."""
+
 from django.test.client import Client
 from django.urls import reverse
 from rest_framework import status

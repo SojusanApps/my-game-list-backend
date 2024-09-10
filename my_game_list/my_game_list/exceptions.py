@@ -1,4 +1,5 @@
 """This module contains all custom exceptions."""
+
 from typing import Self
 
 from django.utils.translation import gettext_lazy as _

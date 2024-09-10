@@ -1,4 +1,5 @@
 """Base filters for dictionary models."""
+
 from django_filters import rest_framework as filters
 
 
@@ -10,4 +11,4 @@ class BaseDictionaryFilterSet(filters.FilterSet):
     class Meta:
         """Meta class for BaseDictionaryFilterSet."""
 
-        fields = ("id", "name")
+        fields: tuple[str, ...] = ("id", "name")

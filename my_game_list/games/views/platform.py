@@ -1,4 +1,5 @@
 """This module contains the viewsets for the Platform model."""
+
 from typing import Self
 
 from rest_framework import status

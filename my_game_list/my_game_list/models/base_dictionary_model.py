@@ -1,4 +1,5 @@
 """This module contains the base dictionary model for all dictionary models in the application."""
+
 from typing import Self
 
 from django.db import models

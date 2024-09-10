@@ -1,4 +1,5 @@
 """This module contains the tests for the friendship request views."""
+
 from typing import TYPE_CHECKING
 
 import pytest

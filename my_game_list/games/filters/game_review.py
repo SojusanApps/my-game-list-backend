@@ -1,4 +1,5 @@
 """Filters for game review model."""
+
 from django_filters import rest_framework as filters
 
 from my_game_list.games.models import GameReview

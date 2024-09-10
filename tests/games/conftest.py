@@ -1,12 +1,14 @@
 """The fixtures used within games test module."""
+
 from typing import TYPE_CHECKING
 
 import pytest
 from django.contrib.auth import get_user_model
 from freezegun import freeze_time
+from model_bakery import baker
 
 from my_game_list.games.models import (
-    Developer,
+    Company,
     Game,
     GameFollow,
     GameList,
@@ -14,7 +16,6 @@ from my_game_list.games.models import (
     GameReview,
     Genre,
     Platform,
-    Publisher,
 )
 
 if TYPE_CHECKING:
@@ -25,46 +26,42 @@ User: type["UserType"] = get_user_model()
 
 @pytest.fixture()
 @freeze_time("2023-06-22 16:47:12")
-def developer_fixture() -> Developer:
+def developer_fixture() -> Company:
     """A fixture with a test developer."""
-    return Developer.objects.create(name="test_developer")
+    return baker.make("games.Company")
 
 
 @pytest.fixture()
 @freeze_time("2023-06-22 16:47:12")
 def platform_fixture() -> Platform:
     """A fixture with a test platform."""
-    return Platform.objects.create(name="test_platform")
+    return baker.make("games.Platform")
 
 
 @pytest.fixture()
 @freeze_time("2023-06-22 16:47:12")
-def publisher_fixture() -> Publisher:
+def publisher_fixture() -> Company:
     """A fixture with a test publisher."""
-    return Publisher.objects.create(name="test_publisher")
+    return baker.make("games.Company")
 
 
 @pytest.fixture()
 @freeze_time("2023-06-22 16:47:12")
 def genre_fixture() -> Genre:
     """A fixture with a test genre."""
-    return Genre.objects.create(name="test_genre")
+    return baker.make("games.Genre")
 
 
 @pytest.fixture()
 @freeze_time("2023-06-22 16:47:12")
 def game_fixture(
-    developer_fixture: Developer,
+    developer_fixture: Company,
     platform_fixture: Platform,
-    publisher_fixture: Publisher,
+    publisher_fixture: Company,
     genre_fixture: Genre,
 ) -> Game:
     """A fixture with a test game."""
-    game = Game.objects.create(
-        title="test_game",
-        developer=developer_fixture,
-        publisher=publisher_fixture,
-    )
+    game: Game = baker.make("games.Game", developer=developer_fixture, publisher=publisher_fixture)
     game.genres.add(genre_fixture)
     game.platforms.add(platform_fixture)
     return game

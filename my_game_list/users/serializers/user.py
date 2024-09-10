@@ -1,4 +1,5 @@
 """This model contains the serializers for User model."""
+
 from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any, ClassVar, Self
 
@@ -36,7 +37,7 @@ class UserCreateSerializer(serializers.ModelSerializer["UserType"]):
         user = User(
             username=validated_data["username"],
             email=validated_data["email"],
-            avatar=validated_data.get("avatar", b""),
+            avatar=validated_data.get("avatar", None),
         )
         user.set_password(validated_data["password"])
         user.save()

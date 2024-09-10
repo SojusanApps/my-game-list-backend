@@ -1,4 +1,5 @@
 """This module contains the custom permission class."""
+
 from typing import Self
 
 from rest_framework import permissions

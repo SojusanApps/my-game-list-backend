@@ -1,4 +1,5 @@
 """This is a base configuration for MyGameList Django application."""
+
 import os
 from datetime import timedelta
 from pathlib import Path
@@ -47,9 +48,6 @@ INSTALLED_APPS = [
     f"{MAIN_APP}.users",
     f"{MAIN_APP}.games",
     f"{MAIN_APP}.friendships",
-    # This must be the last to ensure that exceptions inside other app's
-    # signal handlers do not affect the integrity of file deletions within transactions
-    "django_cleanup.apps.CleanupConfig",
 ]
 
 MIDDLEWARE = [
@@ -247,3 +245,6 @@ LOGGING = {
 }
 
 MYPYPATH = BASE_DIR / "stubs"
+
+IGDB_CLIENT_ID = oeg("IGDB_CLIENT_ID", "client_id_to_change_on_production")
+IGDB_CLIENT_SECRET = oeg("IGDB_CLIENT_SECRET", "secret_key_to_change_on_production")

@@ -1,4 +1,5 @@
 """This module contains the serializers for the GameList model."""
+
 from rest_framework import serializers
 
 from my_game_list.games.models import GameList
@@ -11,7 +12,7 @@ class GameListSerializer(serializers.ModelSerializer[GameList]):
     status_code = serializers.CharField(source="status")
     game_id = serializers.IntegerField(source="game.id", read_only=True)
     title = serializers.CharField(source="game.title", read_only=True)
-    game_cover_image = serializers.FileField(source="game.cover_image", read_only=True)
+    game_cover_image = serializers.CharField(source="game.cover_image_id", read_only=True)
 
     class Meta:
         """Meta data for the game list serializer."""

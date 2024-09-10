@@ -1,4 +1,5 @@
 """The queryset for the Game model."""
+
 from typing import TYPE_CHECKING, Self
 
 from django.db.models import Avg, Count, DecimalField, ExpressionWrapper, QuerySet, Window

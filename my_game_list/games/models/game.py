@@ -1,4 +1,5 @@
 """This module contains the models for the Game."""
+
 from typing import Self
 
 from django.contrib import admin
@@ -7,13 +8,12 @@ from django.utils.functional import cached_property
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
-from my_game_list.games.models.developer import Developer
+from my_game_list.games.models import Company
 from my_game_list.games.models.genre import Genre
 from my_game_list.games.models.platform import Platform
-from my_game_list.games.models.publisher import Publisher
 from my_game_list.games.querysets import GameQuerySet
+from my_game_list.my_game_list.igdb_integration import IGDBImageSize, get_image_url
 from my_game_list.my_game_list.models import BaseModel
-from my_game_list.my_game_list.validators import FileSizeValidator
 
 
 class Game(BaseModel):
@@ -23,16 +23,24 @@ class Game(BaseModel):
     created_at = models.DateTimeField(_("creation time"), auto_now_add=True)
     last_modified_at = models.DateTimeField(_("last modified"), auto_now=True)
     release_date = models.DateField(_("release date"), blank=True, null=True)
-    cover_image = models.ImageField(
-        _("cover image"),
-        upload_to="cover_images/",
-        editable=True,
-        validators=[FileSizeValidator()],
-    )
-    description = models.TextField(_("description"), blank=True, max_length=2000)
+    cover_image_id = models.CharField(_("cover image id"), max_length=255, blank=True)
+    summary = models.TextField(_("summary"), blank=True, max_length=2000)
+    igdb_id = models.PositiveIntegerField(_("igdb id"), unique=True)
 
-    publisher = models.ForeignKey(Publisher, on_delete=models.PROTECT, related_name="games")
-    developer = models.ForeignKey(Developer, on_delete=models.PROTECT, related_name="games")
+    publisher = models.ForeignKey(
+        Company,
+        on_delete=models.PROTECT,
+        related_name="games_published",
+        blank=True,
+        null=True,
+    )
+    developer = models.ForeignKey(
+        Company,
+        on_delete=models.PROTECT,
+        related_name="games_developed",
+        blank=True,
+        null=True,
+    )
     genres = models.ManyToManyField(Genre, related_name="games")
     platforms = models.ManyToManyField(Platform, related_name="games")
 
@@ -52,10 +60,10 @@ class Game(BaseModel):
     @admin.display(description="Cover image preview")
     def cover_image_tag(self: Self) -> str:
         """Used in admin model to have a image preview."""
-        if self.cover_image:
+        if self.cover_image_id:
             return format_html(
-                '<img src={} width="250" height="300">',
-                self.cover_image.url,
+                '<img src={} width="90" height="128">',
+                get_image_url(self.cover_image_id, IGDBImageSize.COVER_SMALL_90_128),
             )
         return ""
 
