@@ -2,7 +2,6 @@
 
 import django.core.validators
 import django.db.models.deletion
-import my_game_list.my_game_list.validators.file_size_validator
 from django.conf import settings
 from django.db import migrations, models
 
@@ -41,7 +40,7 @@ class Migration(migrations.Migration):
                         blank=True,
                         null=True,
                         upload_to="developer_logos/",
-                        validators=[my_game_list.my_game_list.validators.file_size_validator.FileSizeValidator()],
+                        validators=[],
                         verbose_name="developer logo",
                     ),
                 ),
@@ -78,7 +77,7 @@ class Migration(migrations.Migration):
                         blank=True,
                         null=True,
                         upload_to="publisher_logos/",
-                        validators=[my_game_list.my_game_list.validators.file_size_validator.FileSizeValidator()],
+                        validators=[],
                         verbose_name="developer logo",
                     ),
                 ),

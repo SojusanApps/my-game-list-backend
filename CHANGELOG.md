@@ -2,6 +2,13 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.1.0] - 11.09.2024
+
+* Removed the `avatar` field from the `User` model.
+* For avatars now will be used `Gravatar`.
+* Removed the `FileSizeValidator` as it is no longer needed.
+* Removed the environment variable `MGL_LIMIT_FILE_SIZE` as it is no longer needed.
+
 ## v. [4.0.0] - 10.09.2024
 
 * Integrated with the IGDB database.
