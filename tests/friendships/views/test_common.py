@@ -77,7 +77,7 @@ def test_unauthorized_access_detail(method: str, viewname: str, api_client: APIC
                         "message": "",
                         "receiver": {
                             "id": ANY,
-                            "avatar": None,
+                            "gravatar_url": ANY,
                             "date_joined": "2023-05-25T14:21:13Z",
                             "email": "test_admin@email.com",
                             "is_active": True,
@@ -88,7 +88,7 @@ def test_unauthorized_access_detail(method: str, viewname: str, api_client: APIC
                         "rejected_at": None,
                         "sender": {
                             "id": ANY,
-                            "avatar": None,
+                            "gravatar_url": ANY,
                             "date_joined": "2023-05-25T12:01:12Z",
                             "email": "test@email.com",
                             "is_active": True,
@@ -114,7 +114,7 @@ def test_unauthorized_access_detail(method: str, viewname: str, api_client: APIC
                         "created_at": "2023-06-23T08:21:12Z",
                         "friend": {
                             "id": ANY,
-                            "avatar": None,
+                            "gravatar_url": ANY,
                             "date_joined": "2023-05-25T14:21:13Z",
                             "email": "test_admin@email.com",
                             "is_active": True,
@@ -124,7 +124,7 @@ def test_unauthorized_access_detail(method: str, viewname: str, api_client: APIC
                         },
                         "user": {
                             "id": ANY,
-                            "avatar": None,
+                            "gravatar_url": ANY,
                             "date_joined": "2023-05-25T12:01:12Z",
                             "email": "test@email.com",
                             "is_active": True,
@@ -168,7 +168,7 @@ def test_list_model(
                 "message": "",
                 "receiver": {
                     "id": ANY,
-                    "avatar": None,
+                    "gravatar_url": ANY,
                     "date_joined": "2023-05-25T14:21:13Z",
                     "email": "test_admin@email.com",
                     "is_active": True,
@@ -179,7 +179,7 @@ def test_list_model(
                 "rejected_at": None,
                 "sender": {
                     "id": ANY,
-                    "avatar": None,
+                    "gravatar_url": ANY,
                     "date_joined": "2023-05-25T12:01:12Z",
                     "email": "test@email.com",
                     "is_active": True,
@@ -198,7 +198,7 @@ def test_list_model(
                 "created_at": "2023-06-23T08:21:12Z",
                 "friend": {
                     "id": ANY,
-                    "avatar": None,
+                    "gravatar_url": ANY,
                     "date_joined": "2023-05-25T14:21:13Z",
                     "email": "test_admin@email.com",
                     "is_active": True,
@@ -208,7 +208,7 @@ def test_list_model(
                 },
                 "user": {
                     "id": ANY,
-                    "avatar": None,
+                    "gravatar_url": ANY,
                     "date_joined": "2023-05-25T12:01:12Z",
                     "email": "test@email.com",
                     "is_active": True,

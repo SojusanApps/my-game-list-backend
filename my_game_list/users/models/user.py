@@ -1,5 +1,6 @@
 """This module contains the User model."""
 
+import hashlib
 from typing import ClassVar, Self
 
 from django.contrib import admin
@@ -9,7 +10,6 @@ from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
 from my_game_list.my_game_list.models import BaseModel
-from my_game_list.my_game_list.validators import FileSizeValidator
 
 
 class Gender(models.TextChoices):
@@ -31,15 +31,6 @@ class User(BaseModel, AbstractUser):
     first_name = None  # type: ignore[assignment]
     last_name = None  # type: ignore[assignment]
 
-    avatar = models.ImageField(
-        _("avatar"),
-        upload_to="avatars/",
-        blank=True,
-        null=True,
-        editable=True,
-        validators=[FileSizeValidator()],
-    )
-
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS: ClassVar[list[str]] = ["username"]
 
@@ -48,12 +39,16 @@ class User(BaseModel, AbstractUser):
         return f"{self.username} - {self.email}"
 
     @property
-    @admin.display(description="Avatar preview")
-    def avatar_tag(self: Self) -> str:
+    def gravatar_url(self: Self) -> str:
+        """Generate the gravatar url for the user."""
+        email_hash = hashlib.sha256(self.email.lower().encode("utf-8")).hexdigest()
+        return f"https://www.gravatar.com/avatar/{email_hash}?s=256"
+
+    @property
+    @admin.display(description="Gravatar preview")
+    def gravatar_tag(self: Self) -> str:
         """Used in admin model to have a image preview."""
-        if self.avatar:
-            return format_html(
-                '<img src={} width="125" height="150">',
-                self.avatar.url,
-            )
-        return ""
+        return format_html(
+            '<img src={} width="125" height="150">',
+            self.gravatar_url,
+        )

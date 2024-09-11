@@ -24,7 +24,7 @@ class UserCreateSerializer(serializers.ModelSerializer["UserType"]):
         """Meta data for the class."""
 
         model = User
-        fields = ("username", "password", "email", "avatar", "gender")
+        fields = ("username", "password", "email", "gender")
         extra_kwargs: ClassVar[dict[str, dict[str, bool]]] = {"password": {"write_only": True}}
 
     def validate_password(self: Self, value: str) -> str:
@@ -37,7 +37,6 @@ class UserCreateSerializer(serializers.ModelSerializer["UserType"]):
         user = User(
             username=validated_data["username"],
             email=validated_data["email"],
-            avatar=validated_data.get("avatar", None),
         )
         user.set_password(validated_data["password"])
         user.save()
@@ -51,7 +50,7 @@ class UserSimpleSerializer(serializers.ModelSerializer["UserType"]):
         """Meta data for the class."""
 
         model = User
-        fields = ("id", "avatar")
+        fields = ("id", "gravatar_url")
 
 
 class UserSerializer(serializers.ModelSerializer["UserType"]):
@@ -70,10 +69,10 @@ class UserSerializer(serializers.ModelSerializer["UserType"]):
             "gender",
             "last_login",
             "date_joined",
-            "avatar",
+            "gravatar_url",
             "is_active",
         )
-        read_only_fields = ("id", "avatar", "last_login", "date_joined")
+        read_only_fields = ("id", "gravatar_url", "last_login", "date_joined")
 
 
 class UserDetailSerializer(serializers.ModelSerializer["UserType"]):
@@ -94,7 +93,7 @@ class UserDetailSerializer(serializers.ModelSerializer["UserType"]):
             "gender",
             "last_login",
             "date_joined",
-            "avatar",
+            "gravatar_url",
             "game_list_statistics",
             "friends",
             "latest_game_list_updates",
