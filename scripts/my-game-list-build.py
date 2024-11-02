@@ -19,8 +19,8 @@ from docker.errors import BuildError
 DOCKER_LOGS_STREAM_VALUE = "stream"
 DOCKER_LOGS_ERROR_VALUE = "errorDetail"
 DOCKER_REGISTRY = "ghcr.io"
-DOCKER_REGISTRY_PATH_APP = f"{DOCKER_REGISTRY}/sojusan/my-game-list/app"
-DOCKER_REGISTRY_PATH_NGINX = f"{DOCKER_REGISTRY}/sojusan/my-game-list/nginx"
+DOCKER_REGISTRY_PATH_APP = f"{DOCKER_REGISTRY}/sojusanapps/my-game-list-backend/app"
+DOCKER_REGISTRY_PATH_NGINX = f"{DOCKER_REGISTRY}/sojusanapps/my-game-list-backend/nginx"
 FAILURE_CODE = 1
 
 

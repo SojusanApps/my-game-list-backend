@@ -32,7 +32,7 @@ setup(
     include_package_data=True,
     author="Sojusan",
     author_email="grzegorczyk1rafal@gmail.com",
-    url="https://github.com/Sojusan/my-game-list",
+    url="https://github.com/SojusanApps/my-game-list-backend",
     license="proprietary",
     classifiers=[
         "Development Status :: 3 - Alpha",

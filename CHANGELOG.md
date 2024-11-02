@@ -2,6 +2,12 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.1.1] - 02.11.2024
+
+* Cleanup in `docker-compose.yml`:
+  * Use depends on condition for waiting for database instead of custom script,
+  * Fix running the application as non-root user.
+
 ## v. [4.1.0] - 11.09.2024
 
 * Removed the `avatar` field from the `User` model.
