@@ -1,4 +1,19 @@
-version: '3.8'
+x-base-app: &base_app
+  image: ghcr.io/sojusanapps/my-game-list-backend/app:latest
+  build:
+    context: ./app
+    args:
+      - MGL_LOG_DIR_PATH=${MGL_LOG_DIR_PATH}
+  volumes:
+    - static_volume:/opt/my_game_list/static
+    - media_volume:/opt/my_game_list/media
+    - type: volume
+      source: app_log_volume
+      target: ${MGL_LOG_DIR_PATH}
+  env_file:
+    - ./.env
+  networks:
+    - loki
 
 services:
   postgres:
@@ -12,52 +27,49 @@ services:
     env_file:
       - ./.env
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U my_game_list"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 10s
       timeout: 5s
       retries: 3
     networks:
       - loki
 
-  app: &main_app
-    image: ghcr.io/sojusan/my-game-list/app:latest
+  app:
+    <<: *base_app
     container_name: my-game-list-app
     restart: "unless-stopped"
     depends_on:
       postgres:
         condition: service_healthy
-    volumes:
-      - static_volume:/opt/my_game_list/static
-      - media_volume:/opt/my_game_list/media
-      - type: volume
-        source: app_log_volume
-        target: ${MGL_LOG_DIR_PATH}
-    env_file:
-      - ./.env
+      set_state:
+        condition: service_completed_successfully
     command: gunicorn
-    networks:
-      - loki
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/version/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   set_state:
-    <<: *main_app
+    <<: *base_app
     container_name: my-game-list-set-state
     restart: "no"
     depends_on:
-      - app
-      - postgres
+      postgres:
+        condition: service_healthy
     command: set_state
     volumes:
       - static_volume:/opt/my_game_list/static
-    networks:
-      - loki
 
   nginx:
-    image: ghcr.io/sojusan/my-game-list/nginx:latest
+    image: ghcr.io/sojusanapps/my-game-list-backend/nginx:latest
     container_name: my-game-list-nginx
+    build:
+      context: ./nginx
     restart: "unless-stopped"
     depends_on:
-      - app
-      - set_state
+      app:
+        condition: service_healthy
     ports:
       - "80:80"
       - "443:443"
@@ -74,7 +86,8 @@ services:
     ports:
       - "9090:9090"
     depends_on:
-      - app
+      app:
+        condition: service_healthy
     volumes:
       - prometheus_data:/prometheus
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml

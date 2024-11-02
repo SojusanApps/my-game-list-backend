@@ -1,6 +1,6 @@
 # MyGameList
 
-[![MyGameList CI](https://github.com/Sojusan/my-game-list/actions/workflows/my-game-list.yml/badge.svg)](https://github.com/Sojusan/my-game-list/actions/workflows/my-game-list.yml)
+[![MyGameList CI](https://github.com/SojusanApps/my-game-list-backend/actions/workflows/my-game-list.yml/badge.svg)](https://github.com/SojusanApps/my-game-list-backend/actions/workflows/my-game-list.yml)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=MyGameListPlaceholder_my-game-list-backend&metric=coverage)](https://sonarcloud.io/summary/new_code?id=MyGameListPlaceholder_my-game-list-backend)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v1.json)](https://github.com/charliermarsh/ruff)
@@ -52,7 +52,7 @@ Tag Legend:
 1. Clone the repository from GitHub with the command:
 
    ```shell
-   https://github.com/Sojusan/my-game-list.git
+   https://github.com/SojusanApps/my-game-list-backend.git
    ```
 
 1. Create a virtual environment with [virtualenvwrapper](https://github.com/regisf/virtualenvwrapper-powershell):
