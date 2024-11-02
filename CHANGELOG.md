@@ -2,6 +2,10 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.1.2] - 02.11.2024
+
+* Changed the way of handling the source code, from individual file for each object to a single one for all.
+
 ## v. [4.1.1] - 02.11.2024
 
 * Cleanup in `docker-compose.yml`:
