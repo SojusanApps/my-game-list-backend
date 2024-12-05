@@ -9,18 +9,33 @@ from django.db import models
 from django.utils.functional import cached_property
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
+from django_stubs_ext.db.models import TypedModelMeta
 
 from my_game_list.games.querysets import GameQuerySet
 from my_game_list.my_game_list.igdb_integration import IGDBImageSize, get_image_url
 from my_game_list.my_game_list.models import BaseDictionaryModel, BaseModel
 
 
-class Company(BaseDictionaryModel):
+class IGDBModel(models.Model):
+    """Base IGDB model."""
+
+    igdb_id = models.PositiveIntegerField(_("igdb id"), unique=True)
+
+    class Meta(TypedModelMeta):
+        """Meta data for dictionary models."""
+
+        abstract = True
+
+    def __str__(self: Self) -> str:
+        """String representation of dictionary models."""
+        return f"{self.igdb_id}"
+
+
+class Company(BaseDictionaryModel, IGDBModel):
     """Data about company."""
 
     name = models.CharField(_("name"), max_length=255)
     company_logo_id = models.CharField(_("company logo id"), max_length=255, blank=True)
-    igdb_id = models.PositiveIntegerField(_("igdb id"), unique=True)
 
     class Meta(BaseDictionaryModel.Meta):
         """Meta data for the company model."""
@@ -129,10 +144,8 @@ class GameReview(BaseModel):
         return f"{self.user.username} - {self.game.title}"
 
 
-class Genre(BaseDictionaryModel):
+class Genre(BaseDictionaryModel, IGDBModel):
     """Data about game genres."""
-
-    igdb_id = models.PositiveIntegerField(_("igdb id"), unique=True)
 
     class Meta(BaseDictionaryModel.Meta):
         """Meta data for the genre model."""
@@ -141,11 +154,10 @@ class Genre(BaseDictionaryModel):
         verbose_name_plural = _("genres")
 
 
-class Platform(BaseDictionaryModel):
+class Platform(BaseDictionaryModel, IGDBModel):
     """Data about game platforms."""
 
     abbreviation = models.CharField(_("abbreviation"), max_length=255, blank=True)
-    igdb_id = models.PositiveIntegerField(_("igdb id"), unique=True)
 
     class Meta(BaseDictionaryModel.Meta):
         """Meta data for the platform model."""
@@ -161,7 +173,7 @@ class Platform(BaseDictionaryModel):
         ]
 
 
-class Game(BaseModel):
+class Game(BaseModel, IGDBModel):
     """A model containing data about games."""
 
     title = models.CharField(_("title"), max_length=255, unique=True)
@@ -170,7 +182,6 @@ class Game(BaseModel):
     release_date = models.DateField(_("release date"), blank=True, null=True)
     cover_image_id = models.CharField(_("cover image id"), max_length=255, blank=True)
     summary = models.TextField(_("summary"), blank=True, max_length=2000)
-    igdb_id = models.PositiveIntegerField(_("igdb id"), unique=True)
 
     publisher = models.ForeignKey(
         Company,

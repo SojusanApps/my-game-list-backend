@@ -1,20 +1,25 @@
 """A custom django command to import data from the IGDB database."""
 
-from datetime import UTC, datetime
-from typing import Any, Self, cast
+from datetime import UTC, date, datetime
+from typing import Any, Literal, Self, TypeVar
 
 from django.core.management.base import BaseCommand, CommandParser
 
 from my_game_list.games.management.commands._igdb_wrapper import (
+    IGDB_API_RESPONSE,
+    IGDB_OBJECT,
     IGDBCompanyResponse,
     IGDBEndpoints,
     IGDBGameResponse,
     IGDBGenreResponse,
+    IGDBInteractionError,
     IGDBInvolvedCompanyResponse,
     IGDBPlatformResponse,
     IGDBWrapper,
 )
 from my_game_list.games.models import Company, Game, Genre, Platform
+
+ModelType = TypeVar("ModelType", Game, Company, Genre, Platform)
 
 
 class Command(BaseCommand):
@@ -36,73 +41,156 @@ class Command(BaseCommand):
             help="What to import from the IGDB database.",
         )
 
-    def import_games(self: Self) -> None:
-        """Import games from the IGDB database to the application database."""
-        games = cast(
-            list[IGDBGameResponse],
-            self.igdb_wrapper.get_all_objects(
-                IGDBEndpoints.GAMES,
-                (
-                    "fields name, cover.image_id, first_release_date, genres, involved_companies.developer, "
-                    "involved_companies.publisher, involved_companies.company, platforms, summary;"
-                ),
-            ),
+    @staticmethod
+    def _get_company(
+        company_type: Literal["developer", "publisher"],
+        involved_companies: list[IGDBInvolvedCompanyResponse] | None,
+        company_igdb_to_db_mapping: dict[int, Company],
+    ) -> Company | None:
+        """
+        Get the company from the involved companies list.
+
+        Args:
+            company_type (Literal["developer", "publisher"]): The type of company to look for.
+            involved_companies (list[IGDBInvolvedCompanyResponse] | None): The list of involved companies.
+            company_igdb_to_db_mapping (dict[int, Company]): The mapping between IGDB companies and database companies.
+
+        Returns:
+            Company | None: The company or None if not found.
+        """
+        if involved_companies is None:
+            return None
+
+        companies_by_id = {company.company: company for company in involved_companies}
+        company_id = next(
+            (company_id for company_id, company in companies_by_id.items() if getattr(company, company_type)),
+            None,
+        )
+
+        return company_igdb_to_db_mapping.get(company_id) if company_id is not None else None
+
+    def _get_model_input(
+        self: Self,
+        item_from_igdb: IGDB_OBJECT,
+        company_igdb_to_db_mapping: dict[int, Company],
+    ) -> dict[str, str | int | None | date | Company]:
+        """
+        Get the input for the model from the item from the IGDB database.
+
+        Args:
+            item_from_igdb (IGDB_OBJECT): The item from the IGDB database.
+            company_igdb_to_db_mapping (dict[int, Company]): The mapping between IGDB companies and database companies.
+
+        Returns:
+            dict[str, str | int | None | date | Company]: The input for the model.
+        """
+        match item_from_igdb:
+            case IGDBGameResponse():
+                return {
+                    "title": item_from_igdb.name,
+                    "release_date": (
+                        datetime.fromtimestamp(item_from_igdb.first_release_date, tz=UTC).date()
+                        if item_from_igdb.first_release_date
+                        else None
+                    ),
+                    "cover_image_id": item_from_igdb.cover.image_id if item_from_igdb.cover else "",
+                    "summary": item_from_igdb.summary,
+                    "publisher": self._get_company(
+                        company_type="publisher",
+                        involved_companies=item_from_igdb.involved_companies,
+                        company_igdb_to_db_mapping=company_igdb_to_db_mapping,
+                    ),
+                    "developer": self._get_company(
+                        company_type="developer",
+                        involved_companies=item_from_igdb.involved_companies,
+                        company_igdb_to_db_mapping=company_igdb_to_db_mapping,
+                    ),
+                    "igdb_id": item_from_igdb.id,
+                }
+            case IGDBGenreResponse():
+                return {
+                    "name": item_from_igdb.name,
+                    "igdb_id": item_from_igdb.id,
+                }
+            case IGDBPlatformResponse():
+                return {
+                    "abbreviation": item_from_igdb.abbreviation,
+                    "igdb_id": item_from_igdb.id,
+                    "name": item_from_igdb.name,
+                }
+            case IGDBCompanyResponse():
+                return {
+                    "name": item_from_igdb.name,
+                    "igdb_id": item_from_igdb.id,
+                    "company_logo_id": item_from_igdb.logo.image_id if item_from_igdb.logo else "",
+                }
+            case _:
+                message_error = f"Invalid type of data from IGDB: {type(item_from_igdb)}"
+                raise IGDBInteractionError(message_error)
+
+    def _import_data(
+        self: Self,
+        endpoint: IGDBEndpoints,
+        query: str,
+        model: type[ModelType],
+    ) -> tuple[list[ModelType], IGDB_API_RESPONSE]:
+        """Import data from the IGDB database to the application database.
+
+        Args:
+            endpoint (IGDBEndpoints): The IGDB endpoint to fetch data from.
+            query (str): The query string for the IGDB API.
+            model (type[ModelType]): The Django model class to map the IGDB data to.
+
+        Returns:
+            tuple[list[ModelType], IGDB_API_RESPONSE]: A tuple containing a list of created model instances
+            and the raw IGDB API response data.
+        """
+        data_from_igdb = self.igdb_wrapper.get_all_objects(
+            endpoint=endpoint,
+            query=query,
         )
 
         company_igdb_to_db_mapping = {company.igdb_id: company for company in Company.objects.all()}
+        data_to_import = [model(**self._get_model_input(data, company_igdb_to_db_mapping)) for data in data_from_igdb]
 
-        def get_publisher(involved_companies: list[IGDBInvolvedCompanyResponse]) -> Company | None:
-            """Get the publisher company from the involved companies list."""
-            for company in involved_companies:
-                if company["publisher"]:
-                    return company_igdb_to_db_mapping[company["company"]]
-            return None
+        return model.objects.bulk_create(data_to_import, ignore_conflicts=True), data_from_igdb
 
-        def get_developer(involved_companies: list[IGDBInvolvedCompanyResponse]) -> Company | None:
-            """Get the developer company from the involved companies list."""
-            for company in involved_companies:
-                if company["developer"]:
-                    return company_igdb_to_db_mapping[company["company"]]
-            return None
-
-        games_to_import = [
-            Game(
-                title=game["name"],
-                release_date=(
-                    datetime.fromtimestamp(game["first_release_date"], tz=UTC).date()
-                    if game.get("first_release_date")
-                    else None
-                ),
-                cover_image_id=game["cover"]["image_id"] if game.get("cover") else "",
-                summary=game.get("summary", ""),
-                publisher=get_publisher(game.get("involved_companies", [])),
-                developer=get_developer(game.get("involved_companies", [])),
-                igdb_id=game["id"],
-            )
-            for game in games
-        ]
-
-        imported_games = Game.objects.bulk_create(games_to_import, ignore_conflicts=True)
+    def import_games(self: Self) -> None:
+        """Import games from the IGDB database to the application database."""
+        imported_games, igdb_games = self._import_data(
+            endpoint=IGDBEndpoints.GAMES,
+            query=(
+                "fields name, cover.image_id, first_release_date, genres, "
+                "involved_companies.developer, involved_companies.publisher, involved_companies.company, "
+                "platforms, summary;"
+            ),
+            model=Game,
+        )
 
         genre_igdb_to_db_mapping = {genre.igdb_id: genre.id for genre in Genre.objects.all()}
         platform_igdb_to_db_mapping = {platform.igdb_id: platform.id for platform in Platform.objects.all()}
-        igdb_games_mapping = {game["id"]: game for game in games}
+        igdb_games_mapping = {game.id: game for game in igdb_games}
 
         genres_to_games_relation = []
         platforms_to_games_relation = []
         for imported_game in Game.objects.all():
             game_from_igdb = igdb_games_mapping.get(imported_game.igdb_id)
-            if game_from_igdb:
-                genres = [
-                    Game.genres.through(game_id=imported_game.id, genre_id=genre_igdb_to_db_mapping[genre])
-                    for genre in game_from_igdb.get("genres", [])
-                ]
-                genres_to_games_relation.extend(genres)
-                platforms = [
-                    Game.platforms.through(game_id=imported_game.id, platform_id=platform_igdb_to_db_mapping[platform])
-                    for platform in game_from_igdb.get("platforms", [])
-                ]
-                platforms_to_games_relation.extend(platforms)
+            if game_from_igdb and isinstance(game_from_igdb, IGDBGameResponse):
+                if genres_ids := game_from_igdb.genres:
+                    genres = [
+                        Game.genres.through(game_id=imported_game.id, genre_id=genre_igdb_to_db_mapping[genre_id])
+                        for genre_id in genres_ids
+                    ]
+                    genres_to_games_relation.extend(genres)
+                if platform_ids := game_from_igdb.platforms:
+                    platforms = [
+                        Game.platforms.through(
+                            game_id=imported_game.id,
+                            platform_id=platform_igdb_to_db_mapping[platform],
+                        )
+                        for platform in platform_ids
+                    ]
+                    platforms_to_games_relation.extend(platforms)
 
         Game.genres.through.objects.bulk_create(genres_to_games_relation, ignore_conflicts=True)
         Game.platforms.through.objects.bulk_create(platforms_to_games_relation, ignore_conflicts=True)
@@ -113,88 +201,61 @@ class Command(BaseCommand):
 
     def import_companies(self: Self) -> None:
         """Import companies from the IGDB database to the application database."""
-        companies = cast(
-            list[IGDBCompanyResponse],
-            self.igdb_wrapper.get_all_objects(
-                IGDBEndpoints.COMPANIES,
-                "fields name, logo.image_id;",
-            ),
+        created_companies, _ = self._import_data(
+            endpoint=IGDBEndpoints.COMPANIES,
+            query="fields name, logo.image_id;",
+            model=Company,
         )
-        companies_to_import = [
-            Company(
-                name=company["name"],
-                igdb_id=company["id"],
-                company_logo_id=company["logo"]["image_id"] if company.get("logo") else "",
-            )
-            for company in companies
-        ]
-
-        imported_companies = Company.objects.bulk_create(companies_to_import, ignore_conflicts=True)
 
         self.stdout.write(
-            self.style.SUCCESS(f"Successfully imported {len(imported_companies)} 'Company' from the IGDB database."),
+            self.style.SUCCESS(
+                (f"Successfully created {len(created_companies)} 'Companies' from the IGDB database."),
+            ),
         )
 
     def import_genres(self: Self) -> None:
         """Import genres from the IGDB database to the application database."""
-        genres = cast(
-            list[IGDBGenreResponse],
-            self.igdb_wrapper.get_all_objects(
-                IGDBEndpoints.GENRES,
-                "fields name;",
-            ),
+        created_genres, _ = self._import_data(
+            endpoint=IGDBEndpoints.GENRES,
+            query="fields name;",
+            model=Genre,
         )
-        genres_to_import = [
-            Genre(
-                name=genre["name"],
-                igdb_id=genre["id"],
-            )
-            for genre in genres
-        ]
-
-        imported_genres = Genre.objects.bulk_create(genres_to_import, ignore_conflicts=True)
 
         self.stdout.write(
-            self.style.SUCCESS(f"Successfully imported {len(imported_genres)} 'Genres' from the IGDB database."),
+            self.style.SUCCESS(
+                (f"Successfully created {len(created_genres)} 'Genres' from the IGDB database."),
+            ),
         )
 
     def import_platforms(self: Self) -> None:
         """Import platforms from the IGDB database to the application database."""
-        platforms = cast(
-            list[IGDBPlatformResponse],
-            self.igdb_wrapper.get_all_objects(
-                IGDBEndpoints.PLATFORMS,
-                "fields abbreviation, name;",
-            ),
+        created_platforms, _ = self._import_data(
+            endpoint=IGDBEndpoints.PLATFORMS,
+            query="fields abbreviation, name;",
+            model=Platform,
         )
-        platforms_to_import = [
-            Platform(
-                abbreviation=platform.get("abbreviation", ""),
-                igdb_id=platform["id"],
-                name=platform["name"],
-            )
-            for platform in platforms
-        ]
-
-        imported_platforms = Platform.objects.bulk_create(platforms_to_import, ignore_conflicts=True)
 
         self.stdout.write(
-            self.style.SUCCESS(f"Successfully imported {len(imported_platforms)} 'Platforms' from the IGDB database."),
+            self.style.SUCCESS(
+                (f"Successfully created {len(created_platforms)} 'Platforms' from the IGDB database."),
+            ),
         )
 
     def handle(self: Self, *args: None, **options: dict[str, int | None | str]) -> None:
         """Handle the command logic."""
-        self.stdout.write(f"{args}")
-        self.stdout.write(f"{options}")
-        what_to_import = options["what_to_import"]
-        if "platforms" in what_to_import:
-            self.import_platforms()
-        if "genres" in what_to_import:
-            self.import_genres()
-        if "companies" in what_to_import:
-            self.import_companies()
-        if "games" in what_to_import:
-            self.import_games()
+        self.stdout.write(f"{args=}")
+        self.stdout.write(f"{options=}")
+        actions = {
+            "platforms": self.import_platforms,
+            "genres": self.import_genres,
+            "companies": self.import_companies,
+            "games": self.import_games,
+        }
+
+        for item in options["what_to_import"]:
+            action = actions.get(item)
+            if action:
+                action()
 
         self.stdout.write(
             self.style.SUCCESS("Import process completed."),
