@@ -2,6 +2,11 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.1.3] - 05.12.2024
+
+* Added base class for IGDB models `IGDBModel`.
+* Improvements to IGDB integrations.
+
 ## v. [4.1.2] - 02.11.2024
 
 * Changed the way of handling the source code, from individual file for each object to a single one for all.
