@@ -52,6 +52,10 @@ GAME_USER_DEPENDENT_DETAIL_VIEWNAMES = [
             "games:platforms-list",
             id="Check forbidden access for the creation of platform.",
         ),
+        pytest.param(
+            "games:game-medias-list",
+            id="Check forbidden access for the creation of game media.",
+        ),
     ],
 )
 @pytest.mark.django_db()
@@ -115,6 +119,10 @@ def test_unauthorized_access_list(viewname: str, api_client: APIClient) -> None:
         pytest.param(
             "games:platforms-detail",
             id="Check forbidden access for the platform with given id.",
+        ),
+        pytest.param(
+            "games:game-medias-detail",
+            id="Check forbidden access for the game media with given id.",
         ),
     ],
 )
@@ -211,6 +219,7 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
                         "status_code": GameListStatus.PLAN_TO_PLAY.value,
                         "last_modified_at": "2023-06-22T16:47:12Z",
                         "created_at": "2023-06-22T16:47:12Z",
+                        "owned_on": ANY,
                     },
                 ],
             },
@@ -302,6 +311,42 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
             },
             id="Test list endpoint for platform.",
         ),
+        pytest.param(
+            "games:game-medias-list",
+            "game_media_fixture",
+            {
+                "count": 6,
+                "next": None,
+                "previous": None,
+                "results": [
+                    {
+                        "id": ANY,
+                        "name": ANY,
+                    },
+                    {
+                        "id": ANY,
+                        "name": ANY,
+                    },
+                    {
+                        "id": ANY,
+                        "name": ANY,
+                    },
+                    {
+                        "id": ANY,
+                        "name": ANY,
+                    },
+                    {
+                        "id": ANY,
+                        "name": ANY,
+                    },
+                    {
+                        "id": ANY,
+                        "name": ANY,
+                    },
+                ],
+            },
+            id="Test list endpoint for game media.",
+        ),
     ],
 )
 @pytest.mark.django_db()
@@ -359,6 +404,7 @@ def test_list_model(
                 "status_code": GameListStatus.PLAN_TO_PLAY.value,
                 "last_modified_at": "2023-06-22T16:47:12Z",
                 "created_at": "2023-06-22T16:47:12Z",
+                "owned_on": ANY,
             },
             id="Get the game list by id.",
         ),
@@ -420,6 +466,15 @@ def test_list_model(
             },
             id="Get the platform by id.",
         ),
+        pytest.param(
+            "games:game-medias-detail",
+            "game_media_fixture",
+            {
+                "id": ANY,
+                "name": ANY,
+            },
+            id="Get the game media by id.",
+        ),
     ],
 )
 @pytest.mark.django_db()
@@ -475,6 +530,7 @@ def test_get_model_detail(
                 "status": GameListStatus.PLAN_TO_PLAY.value,
                 "created_at": "2023-06-22T22:20:01Z",
                 "last_modified_at": "2023-06-22T22:20:01Z",
+                "owned_on": ANY,
             },
             id="Create a new game list.",
         ),
@@ -527,6 +583,16 @@ def test_get_model_detail(
                 "id": ANY,
             },
             id="Creation of the platform.",
+        ),
+        pytest.param(
+            "games:game-medias-list",
+            {
+                "name": "created_media",
+            },
+            {
+                "id": ANY,
+            },
+            id="Creation of the game media.",
         ),
     ],
 )
@@ -609,6 +675,7 @@ def test_create_model(
                 "status": GameListStatus.COMPLETED.value,
                 "created_at": "2023-06-22T16:47:12Z",
                 "last_modified_at": "2023-06-22T22:20:01Z",
+                "owned_on": ANY,
             },
             id="Update a game list.",
         ),
@@ -660,6 +727,15 @@ def test_create_model(
             {},
             id="Update of the platform.",
         ),
+        pytest.param(
+            "games:game-medias-detail",
+            "game_media_fixture",
+            {
+                "name": "updated_media",
+            },
+            {},
+            id="Update of the game media.",
+        ),
     ],
 )
 @pytest.mark.django_db()
@@ -696,42 +772,55 @@ def test_update_model(
 
 
 @pytest.mark.parametrize(
-    ("viewname", "fixture_name"),
+    ("viewname", "fixture_name", "total_count_after_deletion"),
     [
         pytest.param(
             "games:companies-detail",
             "developer_fixture",
+            0,
             id="Delete the company.",
         ),
         pytest.param(
             "games:game-follows-detail",
             "game_follow_fixture",
+            0,
             id="Delete the game follow.",
         ),
         pytest.param(
             "games:game-lists-detail",
             "game_list_fixture",
+            0,
             id="Delete the game list.",
         ),
         pytest.param(
             "games:game-reviews-detail",
             "game_review_fixture",
+            0,
             id="Delete the game review.",
         ),
         pytest.param(
             "games:games-detail",
             "game_fixture",
+            0,
             id="Delete the game.",
         ),
         pytest.param(
             "games:genres-detail",
             "genre_fixture",
+            0,
             id="Delete the genre.",
         ),
         pytest.param(
             "games:platforms-detail",
             "platform_fixture",
+            0,
             id="Delete the platform.",
+        ),
+        pytest.param(
+            "games:game-medias-detail",
+            "game_media_fixture",
+            5,
+            id="Delete the game media.",
         ),
     ],
 )
@@ -740,6 +829,7 @@ def test_delete_model(
     request: pytest.FixtureRequest,
     viewname: str,
     fixture_name: str,
+    total_count_after_deletion: int,
     admin_authenticated_api_client: APIClient,
 ) -> None:
     """Check if deletion of the game model works properly."""
@@ -747,4 +837,4 @@ def test_delete_model(
     response = admin_authenticated_api_client.delete(reverse(viewname, (model_instance.pk,)))
 
     assert response.status_code == status.HTTP_204_NO_CONTENT
-    assert model_instance.__class__.objects.count() == 0
+    assert model_instance.__class__.objects.count() == total_count_after_deletion

@@ -7,6 +7,7 @@ from my_game_list.games.views import (
     CompanyViewSet,
     GameFollowViewSet,
     GameListViewSet,
+    GameMediaViewSet,
     GameReviewViewSet,
     GameViewSet,
     GenreViewSet,
@@ -23,6 +24,7 @@ router.register("game-reviews", GameReviewViewSet, basename="game-reviews")
 router.register("games", GameViewSet, basename="games")
 router.register("genres", GenreViewSet, basename="genres")
 router.register("platforms", PlatformViewSet, basename="platforms")
+router.register("game-medias", GameMediaViewSet, basename="game-medias")
 
 urlpatterns = [
     path("", include(router.urls)),

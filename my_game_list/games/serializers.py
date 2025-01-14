@@ -4,7 +4,7 @@ from typing import Self
 
 from rest_framework import serializers
 
-from my_game_list.games.models import Company, Game, GameFollow, GameList, GameReview, Genre, Platform
+from my_game_list.games.models import Company, Game, GameFollow, GameList, GameMedia, GameReview, Genre, Platform
 from my_game_list.my_game_list.serializers import BaseDictionarySerializer
 from my_game_list.users.models import User
 from my_game_list.users.serializers import UserSerializer
@@ -40,6 +40,16 @@ class GameFollowSerializer(serializers.ModelSerializer[GameFollow]):
         fields = ("id", "created_at", "game", "user")
 
 
+class GameMediaSerializer(serializers.ModelSerializer[GameMedia]):
+    """A serializer for the game media model."""
+
+    class Meta:
+        """Meta data for the game media serializer."""
+
+        model = GameMedia
+        fields = ("id", "name")
+
+
 class GameListSerializer(serializers.ModelSerializer[GameList]):
     """A serializer for the game list model."""
 
@@ -48,6 +58,7 @@ class GameListSerializer(serializers.ModelSerializer[GameList]):
     game_id = serializers.IntegerField(source="game.id", read_only=True)
     title = serializers.CharField(source="game.title", read_only=True)
     game_cover_image = serializers.CharField(source="game.cover_image_id", read_only=True)
+    owned_on = GameMediaSerializer(many=True)
 
     class Meta:
         """Meta data for the game list serializer."""
@@ -64,11 +75,18 @@ class GameListSerializer(serializers.ModelSerializer[GameList]):
             "title",
             "game_cover_image",
             "user",
+            "owned_on",
         )
 
 
 class GameListCreateSerializer(serializers.ModelSerializer[GameList]):
     """A serializer for the game list create model."""
+
+    owned_on = serializers.SlugRelatedField(
+        queryset=GameMedia.objects.all(),
+        slug_field="id",
+        many=True,
+    )
 
     class Meta:
         """Meta data for the game list create serializer."""
@@ -82,6 +100,7 @@ class GameListCreateSerializer(serializers.ModelSerializer[GameList]):
             "last_modified_at",
             "game",
             "user",
+            "owned_on",
         )
 
 

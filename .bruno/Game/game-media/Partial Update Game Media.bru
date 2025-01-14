@@ -1,11 +1,11 @@
 meta {
-  name: Update Game-List
+  name: Partial Update Game Media
   type: http
-  seq: 4
+  seq: 5
 }
 
-put {
-  url: {{protocol}}/{{host}}:{{port}}/api/game/game-lists/{{gameListId}}/
+patch {
+  url: {{protocol}}/{{host}}:{{port}}/api/game/game-medias/{{gameMediaId}}/
   body: multipartForm
   auth: basic
 }
@@ -16,7 +16,5 @@ auth:basic {
 }
 
 body:multipart-form {
-  status: C
-  game: 3
-  user: 2
+  name: Test Media
 }

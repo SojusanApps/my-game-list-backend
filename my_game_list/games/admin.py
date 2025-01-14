@@ -2,7 +2,7 @@
 
 from django.contrib import admin
 
-from my_game_list.games.models import Company, Game, GameFollow, GameList, GameReview, Genre, Platform
+from my_game_list.games.models import Company, Game, GameFollow, GameList, GameMedia, GameReview, Genre, Platform
 from my_game_list.my_game_list.admin import BaseDictionaryModelAdmin
 
 
@@ -86,3 +86,11 @@ class PlatformAdmin(BaseDictionaryModelAdmin):
 
     readonly_fields = (*BaseDictionaryModelAdmin.readonly_fields, "igdb_id")
     list_display = (*BaseDictionaryModelAdmin.list_display, "abbreviation", "igdb_id")
+
+
+@admin.register(GameMedia)
+class GameMediaAdmin(BaseDictionaryModelAdmin):
+    """Admin model for the game media model."""
+
+    readonly_fields = (*BaseDictionaryModelAdmin.readonly_fields,)
+    list_display = (*BaseDictionaryModelAdmin.list_display,)

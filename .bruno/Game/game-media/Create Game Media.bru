@@ -1,11 +1,11 @@
 meta {
-  name: Create Genre
+  name: Create Game Media
   type: http
   seq: 2
 }
 
 post {
-  url: {{protocol}}/{{host}}:{{port}}/api/game/genres/
+  url: {{protocol}}/{{host}}:{{port}}/api/game/game-medias/
   body: multipartForm
   auth: basic
 }
@@ -16,9 +16,9 @@ auth:basic {
 }
 
 body:multipart-form {
-  name: Test Genre
+  name: Test Media
 }
 
 vars:post-response {
-  genreId: res.body.id
+  gameMediaId: res.body.id
 }
