@@ -14,11 +14,13 @@ from my_game_list.games.filters import (
     GameFilterSet,
     GameFollowFilterSet,
     GameListFilterSet,
+    GameMediaFilterSet,
     GameReviewFilterSet,
     GenreFilterSet,
     PlatformFilterSet,
 )
-from my_game_list.games.models import Company, Game, GameFollow, GameList, GameReview, Genre, Platform
+from my_game_list.games.mixins import DictionaryAllValuesMixin
+from my_game_list.games.models import Company, Game, GameFollow, GameList, GameMedia, GameReview, Genre, Platform
 from my_game_list.games.serializers import (
     CompanySerializer,
     CompanySimpleNameSerializer,
@@ -26,6 +28,7 @@ from my_game_list.games.serializers import (
     GameFollowSerializer,
     GameListCreateSerializer,
     GameListSerializer,
+    GameMediaSerializer,
     GameReviewCreateSerializer,
     GameReviewSerializer,
     GameSerializer,
@@ -118,7 +121,7 @@ class GameViewSet(ModelViewSet[Game]):
         return GameCreateSerializer if self.action in ["create", "update", "partial_update"] else GameSerializer
 
 
-class GenreViewSet(ModelViewSet[Genre]):
+class GenreViewSet(ModelViewSet[Genre], DictionaryAllValuesMixin):
     """A ViewSet for the Genre model."""
 
     queryset = Genre.objects.all()
@@ -126,16 +129,8 @@ class GenreViewSet(ModelViewSet[Genre]):
     permission_classes = (IsAdminOrReadOnly,)
     filterset_class = GenreFilterSet
 
-    @action(detail=False, methods=("get",), url_path="all-values")
-    def all_values(self: Self, request: Request) -> Response:  # noqa: ARG002
-        """Return all values of the Publisher model."""
-        data = Genre.objects.all().order_by("name")
-        serializer = GenreSerializer(data, many=True)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class PlatformViewSet(ModelViewSet[Platform]):
+class PlatformViewSet(ModelViewSet[Platform], DictionaryAllValuesMixin):
     """A ViewSet for the Platform model."""
 
     queryset = Platform.objects.all()
@@ -143,10 +138,11 @@ class PlatformViewSet(ModelViewSet[Platform]):
     permission_classes = (IsAdminOrReadOnly,)
     filterset_class = PlatformFilterSet
 
-    @action(detail=False, methods=("get",), url_path="all-values")
-    def all_values(self: Self, request: Request) -> Response:  # noqa: ARG002
-        """Return all values of the Publisher model."""
-        data = Platform.objects.all().order_by("name")
-        serializer = PlatformSerializer(data, many=True)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+class GameMediaViewSet(ModelViewSet[GameMedia], DictionaryAllValuesMixin):
+    """A ViewSet for the GameMedia model."""
+
+    queryset = GameMedia.objects.all()
+    serializer_class = GameMediaSerializer
+    permission_classes = (IsAdminOrReadOnly,)
+    filterset_class = GameMediaFilterSet

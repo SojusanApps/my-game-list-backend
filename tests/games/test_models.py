@@ -3,7 +3,7 @@
 import pytest
 from model_bakery import baker
 
-from my_game_list.games.models import Company, Game, GameFollow, GameList, GameReview, Genre, Platform
+from my_game_list.games.models import Company, Game, GameFollow, GameList, GameMedia, GameReview, Genre, Platform
 
 
 @pytest.mark.django_db()
@@ -49,3 +49,10 @@ def test_platform_dunder_str() -> None:
     """Test the `Platform` dunder str method."""
     platform = baker.make(Platform)
     assert str(platform) == platform.name
+
+
+@pytest.mark.django_db()
+def test_game_media_dunder_str() -> None:
+    """Test the `GameMedia` dunder str method."""
+    game_media = baker.make(GameMedia)
+    assert str(game_media) == game_media.name

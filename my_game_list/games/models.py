@@ -71,7 +71,7 @@ class GameFollow(BaseModel):
         """Meta data for the game follow model."""
 
         verbose_name = _("game follow")
-        verbose_name_plural = _("games followed")
+        verbose_name_plural = _("games follows")
         constraints: ClassVar[list[models.BaseConstraint]] = [
             models.UniqueConstraint(fields=("game", "user"), name="unique_game_user_in_game_follow"),
         ]
@@ -91,6 +91,16 @@ class GameListStatus(models.TextChoices):
     ON_HOLD = "OH", _("On hold")
 
 
+class GameMedia(BaseDictionaryModel):
+    """Data about media on which the game is owned."""
+
+    class Meta(BaseDictionaryModel.Meta):
+        """Meta data for the game owned on model."""
+
+        verbose_name = _("game media")
+        verbose_name_plural = _("game medias")
+
+
 class GameList(BaseModel):
     """A game list model. Contains the list of games for user."""
 
@@ -104,8 +114,9 @@ class GameList(BaseModel):
     created_at = models.DateTimeField(_("creation time"), auto_now_add=True)
     last_modified_at = models.DateTimeField(_("last modified"), auto_now=True)
 
-    game = models.ForeignKey("Game", on_delete=models.PROTECT, related_name="game_lists")
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="game_lists")
+    game = models.ForeignKey("Game", on_delete=models.CASCADE, related_name="game_lists")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="game_lists")
+    owned_on = models.ManyToManyField(GameMedia, related_name="game_lists")
 
     class Meta(BaseModel.Meta):
         """Meta data for game list model."""
@@ -185,14 +196,14 @@ class Game(BaseModel, IGDBModel):
 
     publisher = models.ForeignKey(
         Company,
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         related_name="games_published",
         blank=True,
         null=True,
     )
     developer = models.ForeignKey(
         Company,
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         related_name="games_developed",
         blank=True,
         null=True,

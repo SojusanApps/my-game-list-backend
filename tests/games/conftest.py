@@ -13,6 +13,7 @@ from my_game_list.games.models import (
     GameFollow,
     GameList,
     GameListStatus,
+    GameMedia,
     GameReview,
     Genre,
     Platform,
@@ -36,6 +37,12 @@ def developer_fixture() -> Company:
 def platform_fixture() -> Platform:
     """A fixture with a test platform."""
     return baker.make("games.Platform")
+
+
+@pytest.fixture()
+def game_media_fixture() -> GameMedia:
+    """A fixture with a test game media."""
+    return baker.make("games.GameMedia")
 
 
 @pytest.fixture()

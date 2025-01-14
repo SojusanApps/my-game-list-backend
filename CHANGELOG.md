@@ -2,6 +2,11 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.2.0] - 14.01.2025
+
+* Added `GameMedia` model in `game` app.
+* Added `owned_on` to `GameList` model.
+
 ## v. [4.1.3] - 05.12.2024
 
 * Added base class for IGDB models `IGDBModel`.

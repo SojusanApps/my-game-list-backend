@@ -8,6 +8,7 @@ from my_game_list.games.models import (
     GameFollow,
     GameList,
     GameListStatus,
+    GameMedia,
     GameReview,
     Genre,
     Platform,
@@ -136,3 +137,12 @@ class PlatformFilterSet(BaseDictionaryFilterSet):
         """Meta class for PlatformFilterSet."""
 
         model = Platform
+
+
+class GameMediaFilterSet(BaseDictionaryFilterSet):
+    """Filter set for game media model."""
+
+    class Meta(BaseDictionaryFilterSet.Meta):
+        """Meta class for GameMediaFilterSet."""
+
+        model = GameMedia
