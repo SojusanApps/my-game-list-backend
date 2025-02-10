@@ -1,17 +1,13 @@
 """Tests for friendship model."""
 
-from typing import TYPE_CHECKING
-
 import pytest
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 
 from my_game_list.friendships.models import Friendship
+from my_game_list.users.models import User as UserModel
 
-if TYPE_CHECKING:
-    from my_game_list.users.models import User as UserType
-
-User: type["UserType"] = get_user_model()
+User: type[UserModel] = get_user_model()
 
 
 @pytest.mark.django_db()
@@ -24,7 +20,7 @@ def test_friendship_dunder_str(user_and_admin_friendship_fixture: Friendship) ->
 
 
 @pytest.mark.django_db()
-def test_friendship_to_myself(user_fixture: "UserType") -> None:
+def test_friendship_to_myself(user_fixture: UserModel) -> None:
     """Test the self relationship is not possible."""
     with pytest.raises(ValidationError) as exception_info:
         Friendship.objects.create(user=user_fixture, friend=user_fixture)

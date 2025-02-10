@@ -1,7 +1,5 @@
 """This module contains tests for the friendship request serializers."""
 
-from typing import TYPE_CHECKING
-
 import pytest
 from django.contrib.auth import get_user_model
 from rest_framework.serializers import ValidationError
@@ -9,15 +7,13 @@ from rest_framework.serializers import ValidationError
 from my_game_list.friendships.models import Friendship, FriendshipRequest
 from my_game_list.friendships.serializers import FriendshipRequestCreateSerializer
 from my_game_list.my_game_list.exceptions import SerializerValidationDetailError
+from my_game_list.users.models import User as UserModel
 
-if TYPE_CHECKING:
-    from my_game_list.users.models import User as UserType
-
-User: type["UserType"] = get_user_model()
+User: type[UserModel] = get_user_model()
 
 
 @pytest.mark.django_db()
-def test_friendship_to_myself(user_fixture: "UserType") -> None:
+def test_friendship_to_myself(user_fixture: UserModel) -> None:
     """Check for creation a friendship to the same user."""
     serializer = FriendshipRequestCreateSerializer(data={"sender": user_fixture.pk, "receiver": user_fixture.pk})
 
@@ -35,8 +31,8 @@ def test_friendship_to_myself(user_fixture: "UserType") -> None:
 
 @pytest.mark.django_db()
 def test_users_are_already_friends(
-    user_fixture: "UserType",
-    admin_user_fixture: "UserType",
+    user_fixture: UserModel,
+    admin_user_fixture: UserModel,
     user_and_admin_friendship_fixture: Friendship,  # noqa: ARG001
 ) -> None:
     """Test that users cant create a duplicated relationship."""
@@ -56,8 +52,8 @@ def test_users_are_already_friends(
 
 @pytest.mark.django_db()
 def test_you_already_sent_friendship_request(
-    user_fixture: "UserType",
-    admin_user_fixture: "UserType",
+    user_fixture: UserModel,
+    admin_user_fixture: UserModel,
     user_and_admin_friendship_request_fixture: FriendshipRequest,  # noqa: ARG001
 ) -> None:
     """Test that user can't send a another friendship request to the same user."""
@@ -77,8 +73,8 @@ def test_you_already_sent_friendship_request(
 
 @pytest.mark.django_db()
 def test_user_already_sent_friendship_request(
-    user_fixture: "UserType",
-    admin_user_fixture: "UserType",
+    user_fixture: UserModel,
+    admin_user_fixture: UserModel,
     user_and_admin_friendship_request_fixture: FriendshipRequest,  # noqa: ARG001
 ) -> None:
     """Test that user can't send a another friendship request to the same user."""

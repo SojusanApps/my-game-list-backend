@@ -1,7 +1,7 @@
 """This module contains tests for the common functionality for the viewsets in the game application."""
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any
+from typing import Any
 from unittest.mock import ANY
 
 import pytest
@@ -19,11 +19,9 @@ from my_game_list.games.models import (
     Genre,
     Platform,
 )
+from my_game_list.users.models import User as UserModel
 
-if TYPE_CHECKING:
-    from my_game_list.users.models import User as UserType
-
-User: type["UserType"] = get_user_model()
+User: type[UserModel] = get_user_model()
 FORBIDDEN_DETAIL = "You do not have permission to perform this action."
 GAME_USER_DEPENDENT_LIST_VIEWNAMES = ["games:game-reviews-list", "games:game-lists-list", "games:game-follows-list"]
 GAME_USER_DEPENDENT_DETAIL_VIEWNAMES = [
@@ -601,7 +599,7 @@ def test_create_model(
     viewname: str,
     initial_data: dict[str, Any],
     expected_result: dict[str, Any],
-    admin_user_fixture: "UserType",
+    admin_user_fixture: UserModel,
     developer_fixture: Company,
     publisher_fixture: Company,
     genre_fixture: Genre,

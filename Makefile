@@ -7,6 +7,7 @@ help:
 	@echo "check - Check the correctness of code with black formatter and ruff."
 	@echo "translations - Prepare the translations for supported languages."
 	@echo "coverage - Prepare the coverage report in HTML format."
+	@echo "generate_openapi - Generate OpenAPI schema in JSON format."
 	@echo "test_db - Run a Docker container with test database."
 	@echo "app_db - Run a Docker container with app database."
 	@echo "test - Run all tests for the application."
@@ -31,6 +32,9 @@ check:
 
 coverage:
 	coverage html
+
+generate_openapi:
+	my-game-list-manage.py spectacular --format openapi-json --file openapi.json
 
 app_db:
 	docker run --name my-game-list-postgres -p 5432:5432 -e POSTGRES_DB=my_game_list -e POSTGRES_USER=my_game_list -e POSTGRES_PASSWORD=my_game_list -d postgres:15.3-alpine

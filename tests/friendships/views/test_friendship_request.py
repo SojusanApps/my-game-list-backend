@@ -1,7 +1,5 @@
 """This module contains the tests for the friendship request views."""
 
-from typing import TYPE_CHECKING
-
 import pytest
 from django.contrib.auth import get_user_model
 from freezegun import freeze_time
@@ -11,18 +9,16 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
 from my_game_list.friendships.models import Friendship, FriendshipRequest
+from my_game_list.users.models import User as UserModel
 
-if TYPE_CHECKING:
-    from my_game_list.users.models import User as UserType
-
-User: type["UserType"] = get_user_model()
+User: type[UserModel] = get_user_model()
 
 
 @freeze_time("2023-06-22 22:20:01")
 @pytest.mark.django_db()
 def test_create_model(
-    user_fixture: "UserType",
-    admin_user_fixture: "UserType",
+    user_fixture: UserModel,
+    admin_user_fixture: UserModel,
     admin_authenticated_api_client: APIClient,
 ) -> None:
     """Check if creation of the new friendship request model is working properly."""

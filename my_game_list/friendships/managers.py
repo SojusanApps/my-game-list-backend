@@ -6,11 +6,12 @@ from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.db.models import Manager
 
+from my_game_list.users.models import User as UserModel
+
 if TYPE_CHECKING:
     from my_game_list.friendships.models import Friendship, FriendshipRequest
-    from my_game_list.users.models import User as UserType
 
-User: type["UserType"] = get_user_model()
+User: type[UserModel] = get_user_model()
 
 
 class FriendshipManager(Manager["Friendship"]):
@@ -26,7 +27,7 @@ class FriendshipManager(Manager["Friendship"]):
         """Returns FriendshipRequest model to omit circular import error."""
         return apps.get_model("friendships.FriendshipRequest")
 
-    def are_friends(self: Self, first_user: "UserType", second_user: "UserType") -> bool:
+    def are_friends(self: Self, first_user: UserModel, second_user: UserModel) -> bool:
         """Check if the given users are friends.
 
         Args:
@@ -39,7 +40,7 @@ class FriendshipManager(Manager["Friendship"]):
         friendship = self._get_friendship_model()
         return friendship.objects.filter(user=first_user, friend=second_user).exists()
 
-    def request_is_sent(self: Self, first_user: "UserType", second_user: "UserType") -> bool:
+    def request_is_sent(self: Self, first_user: UserModel, second_user: UserModel) -> bool:
         """Check if the friendship request is sent to the user by a given user.
 
         Args:

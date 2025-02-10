@@ -1,7 +1,6 @@
 """Tests for user app views."""
 
 from collections.abc import Sequence
-from typing import TYPE_CHECKING
 from unittest.mock import ANY
 
 import pytest
@@ -11,11 +10,9 @@ from rest_framework.reverse import reverse
 from rest_framework.test import APIClient
 
 from my_game_list.users.models import Gender
+from my_game_list.users.models import User as UserModel
 
-if TYPE_CHECKING:
-    from my_game_list.users.models import User as UserType
-
-User: type["UserType"] = get_user_model()
+User: type[UserModel] = get_user_model()
 
 
 @pytest.mark.parametrize(
@@ -43,7 +40,7 @@ def test_unauthorized_access(viewname: str, args: Sequence[int], api_client: API
 
 
 @pytest.mark.django_db()
-def test_list_users(authenticated_api_client: APIClient, admin_user_fixture: "UserType") -> None:  # noqa: ARG001
+def test_list_users(authenticated_api_client: APIClient, admin_user_fixture: UserModel) -> None:  # noqa: ARG001
     """Check that authorized user can access the list of users."""
     response = authenticated_api_client.get(reverse("users:users-list"))
     users_ids = User.objects.all().values_list("id", flat=True)
@@ -89,6 +86,7 @@ def test_get_user(authenticated_api_client: APIClient) -> None:
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == {
         "id": user.pk,
+        "email": "test@email.com",
         "username": "test_user",
         "gender": Gender.PREFER_NOT_TO_SAY.label,
         "last_login": None,

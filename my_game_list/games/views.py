@@ -2,11 +2,9 @@
 
 from typing import Self
 
+from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
-from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.request import Request
-from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from my_game_list.games.filters import (
@@ -38,7 +36,8 @@ from my_game_list.games.serializers import (
 from my_game_list.my_game_list.permissions import IsAdminOrReadOnly
 
 
-class CompanyViewSet(ModelViewSet[Company]):
+@extend_schema_view(all_values=extend_schema(responses={status.HTTP_200_OK: CompanySimpleNameSerializer(many=True)}))
+class CompanyViewSet(ModelViewSet[Company], DictionaryAllValuesMixin):
     """A ViewSet for the Company model."""
 
     queryset = Company.objects.all()
@@ -46,13 +45,9 @@ class CompanyViewSet(ModelViewSet[Company]):
     permission_classes = (IsAdminOrReadOnly,)
     filterset_class = CompanyFilterSet
 
-    @action(detail=False, methods=("get",), url_path="all-values")
-    def all_values(self: Self, request: Request) -> Response:  # noqa: ARG002
-        """Return all values of the Company model."""
-        data = Company.objects.all().order_by("name")
-        serializer = CompanySimpleNameSerializer(data, many=True)
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def get_serializer_class(self: Self) -> type[CompanySerializer] | type[CompanySimpleNameSerializer]:
+        """Get the serializer class for the Company model."""
+        return CompanySimpleNameSerializer if self.action == "all_values" else CompanySerializer
 
 
 class GameFollowViewSet(ModelViewSet[GameFollow]):
@@ -121,6 +116,7 @@ class GameViewSet(ModelViewSet[Game]):
         return GameCreateSerializer if self.action in ["create", "update", "partial_update"] else GameSerializer
 
 
+@extend_schema_view(all_values=extend_schema(responses={status.HTTP_200_OK: GenreSerializer(many=True)}))
 class GenreViewSet(ModelViewSet[Genre], DictionaryAllValuesMixin):
     """A ViewSet for the Genre model."""
 
@@ -130,6 +126,7 @@ class GenreViewSet(ModelViewSet[Genre], DictionaryAllValuesMixin):
     filterset_class = GenreFilterSet
 
 
+@extend_schema_view(all_values=extend_schema(responses={status.HTTP_200_OK: PlatformSerializer(many=True)}))
 class PlatformViewSet(ModelViewSet[Platform], DictionaryAllValuesMixin):
     """A ViewSet for the Platform model."""
 
@@ -139,6 +136,7 @@ class PlatformViewSet(ModelViewSet[Platform], DictionaryAllValuesMixin):
     filterset_class = PlatformFilterSet
 
 
+@extend_schema_view(all_values=extend_schema(responses={status.HTTP_200_OK: GameMediaSerializer(many=True)}))
 class GameMediaViewSet(ModelViewSet[GameMedia], DictionaryAllValuesMixin):
     """A ViewSet for the GameMedia model."""
 

@@ -2,10 +2,16 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.2.1] - 10.02.2025
+
+* Added a new make command (`generate_openapi`) to generate the `openapi.json` file.
+* Fixed the openapi schema using the `drf-spectacular`.
+* Changed the `ApiVersion` to return a structured output instead of raw string.
+
 ## v. [4.2.0] - 14.01.2025
 
 * Added `GameMedia` model in `game` app.
-* Added `owned_on` to `GameList` model.
+* Added `owned_on` to `GameList` model.1
 
 ## v. [4.1.3] - 05.12.2024
 

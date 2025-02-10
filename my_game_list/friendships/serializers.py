@@ -1,18 +1,16 @@
 """This module contains serializers for the friendship related data."""
 
-from typing import TYPE_CHECKING, ClassVar, Self, TypedDict
+from typing import ClassVar, Self, TypedDict
 
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from rest_framework.serializers import ModelSerializer, SlugRelatedField, ValidationError
 
 from my_game_list.friendships.models import Friendship, FriendshipRequest
+from my_game_list.users.models import User as UserModel
 from my_game_list.users.serializers import UserSerializer
 
-if TYPE_CHECKING:
-    from my_game_list.users.models import User as UserType
-
-User: type["UserType"] = get_user_model()
+User: type[UserModel] = get_user_model()
 
 
 class FriendshipSerializer(ModelSerializer[Friendship]):
@@ -55,8 +53,8 @@ class FriendshipRequestCreateSerializerDataType(TypedDict):
     """TypedDict representing the data structure for FriendshipRequestCreateSerializer."""
 
     message: str
-    sender: "UserType"
-    receiver: "UserType"
+    sender: UserModel
+    receiver: UserModel
 
 
 class FriendshipRequestCreateSerializer(ModelSerializer[FriendshipRequest]):
