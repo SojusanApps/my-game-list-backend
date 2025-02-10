@@ -1,23 +1,19 @@
 """Includes global scope fixtures. They can be used in all tests."""
 
-from typing import TYPE_CHECKING
-
 import pytest
 from django.contrib.auth import get_user_model
 from freezegun import freeze_time
 from model_bakery import baker
 from rest_framework.test import APIClient
 
-if TYPE_CHECKING:
-    from my_game_list.users.models import User as UserType
+from my_game_list.users.models import User as UserModel
 
-
-User: type["UserType"] = get_user_model()
+User: type[UserModel] = get_user_model()
 
 
 @pytest.fixture()
 @freeze_time("2023-05-25 12:01:12")
-def user_fixture() -> "UserType":
+def user_fixture() -> UserModel:
     """Create a new user.
 
     Fixture creating and returning a user model instance with user name "test_user" and password "test".
@@ -30,7 +26,7 @@ def user_fixture() -> "UserType":
 
 @pytest.fixture()
 @freeze_time("2023-05-25 14:21:13")
-def admin_user_fixture() -> "UserType":
+def admin_user_fixture() -> UserModel:
     """Create a new admin.
 
     Fixture creating and returning a user model instance with superuser privileges,
@@ -56,7 +52,7 @@ def api_client() -> APIClient:
 
 
 @pytest.fixture()
-def authenticated_api_client(user_fixture: "UserType", api_client: APIClient) -> APIClient:
+def authenticated_api_client(user_fixture: UserModel, api_client: APIClient) -> APIClient:
     """Fixture providing the API client that is authorized as a simple user."""
     api_client.force_authenticate(user_fixture)
 
@@ -64,7 +60,7 @@ def authenticated_api_client(user_fixture: "UserType", api_client: APIClient) ->
 
 
 @pytest.fixture()
-def admin_authenticated_api_client(admin_user_fixture: "UserType", api_client: APIClient) -> APIClient:
+def admin_authenticated_api_client(admin_user_fixture: UserModel, api_client: APIClient) -> APIClient:
     """Fixture providing the API client that is authorized as a admin user."""
     api_client.force_authenticate(admin_user_fixture)
 

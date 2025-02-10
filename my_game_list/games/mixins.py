@@ -15,7 +15,7 @@ from rest_framework.response import Response
 class DictionaryAllValuesMixin:
     """A mixin for ViewSets that allows to get all values of the model."""
 
-    @action(detail=False, methods=("get",), url_path="all-values")
+    @action(detail=False, methods=("get",), url_path="all-values", pagination_class=None)
     def all_values(self: Self, request: Request) -> Response:  # noqa: ARG002
         """Return all values of the Publisher model."""
         data = self.get_queryset().order_by("name")  # type: ignore[attr-defined]

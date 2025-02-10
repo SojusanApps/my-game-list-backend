@@ -1,23 +1,23 @@
 """This module contains the serializers for user related data."""
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, ClassVar, Self
+from typing import Any, ClassVar, Self
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password as django_validate_password
 from django.db.models import Avg
+from drf_spectacular.helpers import lazy_serializer
+from drf_spectacular.utils import extend_schema_field, inline_serializer
 from rest_framework import serializers
 from rest_framework.utils.serializer_helpers import ReturnDict
 
 from my_game_list.games.models import GameListStatus
+from my_game_list.users.models import User as UserModel
 
-if TYPE_CHECKING:
-    from my_game_list.users.models import User as UserType
-
-User: type["UserType"] = get_user_model()
+User: type[UserModel] = get_user_model()
 
 
-class UserCreateSerializer(serializers.ModelSerializer["UserType"]):
+class UserCreateSerializer(serializers.ModelSerializer[UserModel]):
     """Serializer used during the user registration process."""
 
     class Meta:
@@ -32,7 +32,7 @@ class UserCreateSerializer(serializers.ModelSerializer["UserType"]):
         django_validate_password(value)
         return value
 
-    def create(self: Self, validated_data: Mapping[str, Any]) -> "UserType":
+    def create(self: Self, validated_data: Mapping[str, Any]) -> UserModel:
         """Create a new User instance."""
         user = User(
             username=validated_data["username"],
@@ -43,7 +43,7 @@ class UserCreateSerializer(serializers.ModelSerializer["UserType"]):
         return user
 
 
-class UserSimpleSerializer(serializers.ModelSerializer["UserType"]):
+class UserSimpleSerializer(serializers.ModelSerializer[UserModel]):
     """Simple user serializer with only avatar and url to the details."""
 
     class Meta:
@@ -53,7 +53,7 @@ class UserSimpleSerializer(serializers.ModelSerializer["UserType"]):
         fields = ("id", "gravatar_url")
 
 
-class UserSerializer(serializers.ModelSerializer["UserType"]):
+class UserSerializer(serializers.ModelSerializer[UserModel]):
     """Serializer for listing the user model."""
 
     gender = serializers.CharField(source="get_gender_display", read_only=True)
@@ -75,7 +75,7 @@ class UserSerializer(serializers.ModelSerializer["UserType"]):
         read_only_fields = ("id", "gravatar_url", "last_login", "date_joined")
 
 
-class UserDetailSerializer(serializers.ModelSerializer["UserType"]):
+class UserDetailSerializer(serializers.ModelSerializer[UserModel]):
     """Detailed serializer for User model."""
 
     gender = serializers.CharField(source="get_gender_display", read_only=True)
@@ -90,6 +90,7 @@ class UserDetailSerializer(serializers.ModelSerializer["UserType"]):
         fields = (
             "id",
             "username",
+            "email",
             "gender",
             "last_login",
             "date_joined",
@@ -99,7 +100,21 @@ class UserDetailSerializer(serializers.ModelSerializer["UserType"]):
             "latest_game_list_updates",
         )
 
-    def get_game_list_statistics(self: Self, instance: "UserType") -> dict[str, int]:
+    @extend_schema_field(
+        inline_serializer(
+            name="GameListStatisticsSerializer",
+            fields={
+                "completed": serializers.IntegerField(),
+                "dropped": serializers.IntegerField(),
+                "plan_to_play": serializers.IntegerField(),
+                "on_hold": serializers.IntegerField(),
+                "playing": serializers.IntegerField(),
+                "total": serializers.IntegerField(),
+                "mean_score": serializers.FloatField(),
+            },
+        ),
+    )
+    def get_game_list_statistics(self: Self, instance: UserModel) -> dict[str, int | float]:
         """Get the game list statistics for the user."""
         return {
             "completed": instance.game_lists.filter(status=GameListStatus.COMPLETED).count(),
@@ -111,13 +126,17 @@ class UserDetailSerializer(serializers.ModelSerializer["UserType"]):
             "mean_score": instance.game_lists.aggregate(mean_score=Avg("score"))["mean_score"],
         }
 
-    def get_friends(self: Self, instance: "UserType") -> ReturnDict[Any, Any]:
-        """Get the list of friends for the user."""
+    @extend_schema_field(UserSimpleSerializer(many=True))
+    def get_friends(self: Self, instance: UserModel) -> ReturnDict[Any, Any]:
+        """Get the list of friends for the user limited to 5 friends."""
         friendships = instance.friends.all()[:5]
         friends = [friendship.friend for friendship in friendships]
         return UserSimpleSerializer(friends, many=True, context=self.context).data
 
-    def get_latest_game_list_updates(self: Self, instance: "UserType") -> ReturnDict[Any, Any]:
+    @extend_schema_field(
+        lazy_serializer("my_game_list.games.serializers.GameListSerializer")(many=True),
+    )
+    def get_latest_game_list_updates(self: Self, instance: UserModel) -> ReturnDict[Any, Any]:
         """Get the latest game list updates for the user."""
         from my_game_list.games.serializers import GameListSerializer
 
