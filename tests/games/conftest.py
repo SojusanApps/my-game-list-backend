@@ -21,41 +21,41 @@ from my_game_list.users.models import User as UserModel
 User: type[UserModel] = get_user_model()
 
 
-@pytest.fixture()
+@pytest.fixture
 @freeze_time("2023-06-22 16:47:12")
 def developer_fixture() -> Company:
     """A fixture with a test developer."""
     return baker.make("games.Company")
 
 
-@pytest.fixture()
+@pytest.fixture
 @freeze_time("2023-06-22 16:47:12")
 def platform_fixture() -> Platform:
     """A fixture with a test platform."""
     return baker.make("games.Platform")
 
 
-@pytest.fixture()
+@pytest.fixture
 def game_media_fixture() -> GameMedia:
     """A fixture with a test game media."""
     return baker.make("games.GameMedia")
 
 
-@pytest.fixture()
+@pytest.fixture
 @freeze_time("2023-06-22 16:47:12")
 def publisher_fixture() -> Company:
     """A fixture with a test publisher."""
     return baker.make("games.Company")
 
 
-@pytest.fixture()
+@pytest.fixture
 @freeze_time("2023-06-22 16:47:12")
 def genre_fixture() -> Genre:
     """A fixture with a test genre."""
     return baker.make("games.Genre")
 
 
-@pytest.fixture()
+@pytest.fixture
 @freeze_time("2023-06-22 16:47:12")
 def game_fixture(
     developer_fixture: Company,
@@ -70,7 +70,7 @@ def game_fixture(
     return game
 
 
-@pytest.fixture()
+@pytest.fixture
 @freeze_time("2023-06-22 16:47:12")
 def game_review_fixture(user_fixture: UserModel, game_fixture: Game) -> GameReview:
     """A fixture with a test game review."""
@@ -81,7 +81,7 @@ def game_review_fixture(user_fixture: UserModel, game_fixture: Game) -> GameRevi
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 @freeze_time("2023-06-22 16:47:12")
 def game_list_fixture(user_fixture: UserModel, game_fixture: Game) -> GameList:
     """A fixture with a test game list."""
@@ -93,7 +93,7 @@ def game_list_fixture(user_fixture: UserModel, game_fixture: Game) -> GameList:
     )
 
 
-@pytest.fixture()
+@pytest.fixture
 @freeze_time("2023-06-22 16:47:12")
 def game_follow_fixture(user_fixture: UserModel, game_fixture: Game) -> GameFollow:
     """A fixture with a test game follow."""
