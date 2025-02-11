@@ -2,6 +2,11 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.2.2] - 11.02.2025
+
+* Updated dependencies in requirements.
+* Added missing migration
+
 ## v. [4.2.1] - 10.02.2025
 
 * Added a new make command (`generate_openapi`) to generate the `openapi.json` file.

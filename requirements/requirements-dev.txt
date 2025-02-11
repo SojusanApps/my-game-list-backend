@@ -1,4 +1,4 @@
 -r requirements-cov.txt
 -r requirements-tox.txt
-ipython==8.27.0
-pre-commit==3.8.0
+ipython==8.32.0
+pre-commit==4.1.0

@@ -1,6 +1,7 @@
 """This module contains the model for the friendship related data."""
 
-from typing import ClassVar, Iterable, Self
+from collections.abc import Iterable
+from typing import ClassVar, Self
 
 from django.conf import settings
 from django.core.exceptions import ValidationError

@@ -1,15 +1,15 @@
 # Django
-django==5.1.1
+django==5.1.6
 djangorestframework==3.15.2
 django-filter==24.3
 django-extensions==3.2.3
 django-redis==5.4.0
-django-cors-headers==4.4.0
-django-rosetta==0.10.0
+django-cors-headers==4.7.0
+django-rosetta==0.10.1
 
 # Authentication
-djangorestframework-simplejwt==5.2.2
-PyJWT==2.8.0
+djangorestframework-simplejwt==5.4.0
+PyJWT==2.10.1
 
 # Celery
 celery==5.4.0
@@ -18,31 +18,31 @@ django-celery-beat==2.7.0
 
 # Others
 gunicorn==23.0.0
-psycopg2-binary==2.9.9
-model-bakery==1.19.5
-redis==5.0.8
-colorlog==6.8.2
+psycopg2-binary==2.9.10
+model-bakery==1.20.1
+redis==5.2.1
+colorlog==6.9.0
 drf-spectacular==0.28.0
-pillow==10.4.0
+pillow==11.1.0
 docker==7.1.0
 django_prometheus==2.3.1
 pip-prometheus==1.2.1
-prometheus-client==0.20.0
-psutil==6.0.0
+prometheus-client==0.21.1
+psutil==6.1.1
 PyYAML==6.0.2
-setuptools==74.1.2
-requests-futures==1.0.1
+setuptools==75.8.0
+requests-futures==1.0.2
 
 # Type hints
-mypy==1.11.2
-django-stubs==5.0.0
-django-stubs-ext==5.0.0
-djangorestframework-stubs==3.15.0
-types-setuptools==74.0.0.20240831
-types-psycopg2==2.9.21.20240819
-types-requests==2.32.0.20240905
-types-docker==7.1.0.20240827
-types-psutil==6.0.0.20240901
-types-redis==4.6.0.20240903
+mypy==1.15.0
+django-stubs==5.1.3
+django-stubs-ext==5.1.3
+djangorestframework-stubs==3.15.2
+types-setuptools==75.8.0.20250210
+types-psycopg2==2.9.21.20250121
+types-requests==2.32.0.20241016
+types-docker==7.1.0.20241229
+types-psutil==6.1.0.20241221
+types-redis==4.6.0.20241004
 django_memcached_consul==0.2.0
 django-filter-stubs==0.1.3
