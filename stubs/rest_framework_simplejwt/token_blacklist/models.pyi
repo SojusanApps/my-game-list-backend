@@ -10,6 +10,8 @@ class OutstandingToken(models.Model):
     expires_at: Incomplete
 
     class Meta:
+        verbose_name: Incomplete
+        verbose_name_plural: Incomplete
         abstract: Incomplete
         ordering: Incomplete
 
@@ -19,4 +21,6 @@ class BlacklistedToken(models.Model):
     blacklisted_at: Incomplete
 
     class Meta:
+        verbose_name: Incomplete
+        verbose_name_plural: Incomplete
         abstract: Incomplete

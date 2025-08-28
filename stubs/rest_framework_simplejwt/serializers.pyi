@@ -1,52 +1,66 @@
+from typing import Any, ClassVar, Generic, TypeVar
+
+from django.contrib.auth.models import AbstractBaseUser
+from django.utils.functional import _StrPromise
+from rest_framework import serializers
+
+from .models import TokenUser as TokenUser
 from .settings import api_settings as api_settings
 from .token_blacklist.models import BlacklistedToken as BlacklistedToken
-from .tokens import RefreshToken as RefreshToken, SlidingToken as SlidingToken, UntypedToken as UntypedToken
-from _typeshed import Incomplete
-from typing import Mapping, TypeVar
-from rest_framework import serializers
-from django.contrib.auth.models import AbstractBaseUser
-from .models import TokenUser
-from .tokens import Token
+from .tokens import (
+    RefreshToken as RefreshToken,
+    SlidingToken as SlidingToken,
+    Token as Token,
+    UntypedToken as UntypedToken,
+)
 
 AuthUser = TypeVar("AuthUser", AbstractBaseUser, TokenUser)
 
 class PasswordField(serializers.CharField):
-    def __init__(self, *args: Incomplete, **kwargs: Incomplete) -> None: ...
+    def __init__(self, *args: Any, **kwargs: Any) -> None: ...
 
-class TokenObtainSerializer(serializers.Serializer[Incomplete]):
-    username_field: Incomplete
-    token_class: Incomplete
-    default_error_messages: Incomplete  # type: ignore[misc]
-    def __init__(self, *args: Incomplete, **kwargs: Incomplete) -> None: ...
-    user: Incomplete
-    def validate(self, attrs: Mapping[str, Incomplete]) -> dict[Incomplete, Incomplete]: ...
+class TokenObtainSerializer(serializers.Serializer[dict[str, str]], Generic[AuthUser]):
+    username_field: str
+    token_class: type[Token] | None
+    default_error_messages: ClassVar[dict[str, str | _StrPromise]]
+    user: AuthUser | None
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None: ...
+    def validate(self, attrs: dict[str, Any]) -> dict[str, str]: ...
     @classmethod
     def get_token(cls, user: AuthUser) -> Token: ...
 
-class TokenObtainPairSerializer(TokenObtainSerializer):
-    token_class = RefreshToken
-    def validate(self, attrs: Mapping[str, Incomplete]) -> dict[str, str]: ...
+class TokenObtainPairSerializer(TokenObtainSerializer[AuthUser]):
+    token_class: type[RefreshToken]
 
-class TokenObtainSlidingSerializer(TokenObtainSerializer):
-    token_class = SlidingToken
-    def validate(self, attrs: Mapping[str, Incomplete]) -> dict[str, str]: ...
+    def validate(self, attrs: dict[str, Any]) -> dict[str, str]: ...
 
-class TokenRefreshSerializer(serializers.Serializer[Incomplete]):
-    refresh: Incomplete
-    access: Incomplete
-    token_class = RefreshToken
-    def validate(self, attrs: Incomplete) -> Incomplete: ...
+class TokenObtainSlidingSerializer(TokenObtainSerializer[AuthUser]):
+    token_class: type[SlidingToken]
 
-class TokenRefreshSlidingSerializer(serializers.Serializer[Incomplete]):
-    token: Incomplete
-    token_class = SlidingToken
-    def validate(self, attrs: Incomplete) -> Incomplete: ...
+    def validate(self, attrs: dict[str, Any]) -> dict[str, str]: ...
 
-class TokenVerifySerializer(serializers.Serializer[Incomplete]):
-    token: Incomplete
-    def validate(self, attrs: Incomplete) -> Incomplete: ...
+class TokenRefreshSerializer(serializers.Serializer[dict[str, str]], Generic[AuthUser]):
+    refresh: str
+    access: str
+    token_class: type[RefreshToken]
+    default_error_messages: ClassVar[dict[str, str | _StrPromise]]
 
-class TokenBlacklistSerializer(serializers.Serializer[Incomplete]):
-    refresh: Incomplete
-    token_class = RefreshToken
-    def validate(self, attrs: Incomplete) -> Incomplete: ...
+    def validate(self, attrs: dict[str, Any]) -> dict[str, str]: ...
+
+class TokenRefreshSlidingSerializer(serializers.Serializer[dict[str, str]]):
+    token: str
+    token_class: type[SlidingToken]
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, str]: ...
+
+class TokenVerifySerializer(serializers.Serializer[dict[str, Any]]):
+    token: str
+
+    def validate(self, attrs: dict[str, str]) -> dict[str, Any]: ...
+
+class TokenBlacklistSerializer(serializers.Serializer[dict[str, Any]]):
+    refresh: str
+    token_class: type[RefreshToken]
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]: ...

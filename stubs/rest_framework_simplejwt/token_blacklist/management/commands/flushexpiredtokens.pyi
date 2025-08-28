@@ -1,8 +1,11 @@
-from ...models import OutstandingToken as OutstandingToken
+from typing import Any
+
 from django.core.management.base import BaseCommand
-from rest_framework_simplejwt.utils import aware_utcnow as aware_utcnow
-from _typeshed import Incomplete
+
+from ...models import OutstandingToken as OutstandingToken
+from ...utils import aware_utcnow as aware_utcnow
 
 class Command(BaseCommand):
     help: str
-    def handle(self, *args: Incomplete, **kwargs: Incomplete) -> None: ...
+
+    def handle(self, *args: Any, **kwargs: Any) -> None: ...

@@ -138,7 +138,8 @@ class UserDetailSerializer(serializers.ModelSerializer[UserModel]):
     )
     def get_latest_game_list_updates(self: Self, instance: UserModel) -> ReturnDict[Any, Any]:
         """Get the latest game list updates for the user."""
-        from my_game_list.games.serializers import GameListSerializer
+        # Import needed at method level to avoid circular import
+        from my_game_list.games.serializers import GameListSerializer  # noqa: PLC0415
 
         return GameListSerializer(
             instance.game_lists.all().order_by("last_modified_at")[:5],

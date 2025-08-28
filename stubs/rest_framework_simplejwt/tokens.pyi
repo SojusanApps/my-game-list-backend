@@ -1,4 +1,11 @@
-from .exceptions import TokenBackendError as TokenBackendError, TokenError as TokenError
+from .backends import TokenBackend as TokenBackend
+from .exceptions import (
+    ExpiredTokenError as ExpiredTokenError,
+    TokenBackendError as TokenBackendError,
+    TokenBackendExpiredToken as TokenBackendExpiredToken,
+    TokenError as TokenError,
+)
+from .models import TokenUser as TokenUser
 from .settings import api_settings as api_settings
 from .token_blacklist.models import BlacklistedToken as BlacklistedToken, OutstandingToken as OutstandingToken
 from .utils import (
@@ -6,67 +13,78 @@ from .utils import (
     datetime_from_epoch as datetime_from_epoch,
     datetime_to_epoch as datetime_to_epoch,
     format_lazy as format_lazy,
+    get_md5_hash_password as get_md5_hash_password,
+    logger as logger,
 )
-from .backends import TokenBackend
-from .models import TokenUser
-from typing import TypeVar
-from django.contrib.auth.models import AbstractBaseUser
-from datetime import datetime, timedelta
 from _typeshed import Incomplete
+from datetime import datetime, timedelta
+from django.contrib.auth.models import AbstractBaseUser
+from typing import Any, ClassVar, Generic, TypeVar
 
+T = TypeVar("T", bound="Token")
 AuthUser = TypeVar("AuthUser", AbstractBaseUser, TokenUser)
 
 class Token:
     token_type: str | None
     lifetime: timedelta | None
-    token: Token | None
+    token: bytes | None
     current_time: datetime
-    payload: Incomplete
-    def __init__(self, token: Incomplete | None = ..., verify: bool = ...) -> None: ...
-    def __getitem__(self, key: str) -> Incomplete: ...
-    def __setitem__(self, key: str, value: Incomplete) -> None: ...
+    payload: dict[str, Any]
+
+    def __init__(self, token: str | bytes | None = None, verify: bool = True) -> None: ...
+    def __getitem__(self, key: str) -> Any: ...
+    def __setitem__(self, key: str, value: Any) -> None: ...
     def __delitem__(self, key: str) -> None: ...
     def __contains__(self, key: str) -> bool: ...
-    def get(self, key: str, default: Incomplete | None = ...) -> Incomplete: ...
+    def get(self, key: str, default: Any | None = None) -> Any: ...
     def verify(self) -> None: ...
     def verify_token_type(self) -> None: ...
     def set_jti(self) -> None: ...
     def set_exp(
-        self, claim: str = ..., from_time: Incomplete | None = ..., lifetime: Incomplete | None = ...
+        self,
+        claim: str = "exp",
+        from_time: datetime | None = None,
+        lifetime: timedelta | None = None,
     ) -> None: ...
-    def set_iat(self, claim: str = ..., at_time: Incomplete | None = ...) -> None: ...
-    def check_exp(self, claim: str = ..., current_time: Incomplete | None = ...) -> None: ...
+    def set_iat(self, claim: str = "iat", at_time: datetime | None = None) -> None: ...
+    def check_exp(self, claim: str = "exp", current_time: datetime | None = None) -> None: ...
+    def outstand(self) -> OutstandingToken | None: ...
     @classmethod
-    def for_user(cls, user: AuthUser) -> Token: ...
+    def for_user(cls: type[T], user: AuthUser) -> T: ...
     @property
     def token_backend(self) -> TokenBackend: ...
     def get_token_backend(self) -> TokenBackend: ...
 
-class BlacklistMixin:
+class BlacklistMixin(Generic[T]):
+    payload: dict[str, Any]
+
     def verify(self, *args: Incomplete, **kwargs: Incomplete) -> None: ...
     def check_blacklist(self) -> None: ...
     def blacklist(self) -> BlacklistedToken: ...
-    @classmethod
-    def for_user(cls, user: AuthUser) -> Token: ...
+    def outstand(self) -> OutstandingToken | None: ...
+    def for_user(self, user: AuthUser) -> T: ...
 
-class SlidingToken(BlacklistMixin, Token):
-    token_type = "sliding"
+class SlidingToken(BlacklistMixin["SlidingToken"], Token):
+    token_type: str
     lifetime: timedelta
+
     def __init__(self, *args: Incomplete, **kwargs: Incomplete) -> None: ...
 
 class AccessToken(Token):
-    token_type = "access"
+    token_type: str
     lifetime: timedelta
 
-class RefreshToken(BlacklistMixin, Token):
-    token_type = "refresh"
+class RefreshToken(BlacklistMixin["RefreshToken"], Token):
+    token_type: str
     lifetime: timedelta
-    no_copy_claims: tuple[str, str, str, str]
-    access_token_class = AccessToken
+    no_copy_claims: ClassVar[tuple[str, ...]]
+    access_token_class: type[AccessToken]
+
     @property
     def access_token(self) -> AccessToken: ...
 
 class UntypedToken(Token):
-    token_type = "untyped"
+    token_type: str
     lifetime: timedelta
+
     def verify_token_type(self) -> None: ...

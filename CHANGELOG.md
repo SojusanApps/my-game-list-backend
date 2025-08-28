@@ -2,10 +2,17 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.2.3] - 28.08.2025
+
+* Updated dependencies in requirements.
+* Adjust code typing to fix mypy issues.
+* Updated SonarQube Github action scanner.
+* Updated the prometheus metrics endpoint to accept only GET request.
+
 ## v. [4.2.2] - 11.02.2025
 
 * Updated dependencies in requirements.
-* Added missing migration
+* Added missing migration.
 
 ## v. [4.2.1] - 10.02.2025
 

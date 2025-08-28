@@ -92,7 +92,7 @@ def _build_docker_image(path: str, tag: str) -> None:
     else:
         for build_line in image_build_logs:
             if isinstance(build_line, dict) and DOCKER_LOGS_STREAM_VALUE in build_line:
-                stream = cast(str, build_line[DOCKER_LOGS_STREAM_VALUE])
+                stream = cast("str", build_line[DOCKER_LOGS_STREAM_VALUE])
                 print_text(stream.strip())
         print_info(f"Docker image was build: {image}")
 
