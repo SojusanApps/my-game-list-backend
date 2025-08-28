@@ -31,4 +31,4 @@ repos:
         always_run: true
         require_serial: true
         stages:
-          - push
+          - pre-push

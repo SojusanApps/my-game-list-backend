@@ -6,6 +6,7 @@
 
 * Updated dependencies in requirements.
 * Adjust code typing to fix mypy issues.
+* Updated SonarQube Github action scanner.
 
 ## v. [4.2.2] - 11.02.2025
 
