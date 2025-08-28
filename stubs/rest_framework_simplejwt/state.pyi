@@ -1,5 +1,3 @@
-from .backends import TokenBackend as TokenBackend
-from .settings import api_settings as api_settings
-from _typeshed import Incomplete
+from .backends import TokenBackend
 
-token_backend: Incomplete
+token_backend: TokenBackend

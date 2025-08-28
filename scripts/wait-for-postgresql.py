@@ -42,7 +42,7 @@ def wait_for_database_connection() -> None:
     Wait for PostgreSQL database connection to be established. The timeout is specified in
     the environment variable POSTGRES_CONNECTION_TIMEOUT.
     """
-    timeout = float(os.environ.get("POSTGRES_CONNECTION_TIMEOUT", 10))
+    timeout = float(os.environ.get("POSTGRES_CONNECTION_TIMEOUT", "10"))
 
     i = 0
     interval = 1

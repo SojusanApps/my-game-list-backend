@@ -1,4 +1,4 @@
-# ruff: noqa
+# ruff: noqa: F403, F405, S108
 """This a configuration of the Django application for test runner."""
 import os
 
@@ -15,7 +15,7 @@ DATABASES = {
         "PASSWORD": oeg("POSTGRES_PASSWORD", "pytest_postgresql"),
         "HOST": oeg("POSTGRES_HOST", "localhost"),
         "PORT": oeg("POSTGRES_PORT", "9999"),
-    }
+    },
 }
 
 REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"] = (
