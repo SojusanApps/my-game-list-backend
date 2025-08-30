@@ -12,6 +12,10 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name="gamefollow",
-            options={"ordering": ("id",), "verbose_name": "game follow", "verbose_name_plural": "games follows"},
+            options={
+                "ordering": ("id",),
+                "verbose_name": "game follow",
+                "verbose_name_plural": "games follows",
+            },
         ),
     ]

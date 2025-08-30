@@ -8,7 +8,10 @@ from django_prometheus.cache.metrics import (
 
 class MemcachedPrometheusCacheMixin:
     def get(
-        self, key: Incomplete, default: Incomplete | None = ..., version: Incomplete | None = ...
+        self,
+        key: Incomplete,
+        default: Incomplete | None = ...,
+        version: Incomplete | None = ...,
     ) -> Incomplete: ...
 
 class PyLibMCCache(MemcachedPrometheusCacheMixin, memcached.PyLibMCCache): ...

@@ -2,7 +2,16 @@
 
 from django.contrib import admin
 
-from my_game_list.games.models import Company, Game, GameFollow, GameList, GameMedia, GameReview, Genre, Platform
+from my_game_list.games.models import (
+    Company,
+    Game,
+    GameFollow,
+    GameList,
+    GameMedia,
+    GameReview,
+    Genre,
+    Platform,
+)
 from my_game_list.my_game_list.admin import BaseDictionaryModelAdmin
 
 

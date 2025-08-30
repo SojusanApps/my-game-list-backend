@@ -9,7 +9,11 @@ class FDCapture:
     targetfd: Incomplete
     tmpfile: Incomplete
     def __init__(
-        self, targetfd: Incomplete, tmpfile: Incomplete | None = ..., now: bool = ..., patchsys: bool = ...
+        self,
+        targetfd: Incomplete,
+        tmpfile: Incomplete | None = ...,
+        now: bool = ...,
+        patchsys: bool = ...,
     ) -> None: ...
     def start(self) -> None: ...
     def done(self) -> Incomplete: ...
@@ -55,7 +59,12 @@ class StdCapture(Capture):
     err: Incomplete
     in_: Incomplete
     def __init__(
-        self, out: bool = ..., err: bool = ..., in_: bool = ..., mixed: bool = ..., now: bool = ...
+        self,
+        out: bool = ...,
+        err: bool = ...,
+        in_: bool = ...,
+        mixed: bool = ...,
+        now: bool = ...,
     ) -> None: ...
     def startall(self) -> None: ...
     def done(self, save: bool = ...) -> Incomplete: ...

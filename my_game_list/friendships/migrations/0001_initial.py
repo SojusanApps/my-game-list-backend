@@ -12,8 +12,19 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Friendship",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
-                ("created_at", models.DateTimeField(auto_now_add=True, verbose_name="creation time")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="creation time"),
+                ),
             ],
             options={
                 "verbose_name": "friendship",
@@ -25,11 +36,31 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="FriendshipRequest",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
-                ("message", models.CharField(blank=True, max_length=100, verbose_name="message")),
-                ("rejected_at", models.DateTimeField(blank=True, null=True, verbose_name="rejection time")),
-                ("created_at", models.DateTimeField(auto_now_add=True, verbose_name="creation time")),
-                ("last_modified_at", models.DateTimeField(auto_now=True, verbose_name="last modified")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "message",
+                    models.CharField(blank=True, max_length=100, verbose_name="message"),
+                ),
+                (
+                    "rejected_at",
+                    models.DateTimeField(blank=True, null=True, verbose_name="rejection time"),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="creation time"),
+                ),
+                (
+                    "last_modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="last modified"),
+                ),
             ],
             options={
                 "verbose_name": "friendship request",

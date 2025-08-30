@@ -2,7 +2,14 @@
 
 from typing import TYPE_CHECKING, Self
 
-from django.db.models import Avg, Count, DecimalField, ExpressionWrapper, QuerySet, Window
+from django.db.models import (
+    Avg,
+    Count,
+    DecimalField,
+    ExpressionWrapper,
+    QuerySet,
+    Window,
+)
 from django.db.models.functions import Coalesce, Round, RowNumber
 
 if TYPE_CHECKING:

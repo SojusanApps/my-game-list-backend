@@ -31,5 +31,10 @@ class Result:
     out: Incomplete
     err: Incomplete
     def __init__(
-        self, exitstatus: Incomplete, signal: Incomplete, retval: Incomplete, stdout: Incomplete, stderr: Incomplete
+        self,
+        exitstatus: Incomplete,
+        signal: Incomplete,
+        retval: Incomplete,
+        stdout: Incomplete,
+        stderr: Incomplete,
     ) -> None: ...

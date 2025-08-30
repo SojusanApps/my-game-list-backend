@@ -6,7 +6,8 @@ from typing import Any, Callable, Dict, Optional
 CONNECTION_INTERRUPTED: Incomplete
 
 def omit_exception(
-    method: Optional[Callable[[Incomplete], Incomplete]] = ..., return_value: Optional[Any] = ...
+    method: Optional[Callable[[Incomplete], Incomplete]] = ...,
+    return_value: Optional[Any] = ...,
 ) -> Incomplete: ...
 
 class RedisCache(BaseCache):

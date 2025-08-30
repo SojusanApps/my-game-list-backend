@@ -4,7 +4,9 @@ from collections.abc import Mapping
 from typing import Any, ClassVar, Self
 
 from django.contrib.auth import get_user_model
-from django.contrib.auth.password_validation import validate_password as django_validate_password
+from django.contrib.auth.password_validation import (
+    validate_password as django_validate_password,
+)
 from django.db.models import Avg
 from drf_spectacular.helpers import lazy_serializer
 from drf_spectacular.utils import extend_schema_field, inline_serializer

@@ -9,7 +9,11 @@ from rest_framework.viewsets import GenericViewSet
 
 from my_game_list.users.filters import UserFilterSet
 from my_game_list.users.models import User as UserModel
-from my_game_list.users.serializers import UserCreateSerializer, UserDetailSerializer, UserSerializer
+from my_game_list.users.serializers import (
+    UserCreateSerializer,
+    UserDetailSerializer,
+    UserSerializer,
+)
 
 User: type[UserModel] = get_user_model()
 

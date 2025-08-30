@@ -4,7 +4,16 @@ from typing import Self
 
 from rest_framework import serializers
 
-from my_game_list.games.models import Company, Game, GameFollow, GameList, GameMedia, GameReview, Genre, Platform
+from my_game_list.games.models import (
+    Company,
+    Game,
+    GameFollow,
+    GameList,
+    GameMedia,
+    GameReview,
+    Genre,
+    Platform,
+)
 from my_game_list.my_game_list.serializers import BaseDictionarySerializer
 from my_game_list.users.models import User
 from my_game_list.users.serializers import UserSerializer

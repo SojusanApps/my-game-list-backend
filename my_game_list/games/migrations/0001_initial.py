@@ -17,10 +17,27 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Company",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
-                ("name", models.CharField(max_length=255, unique=True, verbose_name="name")),
-                ("company_logo_id", models.CharField(blank=True, max_length=255, verbose_name="company logo id")),
-                ("igdb_id", models.PositiveIntegerField(unique=True, verbose_name="igdb id")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(max_length=255, unique=True, verbose_name="name"),
+                ),
+                (
+                    "company_logo_id",
+                    models.CharField(blank=True, max_length=255, verbose_name="company logo id"),
+                ),
+                (
+                    "igdb_id",
+                    models.PositiveIntegerField(unique=True, verbose_name="igdb id"),
+                ),
             ],
             options={
                 "verbose_name": "company",
@@ -32,8 +49,19 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Developer",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
-                ("name", models.CharField(max_length=255, unique=True, verbose_name="name")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(max_length=255, unique=True, verbose_name="name"),
+                ),
                 (
                     "developer_logo",
                     models.ImageField(
@@ -55,9 +83,23 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Genre",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
-                ("name", models.CharField(max_length=255, unique=True, verbose_name="name")),
-                ("igdb_id", models.PositiveIntegerField(unique=True, verbose_name="igdb id")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(max_length=255, unique=True, verbose_name="name"),
+                ),
+                (
+                    "igdb_id",
+                    models.PositiveIntegerField(unique=True, verbose_name="igdb id"),
+                ),
             ],
             options={
                 "verbose_name": "genre",
@@ -69,8 +111,19 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Publisher",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
-                ("name", models.CharField(max_length=255, unique=True, verbose_name="name")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(max_length=255, unique=True, verbose_name="name"),
+                ),
                 (
                     "publisher_logo",
                     models.ImageField(
@@ -92,10 +145,27 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Platform",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
-                ("name", models.CharField(max_length=255, unique=True, verbose_name="name")),
-                ("abbreviation", models.CharField(blank=True, max_length=255, verbose_name="abbreviation")),
-                ("igdb_id", models.PositiveIntegerField(unique=True, verbose_name="igdb id")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "name",
+                    models.CharField(max_length=255, unique=True, verbose_name="name"),
+                ),
+                (
+                    "abbreviation",
+                    models.CharField(blank=True, max_length=255, verbose_name="abbreviation"),
+                ),
+                (
+                    "igdb_id",
+                    models.PositiveIntegerField(unique=True, verbose_name="igdb id"),
+                ),
             ],
             options={
                 "verbose_name": "platform",
@@ -114,28 +184,67 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="Game",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
-                ("title", models.CharField(max_length=255, unique=True, verbose_name="title")),
-                ("created_at", models.DateTimeField(auto_now_add=True, verbose_name="creation time")),
-                ("last_modified_at", models.DateTimeField(auto_now=True, verbose_name="last modified")),
-                ("release_date", models.DateField(blank=True, null=True, verbose_name="release date")),
-                ("cover_image_id", models.CharField(blank=True, max_length=255, verbose_name="cover image id")),
-                ("summary", models.TextField(blank=True, max_length=2000, verbose_name="summary")),
-                ("igdb_id", models.CharField(max_length=255, unique=True, verbose_name="igdb id")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "title",
+                    models.CharField(max_length=255, unique=True, verbose_name="title"),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="creation time"),
+                ),
+                (
+                    "last_modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="last modified"),
+                ),
+                (
+                    "release_date",
+                    models.DateField(blank=True, null=True, verbose_name="release date"),
+                ),
+                (
+                    "cover_image_id",
+                    models.CharField(blank=True, max_length=255, verbose_name="cover image id"),
+                ),
+                (
+                    "summary",
+                    models.TextField(blank=True, max_length=2000, verbose_name="summary"),
+                ),
+                (
+                    "igdb_id",
+                    models.CharField(max_length=255, unique=True, verbose_name="igdb id"),
+                ),
                 (
                     "developer",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.PROTECT, related_name="games_developed", to="games.company"
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="games_developed",
+                        to="games.company",
                     ),
                 ),
                 (
                     "publisher",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.PROTECT, related_name="games_published", to="games.company"
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="games_published",
+                        to="games.company",
                     ),
                 ),
-                ("genres", models.ManyToManyField(related_name="games", to="games.genre")),
-                ("platforms", models.ManyToManyField(related_name="games", to="games.platform")),
+                (
+                    "genres",
+                    models.ManyToManyField(related_name="games", to="games.genre"),
+                ),
+                (
+                    "platforms",
+                    models.ManyToManyField(related_name="games", to="games.platform"),
+                ),
             ],
             options={
                 "verbose_name": "game",
@@ -147,12 +256,25 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="GameFollow",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
-                ("created_at", models.DateTimeField(auto_now_add=True, verbose_name="creation time")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="creation time"),
+                ),
                 (
                     "game",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.PROTECT, related_name="follow_list", to="games.game"
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="follow_list",
+                        to="games.game",
                     ),
                 ),
                 (
@@ -177,7 +299,15 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="GameList",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
                 (
                     "score",
                     models.PositiveIntegerField(
@@ -204,12 +334,20 @@ class Migration(migrations.Migration):
                         verbose_name="status",
                     ),
                 ),
-                ("created_at", models.DateTimeField(auto_now_add=True, verbose_name="creation time")),
-                ("last_modified_at", models.DateTimeField(auto_now=True, verbose_name="last modified")),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="creation time"),
+                ),
+                (
+                    "last_modified_at",
+                    models.DateTimeField(auto_now=True, verbose_name="last modified"),
+                ),
                 (
                     "game",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.PROTECT, related_name="game_lists", to="games.game"
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="game_lists",
+                        to="games.game",
                     ),
                 ),
                 (
@@ -232,19 +370,37 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name="GameReview",
             fields=[
-                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
-                ("created_at", models.DateTimeField(auto_now_add=True, verbose_name="creation time")),
-                ("review", models.TextField(blank=True, max_length=1000, verbose_name="review")),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "created_at",
+                    models.DateTimeField(auto_now_add=True, verbose_name="creation time"),
+                ),
+                (
+                    "review",
+                    models.TextField(blank=True, max_length=1000, verbose_name="review"),
+                ),
                 (
                     "game",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.PROTECT, related_name="reviews", to="games.game"
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="reviews",
+                        to="games.game",
                     ),
                 ),
                 (
                     "user",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.PROTECT, related_name="reviews", to=settings.AUTH_USER_MODEL
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="reviews",
+                        to=settings.AUTH_USER_MODEL,
                     ),
                 ),
             ],

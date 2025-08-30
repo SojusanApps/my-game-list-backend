@@ -4,7 +4,11 @@ from typing import ClassVar, Self, TypedDict
 
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
-from rest_framework.serializers import ModelSerializer, SlugRelatedField, ValidationError
+from rest_framework.serializers import (
+    ModelSerializer,
+    SlugRelatedField,
+    ValidationError,
+)
 
 from my_game_list.friendships.models import Friendship, FriendshipRequest
 from my_game_list.users.models import User as UserModel

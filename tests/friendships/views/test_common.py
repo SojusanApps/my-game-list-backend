@@ -15,8 +15,14 @@ User = get_user_model()
 @pytest.mark.parametrize(
     "viewname",
     [
-        pytest.param("friendships:friendships-list", id="Check the forbidden access to friendships."),
-        pytest.param("friendships:friendship-requests-list", id="Check the forbidden access to friendship requests."),
+        pytest.param(
+            "friendships:friendships-list",
+            id="Check the forbidden access to friendships.",
+        ),
+        pytest.param(
+            "friendships:friendship-requests-list",
+            id="Check the forbidden access to friendship requests.",
+        ),
     ],
 )
 @pytest.mark.django_db()

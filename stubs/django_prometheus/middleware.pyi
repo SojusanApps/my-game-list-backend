@@ -1,7 +1,14 @@
 from _typeshed import Incomplete
 from django.utils.deprecation import MiddlewareMixin
-from django_prometheus.conf import NAMESPACE as NAMESPACE, PROMETHEUS_LATENCY_BUCKETS as PROMETHEUS_LATENCY_BUCKETS
-from django_prometheus.utils import PowersOf as PowersOf, Time as Time, TimeSince as TimeSince
+from django_prometheus.conf import (
+    NAMESPACE as NAMESPACE,
+    PROMETHEUS_LATENCY_BUCKETS as PROMETHEUS_LATENCY_BUCKETS,
+)
+from django_prometheus.utils import (
+    PowersOf as PowersOf,
+    Time as Time,
+    TimeSince as TimeSince,
+)
 
 class Metrics:
     @classmethod
@@ -12,7 +19,7 @@ class Metrics:
         name: Incomplete,
         documentation: Incomplete,
         labelnames: Incomplete = ...,
-        **kwargs: Incomplete
+        **kwargs: Incomplete,
     ) -> Incomplete: ...
     def __init__(self, *args: Incomplete, **kwargs: Incomplete) -> None: ...
     requests_total: Incomplete
@@ -48,11 +55,19 @@ class PrometheusAfterMiddleware(MiddlewareMixin):
     metrics: Incomplete
     def __init__(self, *args: Incomplete, **kwargs: Incomplete) -> None: ...
     def label_metric(
-        self, metric: Incomplete, request: Incomplete, response: Incomplete | None = ..., **labels: Incomplete
+        self,
+        metric: Incomplete,
+        request: Incomplete,
+        response: Incomplete | None = ...,
+        **labels: Incomplete,
     ) -> Incomplete: ...
     def process_request(self, request: Incomplete) -> None: ...
     def process_view(
-        self, request: Incomplete, view_func: Incomplete, *view_args: Incomplete, **view_kwargs: Incomplete
+        self,
+        request: Incomplete,
+        view_func: Incomplete,
+        *view_args: Incomplete,
+        **view_kwargs: Incomplete,
     ) -> None: ...
     def process_template_response(self, request: Incomplete, response: Incomplete) -> Incomplete: ...
     def process_response(self, request: Incomplete, response: Incomplete) -> Incomplete: ...

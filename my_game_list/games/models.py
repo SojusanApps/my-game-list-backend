@@ -65,7 +65,11 @@ class GameFollow(BaseModel):
     created_at = models.DateTimeField(_("creation time"), auto_now_add=True)
 
     game = models.ForeignKey("Game", on_delete=models.PROTECT, related_name="follow_list")
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="games_followed")
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="games_followed",
+    )
 
     class Meta(BaseModel.Meta):
         """Meta data for the game follow model."""

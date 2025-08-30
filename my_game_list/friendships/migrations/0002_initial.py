@@ -36,14 +36,18 @@ class Migration(migrations.Migration):
             model_name="friendship",
             name="friend",
             field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE, related_name="_friends", to=settings.AUTH_USER_MODEL
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="_friends",
+                to=settings.AUTH_USER_MODEL,
             ),
         ),
         migrations.AddField(
             model_name="friendship",
             name="user",
             field=models.ForeignKey(
-                on_delete=django.db.models.deletion.CASCADE, related_name="friends", to=settings.AUTH_USER_MODEL
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="friends",
+                to=settings.AUTH_USER_MODEL,
             ),
         ),
         migrations.AddConstraint(

@@ -18,7 +18,16 @@ from my_game_list.games.filters import (
     PlatformFilterSet,
 )
 from my_game_list.games.mixins import DictionaryAllValuesMixin
-from my_game_list.games.models import Company, Game, GameFollow, GameList, GameMedia, GameReview, Genre, Platform
+from my_game_list.games.models import (
+    Company,
+    Game,
+    GameFollow,
+    GameList,
+    GameMedia,
+    GameReview,
+    Genre,
+    Platform,
+)
 from my_game_list.games.serializers import (
     CompanySerializer,
     CompanySimpleNameSerializer,
@@ -45,7 +54,9 @@ class CompanyViewSet(ModelViewSet[Company], DictionaryAllValuesMixin):
     permission_classes = (IsAdminOrReadOnly,)
     filterset_class = CompanyFilterSet
 
-    def get_serializer_class(self: Self) -> type[CompanySerializer] | type[CompanySimpleNameSerializer]:
+    def get_serializer_class(
+        self: Self,
+    ) -> type[CompanySerializer] | type[CompanySimpleNameSerializer]:
         """Get the serializer class for the Company model."""
         return CompanySimpleNameSerializer if self.action == "all_values" else CompanySerializer
 
@@ -67,7 +78,9 @@ class GameListViewSet(ModelViewSet[GameList]):
     permission_classes = (IsAuthenticated,)
     filterset_class = GameListFilterSet
 
-    def get_serializer_class(self: Self) -> type[GameListCreateSerializer] | type[GameListSerializer]:
+    def get_serializer_class(
+        self: Self,
+    ) -> type[GameListCreateSerializer] | type[GameListSerializer]:
         """Get the serializer class for the Game model."""
         return (
             GameListCreateSerializer
@@ -88,7 +101,9 @@ class GameReviewViewSet(ModelViewSet[GameReview]):
     permission_classes = (IsAuthenticated,)
     filterset_class = GameReviewFilterSet
 
-    def get_serializer_class(self: Self) -> type[GameReviewCreateSerializer] | type[GameReviewSerializer]:
+    def get_serializer_class(
+        self: Self,
+    ) -> type[GameReviewCreateSerializer] | type[GameReviewSerializer]:
         """Get the serializer class for the Game model."""
         return (
             GameReviewCreateSerializer
@@ -111,7 +126,9 @@ class GameViewSet(ModelViewSet[Game]):
     ordering_fields = ("release_date",)
     ordering = ("release_date",)
 
-    def get_serializer_class(self: Self) -> type[GameCreateSerializer] | type[GameSerializer]:
+    def get_serializer_class(
+        self: Self,
+    ) -> type[GameCreateSerializer] | type[GameSerializer]:
         """Get the serializer class for the Game model."""
         return GameCreateSerializer if self.action in ["create", "update", "partial_update"] else GameSerializer
 

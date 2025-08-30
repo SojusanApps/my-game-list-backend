@@ -5,7 +5,10 @@ from django.views.decorators.http import require_http_methods
 from django_prometheus.exports import ExportToDjangoView
 from rest_framework.request import Request
 
-from my_game_list.my_game_list.decorators import calculate_cpu_usage_metric, calculate_memory_usage_metric
+from my_game_list.my_game_list.decorators import (
+    calculate_cpu_usage_metric,
+    calculate_memory_usage_metric,
+)
 
 
 @calculate_memory_usage_metric

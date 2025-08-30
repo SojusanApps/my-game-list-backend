@@ -93,7 +93,7 @@ class Command(BaseCommand):
                         if item_from_igdb.first_release_date
                         else None
                     ),
-                    "cover_image_id": item_from_igdb.cover.image_id if item_from_igdb.cover else "",
+                    "cover_image_id": (item_from_igdb.cover.image_id if item_from_igdb.cover else ""),
                     "summary": item_from_igdb.summary,
                     "publisher": self._get_company(
                         company_type="publisher",
@@ -122,7 +122,7 @@ class Command(BaseCommand):
                 return {
                     "name": item_from_igdb.name,
                     "igdb_id": item_from_igdb.id,
-                    "company_logo_id": item_from_igdb.logo.image_id if item_from_igdb.logo else "",
+                    "company_logo_id": (item_from_igdb.logo.image_id if item_from_igdb.logo else ""),
                 }
             case _:
                 message_error = f"Invalid type of data from IGDB: {type(item_from_igdb)}"
@@ -153,7 +153,10 @@ class Command(BaseCommand):
         company_igdb_to_db_mapping = {company.igdb_id: company for company in Company.objects.all()}
         data_to_import = [model(**self._get_model_input(data, company_igdb_to_db_mapping)) for data in data_from_igdb]
 
-        return model.objects.bulk_create(data_to_import, ignore_conflicts=True), data_from_igdb
+        return (
+            model.objects.bulk_create(data_to_import, ignore_conflicts=True),
+            data_from_igdb,
+        )
 
     def import_games(self: Self) -> None:
         """Import games from the IGDB database to the application database."""
@@ -178,7 +181,10 @@ class Command(BaseCommand):
             if game_from_igdb and isinstance(game_from_igdb, IGDBGameResponse):
                 if genres_ids := game_from_igdb.genres:
                     genres = [
-                        Game.genres.through(game_id=imported_game.id, genre_id=genre_igdb_to_db_mapping[genre_id])
+                        Game.genres.through(
+                            game_id=imported_game.id,
+                            genre_id=genre_igdb_to_db_mapping[genre_id],
+                        )
                         for genre_id in genres_ids
                     ]
                     genres_to_games_relation.extend(genres)
