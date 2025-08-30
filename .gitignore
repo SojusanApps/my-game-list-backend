@@ -24,3 +24,6 @@ docs/*
 .scannerwork
 coverage.xml
 openapi.json
+
+# AI related
+.serena
