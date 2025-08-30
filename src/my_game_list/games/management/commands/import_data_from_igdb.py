@@ -6,14 +6,14 @@ from typing import Any, Literal, Self, TypeVar
 from django.core.management.base import BaseCommand, CommandParser
 
 from my_game_list.games.management.commands._igdb_wrapper import (
-    IGDB_API_RESPONSE,
-    IGDB_OBJECT,
+    IGDBApiResponse,
     IGDBCompanyResponse,
     IGDBEndpoints,
     IGDBGameResponse,
     IGDBGenreResponse,
     IGDBInteractionError,
     IGDBInvolvedCompanyResponse,
+    IGDBObject,
     IGDBPlatformResponse,
     IGDBWrapper,
 )
@@ -71,14 +71,14 @@ class Command(BaseCommand):
 
     def _get_model_input(
         self: Self,
-        item_from_igdb: IGDB_OBJECT,
+        item_from_igdb: IGDBObject,
         company_igdb_to_db_mapping: dict[int, Company],
     ) -> dict[str, str | int | None | date | Company]:
         """
         Get the input for the model from the item from the IGDB database.
 
         Args:
-            item_from_igdb (IGDB_OBJECT): The item from the IGDB database.
+            item_from_igdb (IGDBObject): The item from the IGDB database.
             company_igdb_to_db_mapping (dict[int, Company]): The mapping between IGDB companies and database companies.
 
         Returns:
@@ -133,7 +133,7 @@ class Command(BaseCommand):
         endpoint: IGDBEndpoints,
         query: str,
         model: type[ModelType],
-    ) -> tuple[list[ModelType], IGDB_API_RESPONSE]:
+    ) -> tuple[list[ModelType], IGDBApiResponse]:
         """Import data from the IGDB database to the application database.
 
         Args:
@@ -142,7 +142,7 @@ class Command(BaseCommand):
             model (type[ModelType]): The Django model class to map the IGDB data to.
 
         Returns:
-            tuple[list[ModelType], IGDB_API_RESPONSE]: A tuple containing a list of created model instances
+            tuple[list[ModelType], IGDBApiResponse]: A tuple containing a list of created model instances
             and the raw IGDB API response data.
         """
         data_from_igdb = self.igdb_wrapper.get_all_objects(

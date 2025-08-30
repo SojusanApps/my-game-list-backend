@@ -4,14 +4,14 @@ import time
 from abc import ABC
 from dataclasses import dataclass
 from enum import StrEnum
-from typing import Any, Self, TypeAlias
+from typing import Any, Self
 
 import requests
 from django.conf import settings
 from requests_futures.sessions import FuturesSession
 
-IGDB_OBJECT: TypeAlias = "IGDBPlatformResponse | IGDBGenreResponse | IGDBCompanyResponse | IGDBGameResponse"
-IGDB_API_RESPONSE: TypeAlias = list[IGDB_OBJECT]
+type IGDBObject = "IGDBPlatformResponse | IGDBGenreResponse | IGDBCompanyResponse | IGDBGameResponse"
+type IGDBApiResponse = list[IGDBObject]
 
 
 class IGDBEndpoints(StrEnum):
@@ -168,7 +168,7 @@ class IGDBWrapper:
             error_message = f"Unable to get the access_token for IGDB. Error: {e}"
             raise IGDBInteractionError(error_message) from e
 
-    def _cast_response(self: Self, endpoint: IGDBEndpoints, response_json: list[dict[str, Any]]) -> IGDB_API_RESPONSE:
+    def _cast_response(self: Self, endpoint: IGDBEndpoints, response_json: list[dict[str, Any]]) -> IGDBApiResponse:
         """Cast the response to the correct type for the endpoint."""
         response_map = {
             IGDBEndpoints.PLATFORMS.value: IGDBPlatformResponse,
@@ -184,7 +184,7 @@ class IGDBWrapper:
 
         return [response_type(**response) for response in response_json]
 
-    def api_request(self: Self, endpoint: IGDBEndpoints, query: str) -> IGDB_API_RESPONSE:
+    def api_request(self: Self, endpoint: IGDBEndpoints, query: str) -> IGDBApiResponse:
         """Run request to the IGDB API.
 
         Args:
@@ -208,14 +208,14 @@ class IGDBWrapper:
 
         return self._cast_response(endpoint, response.json())
 
-    def get_all_objects(self: Self, endpoint: IGDBEndpoints, query: str) -> IGDB_API_RESPONSE:
+    def get_all_objects(self: Self, endpoint: IGDBEndpoints, query: str) -> IGDBApiResponse:
         """Get all objects from the IGDB database.
 
         Args:
             endpoint (IGDBEndpoints): The name of the endpoint.
             query (str): The query for the endpoint.
         """
-        result: IGDB_API_RESPONSE = []
+        result: IGDBApiResponse = []
         offset = 0
         query = f"{query}limit {self.QUERY_ITEM_LIMIT};sort id;"
         while True:
