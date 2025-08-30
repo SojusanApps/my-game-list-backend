@@ -5,12 +5,12 @@ import inspect
 import shutil
 import subprocess
 import sys
-from distutils.util import strtobool
 from itertools import chain
 from pathlib import Path
 from types import FunctionType
 from typing import cast
 
+from distutils.util import strtobool
 from python_colors import print_error, print_info, print_text, print_warning
 
 import docker
