@@ -3,7 +3,7 @@
 import argparse
 from collections.abc import Sequence
 
-FILENAMES_TO_BE_MODIFIED = ("CHANGELOG.md", "my_game_list/__init__.py")
+FILENAMES_TO_BE_MODIFIED = ("CHANGELOG.md", "src/my_game_list/__init__.py")
 
 
 def main(argv: Sequence[str] | None = None) -> int:

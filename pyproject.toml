@@ -59,7 +59,7 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.dynamic]
-version = {attr = "my_game_list.__version__"}
+version = { attr = "my_game_list.__version__" }
 
 [project.optional-dependencies]
 test = [
@@ -80,12 +80,6 @@ dev-dependencies = [
     "black==25.1.0",
     "ruff==0.12.11",
 ]
-
-# [project.scripts]
-# my-game-list-manage = "scripts.my-game-list-manage:main"
-# my-game-list-run-tests-with-pg = "scripts.my_game_list_run_tests_with_pg"
-# my-game-list-run-tests = "scripts.my_game_list_run_tests"
-# wait-for-postgresql = "scripts.wait-for-postgresql"
 
 [project.urls]
 Homepage = "https://github.com/SojusanApps/my-game-list-backend"
