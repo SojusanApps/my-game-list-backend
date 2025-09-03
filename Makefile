@@ -1,6 +1,7 @@
 # The @ makes sure that the command itself isn't echoed in the terminal
 help:
 	@echo "MyGameList Makefile"
+	@echo "sync - Sync all dependencies."
 	@echo "run - Start the application on the default port."
 	@echo "fresh_run - Use for the first start of the application. It collects the static files,"
 	@echo "            runs the migrations, prompts for superuser creation, and at the end runs the application."
@@ -12,29 +13,31 @@ help:
 	@echo "app_db - Run a Docker container with app database."
 	@echo "test - Run all tests for the application."
 
+sync:
+	uv sync --all-extras
+
 run:
-	my-game-list-manage.py runserver
+	uv run scripts/my-game-list-manage.py runserver
 
 translations:
-	my-game-list-manage.py makemessages -l pl
+	uv run scripts/my-game-list-manage.py makemessages -l pl
 
 fresh_run:
-	my-game-list-manage.py collectstatic
-	my-game-list-manage.py makemigrations
-	my-game-list-manage.py migrate
-	my-game-list-manage.py createsuperuser
-	my-game-list-manage.py runserver
+	uv run scripts/my-game-list-manage.py collectstatic
+	uv run scripts/my-game-list-manage.py makemigrations
+	uv run scripts/my-game-list-manage.py migrate
+	uv run scripts/my-game-list-manage.py createsuperuser
+	uv run scripts/my-game-list-manage.py runserver
 
 check:
-	black .
-	ruff check .
-	mypy . --strict
+	uv run ruff check .
+	uv run mypy . --strict
 
 coverage:
-	coverage html
+	uv run coverage html
 
 generate_openapi:
-	my-game-list-manage.py spectacular --format openapi-json --file openapi.json
+	uv run scripts/my-game-list-manage.py spectacular --format openapi-json --file openapi.json
 
 app_db:
 	docker run --name my-game-list-postgres -p 5432:5432 -e POSTGRES_DB=my_game_list -e POSTGRES_USER=my_game_list -e POSTGRES_PASSWORD=my_game_list -d postgres:15.3-alpine
@@ -43,8 +46,8 @@ test_db:
 	docker run --name pytest_postgresql -e POSTGRES_USER=pytest_postgresql -e POSTGRES_PASSWORD=pytest_postgresql -e POSTGRES_DB=pytest_postgresql -p 127.0.0.1:9999:5432 -d postgres:15.3-alpine
 
 test:
-	pytest -n auto
+	uv run pytest -n auto
 
 # .PHONY defines parts of the makefile that are not dependant on any specific file
 # This is most often used to store functions
-.PHONY: help run fresh_run check translations app_db test_db coverage
+.PHONY: help uv-install install sync uv-compile run fresh_run check translations app_db test_db coverage sync
