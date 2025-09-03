@@ -2,6 +2,10 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.2.4] - 03.09.2025
+
+* Migrate to [uv](https://docs.astral.sh/uv).
+
 ## v. [4.2.3] - 28.08.2025
 
 * Updated dependencies in requirements.
