@@ -56,5 +56,10 @@ def wait_for_database_connection() -> None:
     print_error("FAILED: Connection to PostgreSQL database time out.")
 
 
-if __name__ == "__main__":
+def main() -> None:
+    """Main entry point."""
     wait_for_database_connection()
+
+
+if __name__ == "__main__":
+    main()

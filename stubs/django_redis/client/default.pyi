@@ -1,5 +1,8 @@
 from .. import pool as pool
-from ..exceptions import CompressorError as CompressorError, ConnectionInterrupted as ConnectionInterrupted
+from ..exceptions import (
+    CompressorError as CompressorError,
+    ConnectionInterrupted as ConnectionInterrupted,
+)
 from ..util import CacheKey as CacheKey
 from _typeshed import Incomplete
 from collections import OrderedDict
@@ -18,7 +21,12 @@ class DefaultClient:
     def __init__(self, server: Incomplete, params: Dict[str, Any], backend: BaseCache) -> None: ...
     def __contains__(self, key: Any) -> bool: ...
     def get_next_client_index(self, write: bool = ..., tried: Optional[List[int]] = ...) -> int: ...
-    def get_client(self, write: bool = ..., tried: Optional[List[int]] = ..., show_index: bool = ...) -> Incomplete: ...
+    def get_client(
+        self,
+        write: bool = ...,
+        tried: Optional[List[int]] = ...,
+        show_index: bool = ...,
+    ) -> Incomplete: ...
     def connect(self, index: int = ...) -> Redis[Incomplete]: ...
     def disconnect(self, index: int = ..., client: Incomplete | None = ...) -> Incomplete: ...
     def set(
@@ -32,7 +40,11 @@ class DefaultClient:
         xx: bool = ...,
     ) -> bool: ...
     def incr_version(
-        self, key: Any, delta: int = ..., version: Optional[int] = ..., client: Optional[Redis[Incomplete]] = ...
+        self,
+        key: Any,
+        delta: int = ...,
+        version: Optional[int] = ...,
+        client: Optional[Redis[Incomplete]] = ...,
     ) -> int: ...
     def add(
         self,
@@ -49,12 +61,25 @@ class DefaultClient:
         version: Optional[int] = ...,
         client: Optional[Redis[Incomplete]] = ...,
     ) -> Any: ...
-    def persist(self, key: Any, version: Optional[int] = ..., client: Optional[Redis[Incomplete]] = ...) -> bool: ...
+    def persist(
+        self,
+        key: Any,
+        version: Optional[int] = ...,
+        client: Optional[Redis[Incomplete]] = ...,
+    ) -> bool: ...
     def expire(
-        self, key: Any, timeout: Incomplete, version: Optional[int] = ..., client: Optional[Redis[Incomplete]] = ...
+        self,
+        key: Any,
+        timeout: Incomplete,
+        version: Optional[int] = ...,
+        client: Optional[Redis[Incomplete]] = ...,
     ) -> bool: ...
     def pexpire(
-        self, key: Incomplete, timeout: Incomplete, version: Incomplete | None = ..., client: Incomplete | None = ...
+        self,
+        key: Incomplete,
+        timeout: Incomplete,
+        version: Incomplete | None = ...,
+        client: Incomplete | None = ...,
     ) -> bool: ...
     def pexpire_at(
         self,
@@ -96,13 +121,19 @@ class DefaultClient:
         itersize: Optional[int] = ...,
     ) -> int: ...
     def delete_many(
-        self, keys: Incomplete, version: Optional[int] = ..., client: Optional[Redis[Incomplete]] = ...
+        self,
+        keys: Incomplete,
+        version: Optional[int] = ...,
+        client: Optional[Redis[Incomplete]] = ...,
     ) -> Incomplete: ...
     def clear(self, client: Optional[Redis[Incomplete]] = ...) -> None: ...
     def decode(self, value: Union[bytes, int]) -> Any: ...
     def encode(self, value: Any) -> Union[bytes, Any]: ...
     def get_many(
-        self, keys: Incomplete, version: Optional[int] = ..., client: Optional[Redis[Incomplete]] = ...
+        self,
+        keys: Incomplete,
+        version: Optional[int] = ...,
+        client: Optional[Redis[Incomplete]] = ...,
     ) -> OrderedDict[Incomplete, Incomplete]: ...
     def set_many(
         self,
@@ -120,15 +151,30 @@ class DefaultClient:
         ignore_key_check: bool = ...,
     ) -> int: ...
     def decr(
-        self, key: Any, delta: int = ..., version: Optional[int] = ..., client: Optional[Redis[Incomplete]] = ...
+        self,
+        key: Any,
+        delta: int = ...,
+        version: Optional[int] = ...,
+        client: Optional[Redis[Incomplete]] = ...,
     ) -> int: ...
     def ttl(
-        self, key: Any, version: Optional[int] = ..., client: Optional[Redis[Incomplete]] = ...
+        self,
+        key: Any,
+        version: Optional[int] = ...,
+        client: Optional[Redis[Incomplete]] = ...,
     ) -> Optional[int]: ...
     def pttl(
-        self, key: Incomplete, version: Incomplete | None = ..., client: Incomplete | None = ...
+        self,
+        key: Incomplete,
+        version: Incomplete | None = ...,
+        client: Incomplete | None = ...,
     ) -> Incomplete: ...
-    def has_key(self, key: Any, version: Optional[int] = ..., client: Optional[Redis[Incomplete]] = ...) -> bool: ...
+    def has_key(
+        self,
+        key: Any,
+        version: Optional[int] = ...,
+        client: Optional[Redis[Incomplete]] = ...,
+    ) -> bool: ...
     def iter_keys(
         self,
         search: str,
@@ -137,7 +183,10 @@ class DefaultClient:
         version: Optional[int] = ...,
     ) -> Iterator[str]: ...
     def keys(
-        self, search: str, version: Optional[int] = ..., client: Optional[Redis[Incomplete]] = ...
+        self,
+        search: str,
+        version: Optional[int] = ...,
+        client: Optional[Redis[Incomplete]] = ...,
     ) -> List[Any]: ...
     def make_key(self, key: Any, version: Optional[Any] = ..., prefix: Optional[str] = ...) -> CacheKey: ...
     def make_pattern(self, pattern: str, version: Optional[int] = ..., prefix: Optional[str] = ...) -> CacheKey: ...

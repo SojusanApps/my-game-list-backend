@@ -2,6 +2,18 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.2.4] - 03.09.2025
+
+* Migrate to [uv](https://docs.astral.sh/uv) package manager.
+* Added a new settings file for mypy type checker.
+* Update Docker files to be compatible with uv package manager.
+* Divided the tox commands into separate envs.
+* Added [typer](https://github.com/fastapi/typer) for command line interface.
+  * Changed `my-game-list-build.py` script to use `typer`.
+* Updated the GitHub Action configuration to work with uv.
+* Upgraded PostgreSQL version to `18.0`.
+* Changed the GitHub Action to use commit SHA instead of tags.
+
 ## v. [4.2.3] - 28.08.2025
 
 * Updated dependencies in requirements.

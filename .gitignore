@@ -1,21 +1,30 @@
-.vscode
-*.log*
+# Python-generated files
 __pycache__/
 *.py[cod]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+.vscode
+*.log*
 *.orig
 .coverage
 .coverage.*
 .tox/
 .cache/
-build/
-/*.egg-info
-dist/
 *.sqlite3
+
 # Remove static that are created after collectstatic by manage.py
 static/
 media/
 docker/app/*.whl
 docker/.env
+docker/nginx/ssl/*.crt
+docker/nginx/ssl/*.key
 .pytest_cache/
 .idea/*
 _ignore_*
@@ -24,3 +33,6 @@ docs/*
 .scannerwork
 coverage.xml
 openapi.json
+
+# AI related
+.serena

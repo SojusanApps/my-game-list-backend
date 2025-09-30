@@ -66,7 +66,12 @@ class Visitor:
     breadthfirst: Incomplete
     optsort: Incomplete
     def __init__(
-        self, fil: Incomplete, rec: Incomplete, ignore: Incomplete, bf: Incomplete, sort: Incomplete
+        self,
+        fil: Incomplete,
+        rec: Incomplete,
+        ignore: Incomplete,
+        bf: Incomplete,
+        sort: Incomplete,
     ) -> None: ...
     def gen(self, path: Incomplete) -> Generator[Incomplete, None, None]: ...
 

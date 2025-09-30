@@ -1,34 +1,51 @@
-FROM python:3.12.1-slim-bullseye
+FROM python:3.12.11-slim-bullseye
+# Copy uv and uvx from the uv image
+COPY --from=ghcr.io/astral-sh/uv:0.8.22 /uv /uvx /bin/
 
-# Application log path from env
-ARG MGL_LOG_DIR_PATH
+# Define ARG with a default value
+ARG MGL_LOG_DIR_PATH=/var/log/my_game_list/
+# Optionally set ENV for runtime
+ENV MGL_LOG_DIR_PATH=${MGL_LOG_DIR_PATH}
 
 # Create a new non-root user
 RUN adduser --system --no-create-home nonroot
 
 # To locally connect your container image to a repository:
-LABEL org.opencontainers.image.source https://github.com/SojusanApps/my-game-list-backend
+LABEL org.opencontainers.image.source=https://github.com/SojusanApps/my-game-list-backend
 
 # App directory
 WORKDIR /var/www/my-game-list
 
+# Enable bytecode compilation
+ENV UV_COMPILE_BYTECODE=1
+# Copy from the cache instead of linking since it's a mounted volume
+ENV UV_LINK_MODE=copy
+# Ensure installed tools can be executed out of the box
+ENV UV_TOOL_BIN_DIR=/usr/local/bin
+
 RUN apt-get update \
-    && apt-get -y install --no-install-recommends curl=7.74.0-1.3+deb11u13 \
-    && apt-get clean && rm -rf /var/lib/apt/lists/* \
-    && pip install --no-cache-dir pip==24.3.1
+    && apt-get -y install --no-install-recommends curl=7.74.0-1.3+deb11u15 \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install the project's dependencies using the lockfile and settings
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --locked --no-install-project --no-dev
 
 COPY settings.py gunicorn.conf.py entrypoint.sh *.whl ./
 
-# Install Django app
-RUN pip install --no-cache-dir -U ./*.whl
-WORKDIR /usr/local/lib/python3.12/site-packages
-RUN  pip install --no-cache-dir -r requirements/requirements.txt
+# Installing separately from its dependencies allows optimal layer caching
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv pip install --no-cache-dir -U ./*.whl
 
-WORKDIR /var/www/my-game-list
+# Place executables in the environment at the front of the path
+ENV PATH="/.venv/bin:$PATH"
 
 # Create the needed directories and set a non-root user as the owner to omit the permission error
-RUN mkdir -p ${MGL_LOG_DIR_PATH} && chown -R nonroot: ${MGL_LOG_DIR_PATH}
-RUN mkdir -p /opt/my_game_list/static && chown -R nonroot: /opt/my_game_list/static
+RUN mkdir -p "${MGL_LOG_DIR_PATH}" && chown -R nonroot: "${MGL_LOG_DIR_PATH}" && \
+    mkdir -p /opt/my_game_list/static && chown -R nonroot: /opt/my_game_list/static && \
+    mkdir -p /home/nonroot/.cache && chown -R nonroot: /home/nonroot/.cache
 
 # Run application as non-root user
 USER nonroot

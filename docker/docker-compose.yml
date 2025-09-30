@@ -17,13 +17,13 @@ x-base-app: &base_app
 
 services:
   postgres:
-    image: postgres:15.3-alpine
+    image: postgres:18.0-alpine
     container_name: my-game-list-postgres
     restart: "unless-stopped"
     ports:
       - "5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
     env_file:
       - ./.env
     healthcheck:
@@ -76,6 +76,7 @@ services:
     volumes:
       - static_volume:/opt/my_game_list/static
       - media_volume:/opt/my_game_list/media
+      - ./nginx/ssl:/etc/nginx/ssl
     networks:
       - loki
 

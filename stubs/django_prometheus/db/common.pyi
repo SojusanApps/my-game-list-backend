@@ -9,7 +9,12 @@ from django_prometheus.db import (
 )
 
 class ExceptionCounterByType:
-    def __init__(self, counter: Incomplete, type_label: str = ..., extra_labels: Incomplete | None = ...) -> None: ...
+    def __init__(
+        self,
+        counter: Incomplete,
+        type_label: str = ...,
+        extra_labels: Incomplete | None = ...,
+    ) -> None: ...
     def __enter__(self) -> None: ...
     def __exit__(self, typ: Incomplete, value: Incomplete, traceback: Incomplete) -> None: ...
 

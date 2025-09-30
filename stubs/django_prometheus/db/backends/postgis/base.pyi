@@ -1,6 +1,8 @@
 from _typeshed import Incomplete
 from django.contrib.gis.db.backends.postgis import base
-from django_prometheus.db.backends.common import get_postgres_cursor_class as get_postgres_cursor_class
+from django_prometheus.db.backends.common import (
+    get_postgres_cursor_class as get_postgres_cursor_class,
+)
 from django_prometheus.db.common import (
     DatabaseWrapperMixin as DatabaseWrapperMixin,
     ExportingCursorWrapper as ExportingCursorWrapper,

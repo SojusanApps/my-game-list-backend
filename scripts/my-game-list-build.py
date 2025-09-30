@@ -1,52 +1,47 @@
 #!/usr/bin/env python
 # ruff: noqa: S603, S607
-"""This module contains features that help you manage the application."""
-import inspect
+"""This module contains features for building and pushing docker images."""
 import shutil
 import subprocess
 import sys
-from distutils.util import strtobool
 from itertools import chain
 from pathlib import Path
-from types import FunctionType
-from typing import cast
 
-from python_colors import print_error, print_info, print_text, print_warning
+import typer
+from python_colors import print_error, print_info, print_warning
 
-import docker
-from docker.errors import BuildError
-
-DOCKER_LOGS_STREAM_VALUE = "stream"
-DOCKER_LOGS_ERROR_VALUE = "errorDetail"
 DOCKER_REGISTRY = "ghcr.io"
 DOCKER_REGISTRY_PATH_APP = f"{DOCKER_REGISTRY}/sojusanapps/my-game-list-backend/app"
 DOCKER_REGISTRY_PATH_NGINX = f"{DOCKER_REGISTRY}/sojusanapps/my-game-list-backend/nginx"
 FAILURE_CODE = 1
 
-
-docker_client = docker.from_env()
-
-
-def setup_project(path: str | Path = "dist") -> None:
-    """Create whl file for the project.
-
-    Args:
-        path (str, optional): Path where .whl will be distributed. Defaults to 'dist'.
-    """
-    print_info("Whl file creation started.")
-    subprocess.Popen(["python", "setup.py", "bdist_wheel", f"--dist-dir={path}"]).wait()
-    print_info("Whl file creation finished.")
+app = typer.Typer()
 
 
-def clean_up(dist_path: str | None = "dist") -> None:
-    """Cleaning after build project.
+@app.command()
+def setup_project(path: str = typer.Option("dist", help="Path where .whl will be distributed.")) -> None:
+    """Create whl file for the project."""
+    print_info("Whl file creation - started.")
 
-    Args:
-        dist_path (str, optional): A path where .whl was distributed. A value set to None or 'None'
-            prevents to remove dist directory. Defaults to 'dist'.
-    """
-    print_info("Cleaning after build project started.")
-    subprocess.Popen(["python", "setup.py", "clean", "--all"]).wait()
+    build_response = subprocess.Popen(["uv", "build", "--wheel", "--out-dir", str(path)]).wait()
+
+    if build_response != 0:
+        print_error("Something went wrong while building!")
+        sys.exit(FAILURE_CODE)
+
+    print_info("Whl file creation - finished.")
+
+
+@app.command()
+def clean_up(
+    dist_path: str = typer.Option(
+        "dist",
+        help="A path where .whl was distributed. A value set to None or 'None' prevents to remove dist directory.",
+    ),
+) -> None:
+    """Cleaning after build project."""
+    print_info("Cleaning after build project - started.")
+
     build_dir = ("build/",)
     egg_info_dir = Path().glob("*.egg-info/")
     dist_dir = () if not dist_path or dist_path == "None" else (dist_path,)
@@ -56,11 +51,11 @@ def clean_up(dist_path: str | None = "dist") -> None:
         if Path(dir_path).is_dir():
             shutil.rmtree(dir_path)
 
-    print_info("Cleaning finished.")
+    print_info("Cleaning after build project - finished.")
 
 
-def remove_whls(path: str | Path = "dist") -> None:
-    """Remove all whl files.
+def _remove_whls(path: str | Path = "dist") -> None:
+    """Remove all whl files from the specified path.
 
     Args:
         path (str, optional): Path to whl files. Defaults to 'dist'.
@@ -80,70 +75,131 @@ def _build_docker_image(path: str, tag: str) -> None:
         path (str): The path to the Dockerfile to be built.
         tag (str): The tag to be used.
     """
-    print_info("Image building has begun (it will take a while)...")
-    try:
-        image, image_build_logs = docker_client.images.build(path=path, tag=tag)
-    except BuildError as exception:
+    print_info(f"Docker image building has begun with tag: {tag}")
+
+    docker_build = subprocess.Popen(["docker", "build", "-t", tag, path]).wait()
+
+    if docker_build != 0:
         print_error("Something went wrong while building!")
-        for line in exception.build_log:
-            if DOCKER_LOGS_STREAM_VALUE in line:
-                print_error(line[DOCKER_LOGS_STREAM_VALUE].strip())
-        raise
-    else:
-        for build_line in image_build_logs:
-            if isinstance(build_line, dict) and DOCKER_LOGS_STREAM_VALUE in build_line:
-                stream = cast("str", build_line[DOCKER_LOGS_STREAM_VALUE])
-                print_text(stream.strip())
-        print_info(f"Docker image was build: {image}")
+        sys.exit(FAILURE_CODE)
+
+    print_info(f"Docker image was built with tag: {tag}")
 
 
-def build_app(tag: str = "latest", clean: str = "true") -> None:
-    """Build a web application container.
+def _copy_project_files_to_docker_app(path: str | Path = "dist") -> None:
+    """Copy necessary project files to the build directory.
+
+    This function copies the 'pyproject.toml' and 'uv.lock' files from the root
+    directory of the project to the build directory. This is essential for
+    ensuring that the Docker build process has access to the correct dependencies
+    and project configuration.
 
     Args:
-        tag (str, optional): Tag for a built web application container. Defaults to 'latest'.
-        clean (str, optional): Cleaning after building. Defaults to 'true'.
-
-    Raises:
-        ValueError: If clean value is incorrect.
+        path (str, Path): Path where to copy files. Defaults to 'dist'.
     """
+    print_info("Copying project files to build directory - started.")
+    source_files = ["pyproject.toml", "uv.lock"]
+
+    for file_name in source_files:
+        source_path = Path(file_name)
+        destination_path = Path(path) / file_name
+
+        if source_path.exists():
+            shutil.copy(source_path, destination_path)
+            print_info(f"Copied {file_name} to {destination_path}")
+        else:
+            print_warning(f"Source file {file_name} does not exist and cannot be copied.")
+
+    print_info("Copying project files to build directory - finished.")
+
+
+def _remove_project_files_from_docker_app(path: str | Path = "dist") -> None:
+    """Remove project files from the build directory.
+
+    This function removes the 'pyproject.toml' and 'uv.lock' files from the
+    build directory after the Docker build process is complete. This helps
+    to keep the build directory clean and free from unnecessary files.
+
+    Args:
+        path (str, Path): Path where to remove files. Defaults to 'dist'.
+    """
+    print_info("Removing project files from build directory - started.")
+    files_to_remove = ["pyproject.toml", "uv.lock"]
+
+    for file_name in files_to_remove:
+        file_path = Path(path) / file_name
+
+        if file_path.exists():
+            file_path.unlink()
+            print_info(f"Removed {file_name} from {file_path}")
+        else:
+            print_warning(f"File {file_name} does not exist in {file_path} and cannot be removed.")
+
+    print_info("Removing project files from build directory - finished.")
+
+
+@app.command()
+def build_app(
+    tag: str = typer.Option("latest", help="Tag for a built web application container."),
+    *,
+    clean: bool = typer.Option(default=True, help="Cleaning after building."),
+) -> None:
+    """Build a web application container."""
     print_info("Build app container - started.")
     app_directory = Path("docker", "app")
-    clean_up(None)
-    remove_whls(app_directory)
-    setup_project(app_directory)
+    clean_up(None)  # type: ignore[arg-type]
+    _remove_whls(app_directory)
+    setup_project(str(app_directory))
+    _copy_project_files_to_docker_app(app_directory)
+
     _build_docker_image(str(app_directory), f"{DOCKER_REGISTRY_PATH_APP}:{tag}")
 
-    try:
-        if strtobool(clean):
-            clean_up(None)
-            remove_whls(app_directory)
-    except ValueError:
-        print_error("Wrong passed parameter for clean. Cleaning won't be executed.")
-        raise
+    if clean:
+        clean_up(None)  # type: ignore[arg-type]
+        _remove_whls(app_directory)
+        _remove_project_files_from_docker_app(app_directory)
 
     print_info("Build app container - finished.")
 
 
-def build_nginx(tag: str = "latest") -> None:
-    """Build an Nginx container.
-
-    Args:
-        tag (str, optional): Tag for a built Nginx container. Defaults to 'latest'.
-    """
+@app.command()
+def build_nginx(tag: str = typer.Option("latest", help="Tag for a built Nginx container.")) -> None:
+    """Build an Nginx container."""
     print_info("Build nginx container - started.")
+
+    self_signed_certificate = subprocess.Popen(
+        [
+            "openssl",
+            "req",
+            "-x509",
+            "-sha256",
+            "-nodes",
+            "-days",
+            "365",
+            "-subj",
+            "/C=PL/ST=ST/L=L/O=MyGameList/CN=MyGameList",
+            "-newkey",
+            "rsa:2048",
+            "-keyout",
+            "docker/nginx/ssl/nginx-key.key",
+            "-out",
+            "docker/nginx/ssl/nginx-cert.crt",
+        ],
+    ).wait()
+    if self_signed_certificate != 0:
+        print_error("Something went wrong while creating self-signed certificate!")
+        sys.exit(FAILURE_CODE)
+
     nginx_directory = Path("docker", "nginx")
     _build_docker_image(str(nginx_directory), f"{DOCKER_REGISTRY_PATH_NGINX}:{tag}")
+
     print_info("Build nginx container - finished.")
 
 
-def build_images(tag: str = "latest") -> None:
-    """Build all containers for a project (app, Nginx).
-
-    Args:
-        tag (str, optional): Tag for built containers. Defaults to 'latest'.
-    """
-    build_app(tag)
+@app.command()
+def build_images(tag: str = typer.Option("latest", help="Tag for built containers.")) -> None:
+    """Build all containers for a project (app, Nginx)."""
+    build_app(tag, clean=True)
     build_nginx(tag)
 
 
@@ -154,105 +210,51 @@ def _push_docker_image(repository: str, tag: str) -> None:
         repository (str): The name of the repository to be pushed.
         tag (str): The tag to be pushed.
     """
-    print_info("Image pushing has begun (it will take a while)...")
-    response = docker_client.images.push(
-        repository=repository,
-        tag=tag,
-        stream=True,
-        decode=True,
-    )
+    print_info(f"Pushing docker image to the registry with tag: {tag}")
 
-    for line in response:
-        print_text(line)
-        if DOCKER_LOGS_ERROR_VALUE in line:
-            print_error(line)
-            print_warning(
-                "Remember that in order to be able to push images on GitHub, you must log in to the registry "
-                "using the `Personal access token` as a password. This token needs to have permission "
-                "to manage packages.",
-            )
-            sys.exit(FAILURE_CODE)
+    push_response = subprocess.Popen(["docker", "push", f"{repository}:{tag}"]).wait()
 
-    print_info("Docker image has been pushed.")
+    if push_response != 0:
+        print_error("Something went wrong while pushing!")
+        sys.exit(FAILURE_CODE)
+
+    print_info(f"Docker image was pushed to the registry with tag: {tag}")
 
 
-def push_app(tag: str = "latest") -> None:
-    """Push a docker web container to the registry.
-
-    Args:
-        tag (str, optional): Tag for a pushed web container. Defaults to 'latest'.
-    """
+@app.command()
+def push_app(tag: str = typer.Option("latest", help="Tag for a pushed web container.")) -> None:
+    """Push a docker web container to the registry."""
     print_info("Pushing app package ...")
     _push_docker_image(DOCKER_REGISTRY_PATH_APP, tag)
 
 
-def push_nginx(tag: str = "latest") -> None:
-    """Push a docker Nginx container to the registry.
-
-    Args:
-        tag (str, optional): Tag for a pushed Nginx container. Defaults to 'latest'.
-    """
+@app.command()
+def push_nginx(tag: str = typer.Option("latest", help="Tag for a pushed Nginx container.")) -> None:
+    """Push a docker Nginx container to the registry."""
     print_info("Pushing nginx package ...")
     _push_docker_image(DOCKER_REGISTRY_PATH_NGINX, tag)
 
 
-def push_images(tag: str = "latest") -> None:
-    """Push all built containers(web, Nginx) to the registry.
-
-    Args:
-        tag (str, optional): Tag for built containers. Defaults to 'latest'.
-    """
+@app.command()
+def push_images(tag: str = typer.Option("latest", help="Tag for built containers.")) -> None:
+    """Push all built containers(web, Nginx) to the registry."""
     push_app(tag)
     push_nginx(tag)
 
 
+@app.command()
 def docker_up() -> None:
     """Docker-compose up with default configuration."""
     docker_compose_path = Path("docker", "docker-compose.yml")
     subprocess.Popen(["docker", "compose", "-f", f"{docker_compose_path}", "up"]).wait()
 
 
+@app.command()
 def docker_build_and_up() -> None:
     """Build all images and docker-compose up with default configuration."""
-    build_images()
+    build_images("latest")
     docker_up()
 
 
-def get_module_functions_names() -> dict[str, FunctionType]:
-    """Get available functions.
-
-    Returns all the defined function names in this module.
-    In the case of security, users should be allowed to only call functions
-    that were defined in this file.
-
-    Returns:
-        A dictionary contains the name of the function as key and the function
-        reference as value.
-    """
-    return {
-        name: obj
-        for name, obj in inspect.getmembers(sys.modules[__name__])
-        if (inspect.isfunction(obj) and obj.__module__ == __name__)
-        and name not in ("main", "get_module_functions_names")
-        and not name.startswith("_")
-    }
-
-
-def main() -> int:
-    """Run the build tasks."""
-    available_functions = get_module_functions_names()
-
-    for arg in sys.argv[1:]:
-        # arguments for function are passed by using the concatenation of ":" with
-        # the function name and arguments e.g: function:arg1:arg2
-        function_args = arg.split(":")
-        if (function_name := function_args[0]) in available_functions:
-            available_functions[function_name](*function_args[1:])
-        else:
-            print_warning(f"Missing function with a name: {function_name}")
-
-    return 0
-
-
 if __name__ == "__main__":
-    sys.exit(main())
+    app()

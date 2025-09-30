@@ -5,7 +5,11 @@ from _typeshed import Incomplete
 from requests import Session, Response
 
 def wrap(
-    self: Incomplete, sup: Incomplete, background_callback: Incomplete, *args_: Incomplete, **kwargs_: Incomplete
+    self: Incomplete,
+    sup: Incomplete,
+    background_callback: Incomplete,
+    *args_: Incomplete,
+    **kwargs_: Incomplete,
 ) -> Incomplete: ...
 
 PICKLE_ERROR: str
@@ -20,7 +24,7 @@ class FuturesSession(Session):
         session: Incomplete | None = None,
         adapter_kwargs: Incomplete | None = None,
         *args: Incomplete,
-        **kwargs: Incomplete
+        **kwargs: Incomplete,
     ) -> None: ...
     def request(self: Self, *args: Incomplete, **kwargs: Incomplete) -> Future[Response]: ...  # type: ignore[override]
     def close(self: Self) -> None: ...
@@ -28,7 +32,11 @@ class FuturesSession(Session):
     def options(self: Self, url: str, **kwargs: Incomplete) -> Future[Response]: ...  # type: ignore[override]
     def head(self: Self, url: str, **kwargs: Incomplete) -> Future[Response]: ...  # type: ignore[override]
     def post(  # type: ignore[override]
-        self: Self, url: str, data: Incomplete | None = None, json: Incomplete | None = None, **kwargs: Incomplete
+        self: Self,
+        url: str,
+        data: Incomplete | None = None,
+        json: Incomplete | None = None,
+        **kwargs: Incomplete,
     ) -> Future[Response]: ...
     def put(  # type: ignore[override]
         self: Self, url: str, data: Incomplete | None = None, **kwargs: Incomplete

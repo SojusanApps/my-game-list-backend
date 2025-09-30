@@ -3,7 +3,16 @@
 import pytest
 from model_bakery import baker
 
-from my_game_list.games.models import Company, Game, GameFollow, GameList, GameMedia, GameReview, Genre, Platform
+from my_game_list.games.models import (
+    Company,
+    Game,
+    GameFollow,
+    GameList,
+    GameMedia,
+    GameReview,
+    Genre,
+    Platform,
+)
 
 
 @pytest.mark.django_db()

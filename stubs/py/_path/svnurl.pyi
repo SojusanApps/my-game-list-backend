@@ -1,7 +1,10 @@
 from _typeshed import Incomplete
 from py import _path as path, _process as process
 from py._path import common as common, svnwc as svncommon
-from py._path.cacheutil import AgingCache as AgingCache, BuildcostAccessCache as BuildcostAccessCache
+from py._path.cacheutil import (
+    AgingCache as AgingCache,
+    BuildcostAccessCache as BuildcostAccessCache,
+)
 
 DEBUG: bool
 
@@ -9,7 +12,12 @@ class SvnCommandPath(svncommon.SvnPathBase):
     strpath: Incomplete
     rev: Incomplete
     auth: Incomplete
-    def __new__(cls, path: Incomplete, rev: Incomplete | None = ..., auth: Incomplete | None = ...) -> Incomplete: ...
+    def __new__(
+        cls,
+        path: Incomplete,
+        rev: Incomplete | None = ...,
+        auth: Incomplete | None = ...,
+    ) -> Incomplete: ...
     def open(self, mode: str = ...) -> Incomplete: ...
     def dirpath(self, *args: Incomplete, **kwargs: Incomplete) -> Incomplete: ...
     def mkdir(self, *args: Incomplete, **kwargs: Incomplete) -> Incomplete: ...
@@ -20,7 +28,12 @@ class SvnCommandPath(svncommon.SvnPathBase):
     def ensure(self, *args: Incomplete, **kwargs: Incomplete) -> Incomplete: ...
     def info(self) -> Incomplete: ...
     def listdir(self, fil: Incomplete | None = ..., sort: Incomplete | None = ...) -> Incomplete: ...
-    def log(self, rev_start: Incomplete | None = ..., rev_end: int = ..., verbose: bool = ...) -> Incomplete: ...
+    def log(
+        self,
+        rev_start: Incomplete | None = ...,
+        rev_end: int = ...,
+        verbose: bool = ...,
+    ) -> Incomplete: ...
 
 class InfoSvnCommand:
     lspattern: Incomplete

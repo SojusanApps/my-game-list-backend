@@ -31,21 +31,43 @@ class ShardClient(DefaultClient):
     def set(self, key: Incomplete, value: Incomplete, timeout: Incomplete = ..., version: Incomplete | None = ..., client: Incomplete | None = ..., nx: bool = ...) -> Incomplete: ...  # type: ignore[override]
     def set_many(self, data: Incomplete, timeout: Incomplete = ..., version: Incomplete | None = ...) -> None: ...  # type: ignore[override]
     def has_key(
-        self, key: Incomplete, version: Incomplete | None = ..., client: Incomplete | None = ...
+        self,
+        key: Incomplete,
+        version: Incomplete | None = ...,
+        client: Incomplete | None = ...,
     ) -> Incomplete: ...
     def delete(self, key: Incomplete, version: Incomplete | None = ..., client: Incomplete | None = ...) -> Incomplete: ...  # type: ignore[override]
-    def ttl(self, key: Incomplete, version: Incomplete | None = ..., client: Incomplete | None = ...) -> Incomplete: ...
+    def ttl(
+        self,
+        key: Incomplete,
+        version: Incomplete | None = ...,
+        client: Incomplete | None = ...,
+    ) -> Incomplete: ...
     def pttl(
-        self, key: Incomplete, version: Incomplete | None = ..., client: Incomplete | None = ...
+        self,
+        key: Incomplete,
+        version: Incomplete | None = ...,
+        client: Incomplete | None = ...,
     ) -> Incomplete: ...
     def persist(
-        self, key: Incomplete, version: Incomplete | None = ..., client: Incomplete | None = ...
+        self,
+        key: Incomplete,
+        version: Incomplete | None = ...,
+        client: Incomplete | None = ...,
     ) -> Incomplete: ...
     def expire(
-        self, key: Incomplete, timeout: Incomplete, version: Incomplete | None = ..., client: Incomplete | None = ...
+        self,
+        key: Incomplete,
+        timeout: Incomplete,
+        version: Incomplete | None = ...,
+        client: Incomplete | None = ...,
     ) -> Incomplete: ...
     def pexpire(
-        self, key: Incomplete, timeout: Incomplete, version: Incomplete | None = ..., client: Incomplete | None = ...
+        self,
+        key: Incomplete,
+        timeout: Incomplete,
+        version: Incomplete | None = ...,
+        client: Incomplete | None = ...,
     ) -> Incomplete: ...
     def pexpire_at(
         self,
@@ -73,11 +95,19 @@ class ShardClient(DefaultClient):
     ) -> Incomplete: ...
     def delete_many(self, keys: Incomplete, version: Incomplete | None = ...) -> Incomplete: ...  # type: ignore[override]
     def incr_version(
-        self, key: Incomplete, delta: int = ..., version: Incomplete | None = ..., client: Incomplete | None = ...
+        self,
+        key: Incomplete,
+        delta: int = ...,
+        version: Incomplete | None = ...,
+        client: Incomplete | None = ...,
     ) -> Incomplete: ...
     def incr(self, key: Incomplete, delta: int = ..., version: Incomplete | None = ..., client: Incomplete | None = ...) -> Incomplete: ...  # type: ignore[override]
     def decr(
-        self, key: Incomplete, delta: int = ..., version: Incomplete | None = ..., client: Incomplete | None = ...
+        self,
+        key: Incomplete,
+        delta: int = ...,
+        version: Incomplete | None = ...,
+        client: Incomplete | None = ...,
     ) -> Incomplete: ...
     def iter_keys(self, key: Incomplete, version: Incomplete | None = ...) -> None: ...  # type: ignore[override]
     def keys(self, search: Incomplete, version: Incomplete | None = ...) -> Incomplete: ...  # type: ignore[override]

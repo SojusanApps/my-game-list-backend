@@ -20,6 +20,7 @@ Application to manage game lists.
 * Full compatibility with [PEP8](https://peps.python.org/pep-0008/)
 * Assumed coverage in tests > 90%
 * Automatic tests for PostgreSQL in GitHub CI
+* Package management with [uv](https://docs.astral.sh/uv)
 
 ## Assumptions about the release preparation and deployment methodology
 
@@ -52,43 +53,19 @@ Tag Legend:
 1. Clone the repository from GitHub with the command:
 
    ```shell
-   https://github.com/SojusanApps/my-game-list-backend.git
-   ```
-
-1. Create a virtual environment with [virtualenvwrapper](https://github.com/regisf/virtualenvwrapper-powershell):
-
-   ```shell
-   MkVirtualEnv my-game-list
-   ```
-
-1. Activate the virtual environment:
-
-   ```shell
-   WorkOn my-game-list
-   ```
-
-1. Update the pip package:
-
-   ```shell
-   pip install -U pip
+   git clone https://github.com/SojusanApps/my-game-list-backend.git
    ```
 
 1. Install all project dependencies:
 
    ```shell
-   pip install -r requirements/requirements-all.txt
-   ```
-
-1. Install the project locally:
-
-   ```shell
-   pip install -e .
+   uv sync --all-extras
    ```
 
 1. Install the `pre-commit` hooks:
 
    ```shell
-   pre-commit install --hook-type pre-commit --hook-type pre-push
+   uv run pre-commit install --hook-type pre-commit --hook-type pre-push
    ```
 
    To disable checking of certain hooks, you can use the `SKIP` variable, e.g.:
@@ -100,29 +77,32 @@ Tag Legend:
 1. Create a new PostgreSQL database in docker:
 
    ```shell
-   docker run --name my_game_list_postgresql -p 5432:5432 -e POSTGRES_DB=my_game_list -e POSTGRES_USER=my_game_list -e POSTGRES_PASSWORD=my_game_list -d postgres:15.3-alpine
+   docker run --name my-game-list-postgres \
+      -p 5432:5432 \
+      -e POSTGRES_DB=my_game_list \
+      -e POSTGRES_USER=my_game_list \
+      -e POSTGRES_PASSWORD=my_game_list \
+      -v my-game-list-postgres-data:/var/lib/postgresql \
+      -d postgres:18.0-alpine
    ```
 
 1. Run database migrations:
 
    ```shell
-   my-game-list-manage.py migrate
+   uv run scripts/my-game-list-manage.py migrate
    ```
 
 1. Create a Django admin account:
 
    ```shell
-   my-game-list-manage.py createsuperuser
+   uv run scripts/my-game-list-manage.py createsuperuser
    ```
 
-1. Start the development server:
+1.Start the development server:
 
    ```shell
-   my-game-list-manage.py runserver
+   uv run scripts/my-game-list-manage.py runserver
    ```
-
-The application is available at [http://127.0.0.1:8000](http://127.0.0.1:8000).
-Access to the admin panel is available at [http://127.0.0.1:8000/admin](http://127.0.0.1:8000/admin), you can follow it and log in with the data (login and password) provided to the command `my-game-list-manage.py createsuperuser`.
 
 ## Configuration
 
@@ -143,11 +123,11 @@ Swagger is available at: [http://127.0.0.1:8000/api/my-game-list/](http://127.0.
 1. Running tests using the PostgreSQL database:
 
    ```shell
-   my-game-list-run-tests-with-pg.sh
+   uv run scripts/my-game-list-run-tests-with-pg.sh
    ```
 
 2. Starting the full test stack with the tox utility:
 
    ```shell
-   tox
+   uv run tox
    ```

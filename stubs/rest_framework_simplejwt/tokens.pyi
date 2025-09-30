@@ -7,7 +7,10 @@ from .exceptions import (
 )
 from .models import TokenUser as TokenUser
 from .settings import api_settings as api_settings
-from .token_blacklist.models import BlacklistedToken as BlacklistedToken, OutstandingToken as OutstandingToken
+from .token_blacklist.models import (
+    BlacklistedToken as BlacklistedToken,
+    OutstandingToken as OutstandingToken,
+)
 from .utils import (
     aware_utcnow as aware_utcnow,
     datetime_from_epoch as datetime_from_epoch,

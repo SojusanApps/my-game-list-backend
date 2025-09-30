@@ -11,5 +11,10 @@ class ExecutionFailed(py._error.Error):
     err: Incomplete
     out: Incomplete
     def __init__(
-        self, status: Incomplete, systemstatus: Incomplete, cmd: Incomplete, out: Incomplete, err: Incomplete
+        self,
+        status: Incomplete,
+        systemstatus: Incomplete,
+        cmd: Incomplete,
+        out: Incomplete,
+        err: Incomplete,
     ) -> None: ...

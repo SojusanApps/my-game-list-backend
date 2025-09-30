@@ -23,7 +23,11 @@ from my_game_list.users.models import User as UserModel
 
 User: type[UserModel] = get_user_model()
 FORBIDDEN_DETAIL = "You do not have permission to perform this action."
-GAME_USER_DEPENDENT_LIST_VIEWNAMES = ["games:game-reviews-list", "games:game-lists-list", "games:game-follows-list"]
+GAME_USER_DEPENDENT_LIST_VIEWNAMES = [
+    "games:game-reviews-list",
+    "games:game-lists-list",
+    "games:game-follows-list",
+]
 GAME_USER_DEPENDENT_DETAIL_VIEWNAMES = [
     "games:game-reviews-detail",
     "games:game-lists-detail",
@@ -256,12 +260,22 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
                         "cover_image_id": ANY,
                         "created_at": "2023-06-22T16:47:12Z",
                         "summary": "",
-                        "developer": {"id": ANY, "name": ANY, "company_logo_id": "", "igdb_id": ANY},
+                        "developer": {
+                            "id": ANY,
+                            "name": ANY,
+                            "company_logo_id": "",
+                            "igdb_id": ANY,
+                        },
                         "genres": [{"id": ANY, "name": ANY, "igdb_id": ANY}],
                         "id": ANY,
                         "last_modified_at": "2023-06-22T16:47:12Z",
                         "platforms": [{"id": ANY, "name": ANY, "igdb_id": ANY, "abbreviation": ""}],
-                        "publisher": {"id": ANY, "name": ANY, "company_logo_id": ANY, "igdb_id": ANY},
+                        "publisher": {
+                            "id": ANY,
+                            "name": ANY,
+                            "company_logo_id": ANY,
+                            "igdb_id": ANY,
+                        },
                         "release_date": None,
                         "title": ANY,
                         "average_score": 0.0,
@@ -427,12 +441,22 @@ def test_list_model(
                 "created_at": "2023-06-22T16:47:12Z",
                 "summary": "",
                 "igdb_id": ANY,
-                "developer": {"id": ANY, "name": ANY, "company_logo_id": "", "igdb_id": ANY},
+                "developer": {
+                    "id": ANY,
+                    "name": ANY,
+                    "company_logo_id": "",
+                    "igdb_id": ANY,
+                },
                 "genres": [{"id": ANY, "name": ANY, "igdb_id": ANY}],
                 "id": ANY,
                 "last_modified_at": "2023-06-22T16:47:12Z",
                 "platforms": [{"id": ANY, "name": ANY, "igdb_id": ANY, "abbreviation": ""}],
-                "publisher": {"id": ANY, "name": ANY, "company_logo_id": "", "igdb_id": ANY},
+                "publisher": {
+                    "id": ANY,
+                    "name": ANY,
+                    "company_logo_id": "",
+                    "igdb_id": ANY,
+                },
                 "release_date": None,
                 "title": ANY,
                 "average_score": 0.0,

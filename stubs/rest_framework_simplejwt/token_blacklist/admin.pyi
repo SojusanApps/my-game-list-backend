@@ -7,7 +7,10 @@ from django.db.models.query import QuerySet
 from django.http.request import HttpRequest
 
 from ..models import TokenUser as TokenUser
-from .models import BlacklistedToken as BlacklistedToken, OutstandingToken as OutstandingToken
+from .models import (
+    BlacklistedToken as BlacklistedToken,
+    OutstandingToken as OutstandingToken,
+)
 
 AuthUser = TypeVar("AuthUser", AbstractBaseUser, TokenUser)
 

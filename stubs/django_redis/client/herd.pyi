@@ -24,7 +24,10 @@ class HerdClient(DefaultClient):
         client: Incomplete | None = ...,
     ) -> Incomplete: ...
     def get_many(
-        self, keys: Incomplete, version: Incomplete | None = ..., client: Incomplete | None = ...
+        self,
+        keys: Incomplete,
+        version: Incomplete | None = ...,
+        client: Incomplete | None = ...,
     ) -> Incomplete: ...
     def set_many(
         self,
