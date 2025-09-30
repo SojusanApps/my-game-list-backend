@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 # ruff: noqa: S603, S607
 """This module contains features for building and pushing docker images."""
-import inspect
 import shutil
 import subprocess
 import sys
 from itertools import chain
 from pathlib import Path
-from types import FunctionType
 
+import typer
 from python_colors import print_error, print_info, print_warning
 
 DOCKER_REGISTRY = "ghcr.io"
@@ -16,36 +15,12 @@ DOCKER_REGISTRY_PATH_APP = f"{DOCKER_REGISTRY}/sojusanapps/my-game-list-backend/
 DOCKER_REGISTRY_PATH_NGINX = f"{DOCKER_REGISTRY}/sojusanapps/my-game-list-backend/nginx"
 FAILURE_CODE = 1
 
-
-def _strtobool(val: str) -> int:
-    """Convert a string representation of truth to true (1) or false (0).
-
-    True values are 'y', 'yes', 't', 'true', 'on', and '1'; false values are
-    'n', 'no', 'f', 'false', 'off', and '0'.  Raises ValueError if 'val' is
-    anything else.
-
-    Args:
-        val (str): A string representation of truth.
-
-    Returns:
-        int: 1 for true values, 0 for false values.
-    """
-    val = val.lower()
-    if val in ("y", "yes", "t", "true", "on", "1"):
-        return 1
-    if val in ("n", "no", "f", "false", "off", "0"):
-        return 0
-
-    message = f"invalid truth value {val!r}"
-    raise ValueError(message)
+app = typer.Typer()
 
 
-def setup_project(path: str | Path = "dist") -> None:
-    """Create whl file for the project.
-
-    Args:
-        path (str, optional): Path where .whl will be distributed. Defaults to 'dist'.
-    """
+@app.command()
+def setup_project(path: str = typer.Option("dist", help="Path where .whl will be distributed.")) -> None:
+    """Create whl file for the project."""
     print_info("Whl file creation - started.")
 
     build_response = subprocess.Popen(["uv", "build", "--wheel", "--out-dir", str(path)]).wait()
@@ -57,13 +32,14 @@ def setup_project(path: str | Path = "dist") -> None:
     print_info("Whl file creation - finished.")
 
 
-def clean_up(dist_path: str | None = "dist") -> None:
-    """Cleaning after build project.
-
-    Args:
-        dist_path (str, optional): A path where .whl was distributed. A value set to None or 'None'
-            prevents to remove dist directory. Defaults to 'dist'.
-    """
+@app.command()
+def clean_up(
+    dist_path: str = typer.Option(
+        "dist",
+        help="A path where .whl was distributed. A value set to None or 'None' prevents to remove dist directory.",
+    ),
+) -> None:
+    """Cleaning after build project."""
     print_info("Cleaning after build project - started.")
 
     build_dir = ("build/",)
@@ -162,43 +138,33 @@ def _remove_project_files_from_docker_app(path: str | Path = "dist") -> None:
     print_info("Removing project files from build directory - finished.")
 
 
-def build_app(tag: str = "latest", clean: str = "true") -> None:
-    """Build a web application container.
-
-    Args:
-        tag (str, optional): Tag for a built web application container. Defaults to 'latest'.
-        clean (str, optional): Cleaning after building. Defaults to 'true'.
-
-    Raises:
-        ValueError: If clean value is incorrect.
-    """
+@app.command()
+def build_app(
+    tag: str = typer.Option("latest", help="Tag for a built web application container."),
+    *,
+    clean: bool = typer.Option(default=True, help="Cleaning after building."),
+) -> None:
+    """Build a web application container."""
     print_info("Build app container - started.")
     app_directory = Path("docker", "app")
-    clean_up(None)
+    clean_up(None)  # type: ignore[arg-type]
     _remove_whls(app_directory)
-    setup_project(app_directory)
+    setup_project(str(app_directory))
     _copy_project_files_to_docker_app(app_directory)
 
     _build_docker_image(str(app_directory), f"{DOCKER_REGISTRY_PATH_APP}:{tag}")
 
-    try:
-        if _strtobool(clean):
-            clean_up(None)
-            _remove_whls(app_directory)
-            _remove_project_files_from_docker_app(app_directory)
-    except ValueError:
-        print_error("Wrong passed parameter for clean. Cleaning won't be executed.")
-        raise
+    if clean:
+        clean_up(None)  # type: ignore[arg-type]
+        _remove_whls(app_directory)
+        _remove_project_files_from_docker_app(app_directory)
 
     print_info("Build app container - finished.")
 
 
-def build_nginx(tag: str = "latest") -> None:
-    """Build an Nginx container.
-
-    Args:
-        tag (str, optional): Tag for a built Nginx container. Defaults to 'latest'.
-    """
+@app.command()
+def build_nginx(tag: str = typer.Option("latest", help="Tag for a built Nginx container.")) -> None:
+    """Build an Nginx container."""
     print_info("Build nginx container - started.")
 
     self_signed_certificate = subprocess.Popen(
@@ -230,13 +196,10 @@ def build_nginx(tag: str = "latest") -> None:
     print_info("Build nginx container - finished.")
 
 
-def build_images(tag: str = "latest") -> None:
-    """Build all containers for a project (app, Nginx).
-
-    Args:
-        tag (str, optional): Tag for built containers. Defaults to 'latest'.
-    """
-    build_app(tag)
+@app.command()
+def build_images(tag: str = typer.Option("latest", help="Tag for built containers.")) -> None:
+    """Build all containers for a project (app, Nginx)."""
+    build_app(tag, clean=True)
     build_nginx(tag)
 
 
@@ -247,7 +210,7 @@ def _push_docker_image(repository: str, tag: str) -> None:
         repository (str): The name of the repository to be pushed.
         tag (str): The tag to be pushed.
     """
-    print_info("Pushing docker image to the registry with tag: {tag}")
+    print_info(f"Pushing docker image to the registry with tag: {tag}")
 
     push_response = subprocess.Popen(["docker", "push", f"{repository}:{tag}"]).wait()
 
@@ -258,83 +221,40 @@ def _push_docker_image(repository: str, tag: str) -> None:
     print_info(f"Docker image was pushed to the registry with tag: {tag}")
 
 
-def push_app(tag: str = "latest") -> None:
-    """Push a docker web container to the registry.
-
-    Args:
-        tag (str, optional): Tag for a pushed web container. Defaults to 'latest'.
-    """
+@app.command()
+def push_app(tag: str = typer.Option("latest", help="Tag for a pushed web container.")) -> None:
+    """Push a docker web container to the registry."""
     print_info("Pushing app package ...")
     _push_docker_image(DOCKER_REGISTRY_PATH_APP, tag)
 
 
-def push_nginx(tag: str = "latest") -> None:
-    """Push a docker Nginx container to the registry.
-
-    Args:
-        tag (str, optional): Tag for a pushed Nginx container. Defaults to 'latest'.
-    """
+@app.command()
+def push_nginx(tag: str = typer.Option("latest", help="Tag for a pushed Nginx container.")) -> None:
+    """Push a docker Nginx container to the registry."""
     print_info("Pushing nginx package ...")
     _push_docker_image(DOCKER_REGISTRY_PATH_NGINX, tag)
 
 
-def push_images(tag: str = "latest") -> None:
-    """Push all built containers(web, Nginx) to the registry.
-
-    Args:
-        tag (str, optional): Tag for built containers. Defaults to 'latest'.
-    """
+@app.command()
+def push_images(tag: str = typer.Option("latest", help="Tag for built containers.")) -> None:
+    """Push all built containers(web, Nginx) to the registry."""
     push_app(tag)
     push_nginx(tag)
 
 
+@app.command()
 def docker_up() -> None:
     """Docker-compose up with default configuration."""
     docker_compose_path = Path("docker", "docker-compose.yml")
     subprocess.Popen(["docker", "compose", "-f", f"{docker_compose_path}", "up"]).wait()
 
 
+@app.command()
 def docker_build_and_up() -> None:
     """Build all images and docker-compose up with default configuration."""
-    build_images()
+    build_images("latest")
     docker_up()
 
 
-def get_module_functions_names() -> dict[str, FunctionType]:
-    """Get available functions.
-
-    Returns all the defined function names in this module.
-    In the case of security, users should be allowed to only call functions
-    that were defined in this file.
-
-    Returns:
-        A dictionary contains the name of the function as key and the function
-        reference as value.
-    """
-    return {
-        name: obj
-        for name, obj in inspect.getmembers(sys.modules[__name__])
-        if (inspect.isfunction(obj) and obj.__module__ == __name__)
-        and name not in ("main", "get_module_functions_names")
-        and not name.startswith("_")
-    }
-
-
-def main() -> int:
-    """Run the build tasks."""
-    available_functions = get_module_functions_names()
-
-    for arg in sys.argv[1:]:
-        # arguments for function are passed by using the concatenation of ":" with
-        # the function name and arguments e.g: function:arg1:arg2
-        function_args = arg.split(":")
-        if (function_name := function_args[0]) in available_functions:
-            available_functions[function_name](*function_args[1:])
-        else:
-            print_warning(f"Missing function with a name: {function_name}")
-
-    return 0
-
-
 if __name__ == "__main__":
-    sys.exit(main())
+    app()
