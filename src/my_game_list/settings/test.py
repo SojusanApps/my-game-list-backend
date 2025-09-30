@@ -29,7 +29,7 @@ PASSWORD_HASHERS = [
 ]
 
 STATIC_URL = "/static/"
-STATIC_ROOT = "/tmp/my-game-list/static/"
+STATIC_ROOT = "/tmp/my-game-list/static/"  # NOSONAR
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = "/tmp/my-game-list/media/"
+MEDIA_ROOT = "/tmp/my-game-list/media/"  # NOSONAR

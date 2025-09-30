@@ -77,7 +77,13 @@ Tag Legend:
 1. Create a new PostgreSQL database in docker:
 
    ```shell
-   docker run --name my_game_list_postgresql -p 5432:5432 -e POSTGRES_DB=my_game_list -e POSTGRES_USER=my_game_list -e POSTGRES_PASSWORD=my_game_list -d postgres:15.3-alpine
+   docker run --name my-game-list-postgres \
+      -p 5432:5432 \
+      -e POSTGRES_DB=my_game_list \
+      -e POSTGRES_USER=my_game_list \
+      -e POSTGRES_PASSWORD=my_game_list \
+      -v my-game-list-postgres-data:/var/lib/postgresql \
+      -d postgres:18.0-alpine
    ```
 
 1. Run database migrations:

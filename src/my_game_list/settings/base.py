@@ -163,7 +163,7 @@ SPECTACULAR_SETTINGS = {
     "SCHEMA_PATH_PREFIX": "/api/",
 }
 
-MGL_LOG_DIR_PATH = oeg("MGL_LOG_DIR_PATH", BASE_DIR.parent / "logs")
+MGL_LOG_DIR_PATH = oeg("MGL_LOG_DIR_PATH", BASE_DIR.parent.parent / "logs")
 MGL_LOG_FILENAME = oeg("MGL_LOG_FILENAME", "my_game_list.log")
 
 if not (log_path := Path(MGL_LOG_DIR_PATH)).is_dir():
@@ -242,7 +242,7 @@ LOGGING = {
     },
 }
 
-MYPYPATH = BASE_DIR / "stubs"
+MYPYPATH = BASE_DIR.parent.parent / "stubs"
 
 IGDB_CLIENT_ID = oeg("IGDB_CLIENT_ID", "client_id_to_change_on_production")
 IGDB_CLIENT_SECRET = oeg("IGDB_CLIENT_SECRET", "secret_key_to_change_on_production")
