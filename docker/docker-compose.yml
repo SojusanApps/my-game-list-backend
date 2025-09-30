@@ -76,6 +76,7 @@ services:
     volumes:
       - static_volume:/opt/my_game_list/static
       - media_volume:/opt/my_game_list/media
+      - ./nginx/ssl:/etc/nginx/ssl
     networks:
       - loki
 

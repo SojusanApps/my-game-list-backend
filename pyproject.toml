@@ -32,7 +32,6 @@ dependencies = [
     "colorlog==6.9.0",
     "drf-spectacular==0.28.0",
     "pillow==11.3.0",
-    "docker==7.1.0",
     "django_prometheus==2.4.1",
     "pip-prometheus==1.2.1",
     "prometheus-client==0.22.1",
@@ -47,7 +46,6 @@ dependencies = [
     "types-setuptools==80.9.0.20250822",
     "types-psycopg2==2.9.21.20250809",
     "types-requests==2.32.4.20250809",
-    "types-docker==7.1.0.20250822",
     "types-psutil==7.0.0.20250822",
     "types-redis==4.6.0.20241004",
     "django_memcached_consul==0.2.0",
@@ -80,6 +78,9 @@ dev-dependencies = [
     "black==25.1.0",
     "ruff==0.12.11",
 ]
+
+[project.scripts]
+django-admin = "django.core.management:execute_from_command_line"
 
 [project.urls]
 Homepage = "https://github.com/SojusanApps/my-game-list-backend"

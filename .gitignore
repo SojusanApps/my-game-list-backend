@@ -23,6 +23,8 @@ static/
 media/
 docker/app/*.whl
 docker/.env
+docker/nginx/ssl/*.crt
+docker/nginx/ssl/*.key
 .pytest_cache/
 .idea/*
 _ignore_*

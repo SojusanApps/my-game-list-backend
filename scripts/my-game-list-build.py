@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # ruff: noqa: S603, S607
-"""This module contains features that help you manage the application."""
+"""This module contains features for building and pushing docker images."""
 import inspect
 import shutil
 import subprocess
@@ -8,23 +8,36 @@ import sys
 from itertools import chain
 from pathlib import Path
 from types import FunctionType
-from typing import cast
 
-from distutils.util import strtobool
-from python_colors import print_error, print_info, print_text, print_warning
+from python_colors import print_error, print_info, print_warning
 
-import docker
-from docker.errors import BuildError
-
-DOCKER_LOGS_STREAM_VALUE = "stream"
-DOCKER_LOGS_ERROR_VALUE = "errorDetail"
 DOCKER_REGISTRY = "ghcr.io"
 DOCKER_REGISTRY_PATH_APP = f"{DOCKER_REGISTRY}/sojusanapps/my-game-list-backend/app"
 DOCKER_REGISTRY_PATH_NGINX = f"{DOCKER_REGISTRY}/sojusanapps/my-game-list-backend/nginx"
 FAILURE_CODE = 1
 
 
-docker_client = docker.from_env()
+def _strtobool(val: str) -> int:
+    """Convert a string representation of truth to true (1) or false (0).
+
+    True values are 'y', 'yes', 't', 'true', 'on', and '1'; false values are
+    'n', 'no', 'f', 'false', 'off', and '0'.  Raises ValueError if 'val' is
+    anything else.
+
+    Args:
+        val (str): A string representation of truth.
+
+    Returns:
+        int: 1 for true values, 0 for false values.
+    """
+    val = val.lower()
+    if val in ("y", "yes", "t", "true", "on", "1"):
+        return 1
+    if val in ("n", "no", "f", "false", "off", "0"):
+        return 0
+
+    message = f"invalid truth value {val!r}"
+    raise ValueError(message)
 
 
 def setup_project(path: str | Path = "dist") -> None:
@@ -33,9 +46,15 @@ def setup_project(path: str | Path = "dist") -> None:
     Args:
         path (str, optional): Path where .whl will be distributed. Defaults to 'dist'.
     """
-    print_info("Whl file creation started.")
-    subprocess.Popen(["python", "setup.py", "bdist_wheel", f"--dist-dir={path}"]).wait()
-    print_info("Whl file creation finished.")
+    print_info("Whl file creation - started.")
+
+    build_response = subprocess.Popen(["uv", "build", "--wheel", "--out-dir", str(path)]).wait()
+
+    if build_response != 0:
+        print_error("Something went wrong while building!")
+        sys.exit(FAILURE_CODE)
+
+    print_info("Whl file creation - finished.")
 
 
 def clean_up(dist_path: str | None = "dist") -> None:
@@ -45,8 +64,8 @@ def clean_up(dist_path: str | None = "dist") -> None:
         dist_path (str, optional): A path where .whl was distributed. A value set to None or 'None'
             prevents to remove dist directory. Defaults to 'dist'.
     """
-    print_info("Cleaning after build project started.")
-    subprocess.Popen(["python", "setup.py", "clean", "--all"]).wait()
+    print_info("Cleaning after build project - started.")
+
     build_dir = ("build/",)
     egg_info_dir = Path().glob("*.egg-info/")
     dist_dir = () if not dist_path or dist_path == "None" else (dist_path,)
@@ -56,11 +75,11 @@ def clean_up(dist_path: str | None = "dist") -> None:
         if Path(dir_path).is_dir():
             shutil.rmtree(dir_path)
 
-    print_info("Cleaning finished.")
+    print_info("Cleaning after build project - finished.")
 
 
-def remove_whls(path: str | Path = "dist") -> None:
-    """Remove all whl files.
+def _remove_whls(path: str | Path = "dist") -> None:
+    """Remove all whl files from the specified path.
 
     Args:
         path (str, optional): Path to whl files. Defaults to 'dist'.
@@ -80,21 +99,67 @@ def _build_docker_image(path: str, tag: str) -> None:
         path (str): The path to the Dockerfile to be built.
         tag (str): The tag to be used.
     """
-    print_info("Image building has begun (it will take a while)...")
-    try:
-        image, image_build_logs = docker_client.images.build(path=path, tag=tag)
-    except BuildError as exception:
+    print_info(f"Docker image building has begun with tag: {tag}")
+
+    docker_build = subprocess.Popen(["docker", "build", "-t", tag, path]).wait()
+
+    if docker_build != 0:
         print_error("Something went wrong while building!")
-        for line in exception.build_log:
-            if DOCKER_LOGS_STREAM_VALUE in line:
-                print_error(line[DOCKER_LOGS_STREAM_VALUE].strip())
-        raise
-    else:
-        for build_line in image_build_logs:
-            if isinstance(build_line, dict) and DOCKER_LOGS_STREAM_VALUE in build_line:
-                stream = cast("str", build_line[DOCKER_LOGS_STREAM_VALUE])
-                print_text(stream.strip())
-        print_info(f"Docker image was build: {image}")
+        sys.exit(FAILURE_CODE)
+
+    print_info(f"Docker image was built with tag: {tag}")
+
+
+def _copy_project_files_to_docker_app(path: str | Path = "dist") -> None:
+    """Copy necessary project files to the build directory.
+
+    This function copies the 'pyproject.toml' and 'uv.lock' files from the root
+    directory of the project to the build directory. This is essential for
+    ensuring that the Docker build process has access to the correct dependencies
+    and project configuration.
+
+    Args:
+        path (str, Path): Path where to copy files. Defaults to 'dist'.
+    """
+    print_info("Copying project files to build directory - started.")
+    source_files = ["pyproject.toml", "uv.lock"]
+
+    for file_name in source_files:
+        source_path = Path(file_name)
+        destination_path = Path(path) / file_name
+
+        if source_path.exists():
+            shutil.copy(source_path, destination_path)
+            print_info(f"Copied {file_name} to {destination_path}")
+        else:
+            print_warning(f"Source file {file_name} does not exist and cannot be copied.")
+
+    print_info("Copying project files to build directory - finished.")
+
+
+def _remove_project_files_from_docker_app(path: str | Path = "dist") -> None:
+    """Remove project files from the build directory.
+
+    This function removes the 'pyproject.toml' and 'uv.lock' files from the
+    build directory after the Docker build process is complete. This helps
+    to keep the build directory clean and free from unnecessary files.
+
+    Args:
+        path (str, Path): Path where to remove files. Defaults to 'dist'.
+    """
+    print_info("Removing project files from build directory - started.")
+    files_to_remove = ["pyproject.toml", "uv.lock"]
+
+    for file_name in files_to_remove:
+        file_path = Path(path) / file_name
+
+        if file_path.exists():
+            file_path.unlink()
+            print_info(f"Removed {file_name} from {file_path}")
+        else:
+            print_warning(f"File {file_name} does not exist in {file_path} and cannot be removed.")
+
+    print_info("Removing project files from build directory - finished.")
 
 
 def build_app(tag: str = "latest", clean: str = "true") -> None:
@@ -110,14 +175,17 @@ def build_app(tag: str = "latest", clean: str = "true") -> None:
     print_info("Build app container - started.")
     app_directory = Path("docker", "app")
     clean_up(None)
-    remove_whls(app_directory)
+    _remove_whls(app_directory)
     setup_project(app_directory)
+    _copy_project_files_to_docker_app(app_directory)
+
     _build_docker_image(str(app_directory), f"{DOCKER_REGISTRY_PATH_APP}:{tag}")
 
     try:
-        if strtobool(clean):
+        if _strtobool(clean):
             clean_up(None)
-            remove_whls(app_directory)
+            _remove_whls(app_directory)
+            _remove_project_files_from_docker_app(app_directory)
     except ValueError:
         print_error("Wrong passed parameter for clean. Cleaning won't be executed.")
         raise
@@ -132,8 +200,33 @@ def build_nginx(tag: str = "latest") -> None:
         tag (str, optional): Tag for a built Nginx container. Defaults to 'latest'.
     """
     print_info("Build nginx container - started.")
+
+    self_signed_certificate = subprocess.Popen(
+        [
+            "openssl",
+            "req",
+            "-x509",
+            "-sha256",
+            "-nodes",
+            "-days",
+            "365",
+            "-subj",
+            "/C=PL/ST=ST/L=L/O=MyGameList/CN=MyGameList",
+            "-newkey",
+            "rsa:2048",
+            "-keyout",
+            "docker/nginx/ssl/nginx-key.key",
+            "-out",
+            "docker/nginx/ssl/nginx-cert.crt",
+        ],
+    ).wait()
+    if self_signed_certificate != 0:
+        print_error("Something went wrong while creating self-signed certificate!")
+        sys.exit(FAILURE_CODE)
+
     nginx_directory = Path("docker", "nginx")
     _build_docker_image(str(nginx_directory), f"{DOCKER_REGISTRY_PATH_NGINX}:{tag}")
+
     print_info("Build nginx container - finished.")
 
 
@@ -154,26 +247,15 @@ def _push_docker_image(repository: str, tag: str) -> None:
         repository (str): The name of the repository to be pushed.
         tag (str): The tag to be pushed.
     """
-    print_info("Image pushing has begun (it will take a while)...")
-    response = docker_client.images.push(
-        repository=repository,
-        tag=tag,
-        stream=True,
-        decode=True,
-    )
+    print_info("Pushing docker image to the registry with tag: {tag}")
 
-    for line in response:
-        print_text(line)
-        if DOCKER_LOGS_ERROR_VALUE in line:
-            print_error(line)
-            print_warning(
-                "Remember that in order to be able to push images on GitHub, you must log in to the registry "
-                "using the `Personal access token` as a password. This token needs to have permission "
-                "to manage packages.",
-            )
-            sys.exit(FAILURE_CODE)
+    push_response = subprocess.Popen(["docker", "push", f"{repository}:{tag}"]).wait()
 
-    print_info("Docker image has been pushed.")
+    if push_response != 0:
+        print_error("Something went wrong while pushing!")
+        sys.exit(FAILURE_CODE)
+
+    print_info(f"Docker image was pushed to the registry with tag: {tag}")
 
 
 def push_app(tag: str = "latest") -> None:
