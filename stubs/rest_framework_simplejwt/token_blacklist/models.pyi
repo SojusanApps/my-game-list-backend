@@ -1,4 +1,5 @@
 from _typeshed import Incomplete
+from typing import ClassVar
 from django.db import models
 
 class OutstandingToken(models.Model):
@@ -10,10 +11,10 @@ class OutstandingToken(models.Model):
     expires_at: Incomplete
 
     class Meta:
-        verbose_name: Incomplete
-        verbose_name_plural: Incomplete
-        abstract: Incomplete
-        ordering: Incomplete
+        verbose_name: ClassVar[Incomplete]
+        verbose_name_plural: ClassVar[Incomplete]
+        abstract: ClassVar[Incomplete]
+        ordering: ClassVar[Incomplete]
 
 class BlacklistedToken(models.Model):
     id: Incomplete
@@ -21,6 +22,6 @@ class BlacklistedToken(models.Model):
     blacklisted_at: Incomplete
 
     class Meta:
-        verbose_name: Incomplete
-        verbose_name_plural: Incomplete
-        abstract: Incomplete
+        verbose_name: ClassVar[Incomplete]
+        verbose_name_plural: ClassVar[Incomplete]
+        abstract: ClassVar[Incomplete]

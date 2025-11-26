@@ -6,6 +6,7 @@ DEBUG = oeg("DJANGO_DEBUG", "True").lower() == "true"
 
 INSTALLED_APPS += [
     "rosetta",
+    "django_tui",
 ]
 
 CORS_ALLOWED_ORIGINS = ["http://localhost:5173"]

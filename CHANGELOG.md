@@ -2,6 +2,11 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.2.5] - 26.11.2025
+
+* Added [django-tui](https://github.com/anze3db/django-tui) - a package that adds a terminal user interface for django commands.
+* Updated dependencies in requirements.
+
 ## v. [4.2.4] - 03.09.2025
 
 * Migrate to [uv](https://docs.astral.sh/uv) package manager.
