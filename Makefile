@@ -59,6 +59,9 @@ test_db:
 test:
 	uv run pytest -n auto
 
+tui:
+	uv run scripts/my-game-list-manage.py custom_tui
+
 # .PHONY defines parts of the makefile that are not dependant on any specific file
 # This is most often used to store functions
-.PHONY: help uv-install install sync uv-compile run fresh_run check translations app_db test_db coverage sync
+.PHONY: help uv-install install sync uv-compile run fresh_run check translations app_db test_db coverage sync tui
