@@ -17,9 +17,16 @@ from my_game_list.my_game_list.models import BaseDictionaryModel, BaseModel
 
 
 class IGDBModel(models.Model):
-    """Base IGDB model."""
+    """Base IGDB model.
+
+    The IGDB models have an igdb_id field that stores the ID of the object in IGDB
+    and an igdb_updated_at field that stores the last time the object was updated in IGDB.
+    The `updated_at` field can be used to determine if the object needs to be updated
+    from IGDB or not.
+    """
 
     igdb_id = models.PositiveIntegerField(_("igdb id"), unique=True)
+    igdb_updated_at = models.DateTimeField(_("igdb last updated at"))
 
     class Meta(TypedModelMeta):
         """Meta data for dictionary models."""
@@ -191,7 +198,7 @@ class Platform(BaseDictionaryModel, IGDBModel):
 class Game(BaseModel, IGDBModel):
     """A model containing data about games."""
 
-    title = models.CharField(_("title"), max_length=255, unique=True)
+    title = models.CharField(_("title"), max_length=255)
     created_at = models.DateTimeField(_("creation time"), auto_now_add=True)
     last_modified_at = models.DateTimeField(_("last modified"), auto_now=True)
     release_date = models.DateField(_("release date"), blank=True, null=True)

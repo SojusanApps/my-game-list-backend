@@ -179,6 +179,7 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
                         "name": ANY,
                         "company_logo_id": "",
                         "igdb_id": ANY,
+                        "igdb_updated_at": ANY,
                     },
                 ],
             },
@@ -257,6 +258,7 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
                 "results": [
                     {
                         "igdb_id": ANY,
+                        "igdb_updated_at": ANY,
                         "cover_image_id": ANY,
                         "created_at": "2023-06-22T16:47:12Z",
                         "summary": "",
@@ -265,16 +267,20 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
                             "name": ANY,
                             "company_logo_id": "",
                             "igdb_id": ANY,
+                            "igdb_updated_at": ANY,
                         },
-                        "genres": [{"id": ANY, "name": ANY, "igdb_id": ANY}],
+                        "genres": [{"id": ANY, "name": ANY, "igdb_id": ANY, "igdb_updated_at": ANY}],
                         "id": ANY,
                         "last_modified_at": "2023-06-22T16:47:12Z",
-                        "platforms": [{"id": ANY, "name": ANY, "igdb_id": ANY, "abbreviation": ""}],
+                        "platforms": [
+                            {"id": ANY, "name": ANY, "igdb_id": ANY, "abbreviation": "", "igdb_updated_at": ANY},
+                        ],
                         "publisher": {
                             "id": ANY,
                             "name": ANY,
                             "company_logo_id": ANY,
                             "igdb_id": ANY,
+                            "igdb_updated_at": ANY,
                         },
                         "release_date": None,
                         "title": ANY,
@@ -300,6 +306,7 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
                         "id": ANY,
                         "name": ANY,
                         "igdb_id": ANY,
+                        "igdb_updated_at": ANY,
                     },
                 ],
             },
@@ -317,6 +324,7 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
                         "id": ANY,
                         "name": ANY,
                         "igdb_id": ANY,
+                        "igdb_updated_at": ANY,
                         "abbreviation": "",
                     },
                 ],
@@ -388,6 +396,7 @@ def test_list_model(
                 "name": ANY,
                 "company_logo_id": "",
                 "igdb_id": ANY,
+                "igdb_updated_at": ANY,
             },
             id="Get the company by id.",
         ),
@@ -441,21 +450,24 @@ def test_list_model(
                 "created_at": "2023-06-22T16:47:12Z",
                 "summary": "",
                 "igdb_id": ANY,
+                "igdb_updated_at": ANY,
                 "developer": {
                     "id": ANY,
                     "name": ANY,
                     "company_logo_id": "",
                     "igdb_id": ANY,
+                    "igdb_updated_at": ANY,
                 },
-                "genres": [{"id": ANY, "name": ANY, "igdb_id": ANY}],
+                "genres": [{"id": ANY, "name": ANY, "igdb_id": ANY, "igdb_updated_at": ANY}],
                 "id": ANY,
                 "last_modified_at": "2023-06-22T16:47:12Z",
-                "platforms": [{"id": ANY, "name": ANY, "igdb_id": ANY, "abbreviation": ""}],
+                "platforms": [{"id": ANY, "name": ANY, "igdb_id": ANY, "abbreviation": "", "igdb_updated_at": ANY}],
                 "publisher": {
                     "id": ANY,
                     "name": ANY,
                     "company_logo_id": "",
                     "igdb_id": ANY,
+                    "igdb_updated_at": ANY,
                 },
                 "release_date": None,
                 "title": ANY,
@@ -474,6 +486,7 @@ def test_list_model(
                 "id": ANY,
                 "name": ANY,
                 "igdb_id": ANY,
+                "igdb_updated_at": ANY,
             },
             id="Get the genre by id.",
         ),
@@ -484,6 +497,7 @@ def test_list_model(
                 "id": ANY,
                 "name": ANY,
                 "igdb_id": ANY,
+                "igdb_updated_at": ANY,
                 "abbreviation": "",
             },
             id="Get the platform by id.",
@@ -524,6 +538,7 @@ def test_get_model_detail(
             {
                 "name": "created_developer",
                 "igdb_id": 123,
+                "igdb_updated_at": "2023-06-22T22:20:01Z",
             },
             {
                 "id": ANY,
@@ -572,6 +587,7 @@ def test_get_model_detail(
             {
                 "title": "New created game",
                 "igdb_id": 123,
+                "igdb_updated_at": "2023-06-22T22:20:01Z",
             },
             {
                 "id": ANY,
@@ -588,6 +604,7 @@ def test_get_model_detail(
             {
                 "name": "created_genre",
                 "igdb_id": 123,
+                "igdb_updated_at": "2023-06-22T22:20:01Z",
             },
             {
                 "id": ANY,
@@ -600,6 +617,7 @@ def test_get_model_detail(
                 "abbreviation": "TP",
                 "name": "created_platform",
                 "igdb_id": 123,
+                "igdb_updated_at": "2023-06-22T22:20:01Z",
             },
             {
                 "id": ANY,
@@ -670,6 +688,7 @@ def test_create_model(
             {
                 "name": "created_developer",
                 "igdb_id": 123,
+                "igdb_updated_at": "2023-06-22T22:20:01Z",
             },
             {
                 "company_logo_id": "",
@@ -718,6 +737,7 @@ def test_create_model(
             {
                 "title": "Updated title",
                 "igdb_id": 123,
+                "igdb_updated_at": "2023-06-22T22:20:01Z",
             },
             {
                 "created_at": "2023-06-22T16:47:12Z",
@@ -734,6 +754,7 @@ def test_create_model(
             {
                 "name": "updated_genre",
                 "igdb_id": 123,
+                "igdb_updated_at": "2023-06-22T22:20:01Z",
             },
             {},
             id="Update of the genre.",
@@ -745,6 +766,7 @@ def test_create_model(
                 "abbreviation": "",
                 "name": "updated_platform",
                 "igdb_id": 123,
+                "igdb_updated_at": "2023-06-22T22:20:01Z",
             },
             {},
             id="Update of the platform.",

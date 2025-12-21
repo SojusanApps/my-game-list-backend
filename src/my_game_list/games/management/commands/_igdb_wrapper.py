@@ -2,6 +2,7 @@
 
 import time
 from abc import ABC
+from collections.abc import Iterator
 from dataclasses import dataclass
 from enum import StrEnum
 from typing import Any, Self
@@ -41,12 +42,16 @@ class BaseIGDBResponse(ABC):
 
     id: int
     """The ID of the object in IGDB."""
+    updated_at: int
+    """The last time the object was updated in IGDB (timestamp)."""
 
 
 @dataclass
-class IGDBImageResponse(BaseIGDBResponse):
+class IGDBImageResponse(ABC):
     """Class representing the data structure for IGDB image response."""
 
+    id: int
+    """The ID of the image object in IGDB."""
     image_id: str
     """The ID of the image used to construct an IGDB image link."""
 
@@ -85,9 +90,11 @@ class IGDBCompanyResponse(BaseIGDBResponse):
 
 
 @dataclass
-class IGDBInvolvedCompanyResponse(BaseIGDBResponse):
+class IGDBInvolvedCompanyResponse(ABC):
     """Class representing the data structure for IGDB involved company response."""
 
+    id: int
+    """The ID of the involved company object in IGDB."""
     company: int
     """Reference ID for Company object."""
     developer: bool
@@ -208,28 +215,37 @@ class IGDBWrapper:
 
         return self._cast_response(endpoint, response.json())
 
-    def get_all_objects(self: Self, endpoint: IGDBEndpoints, query: str) -> IGDBApiResponse:
+    def iter_all_objects(self: Self, endpoint: IGDBEndpoints, query: str) -> Iterator[IGDBApiResponse]:
         """Get all objects from the IGDB database.
 
         Args:
             endpoint (IGDBEndpoints): The name of the endpoint.
             query (str): The query for the endpoint.
+
+        Yields:
+            Iterator[IGDBApiResponse]: A generator yielding batches of IGDB objects.
         """
-        result: IGDBApiResponse = []
         offset = 0
-        query = f"{query}limit {self.QUERY_ITEM_LIMIT};sort id;"
+        query = f"{query}limit {self.QUERY_ITEM_LIMIT};"
         while True:
             items_in_response = 0
-            for response in self.api_multi_request(endpoint, query, offset):
+            # Fetch multiple pages in parallel
+            responses = self.api_multi_request(endpoint, query, offset)
+
+            batch_result = []
+            for response in responses:
                 response_cast = self._cast_response(endpoint, response.json())
                 items_in_response += len(response_cast)
-                result.extend(response_cast)
+                batch_result.extend(response_cast)
+
+            if batch_result:
+                yield batch_result
+
             if items_in_response != self.MAX_REQUESTS_TO_IGDB * self.QUERY_ITEM_LIMIT:
                 break
-            offset += self.QUERY_ITEM_LIMIT
+            offset += self.MAX_REQUESTS_TO_IGDB * self.QUERY_ITEM_LIMIT
             # IGDB API has a limit of 4 requests per second
             time.sleep(1)
-        return result
 
     def api_multi_request(self: Self, endpoint: IGDBEndpoints, query: str, offset: int = 0) -> list[requests.Response]:
         """
