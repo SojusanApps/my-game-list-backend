@@ -19,7 +19,7 @@ from my_game_list.my_game_list.admin import BaseDictionaryModelAdmin
 class CompanyAdmin(BaseDictionaryModelAdmin):
     """Admin model for the company model."""
 
-    readonly_fields = (*BaseDictionaryModelAdmin.readonly_fields, "company_logo_tag")
+    readonly_fields = (*BaseDictionaryModelAdmin.readonly_fields, "company_logo_tag", "igdb_id", "igdb_updated_at")
     list_display = (*BaseDictionaryModelAdmin.list_display, "company_logo_tag")
 
 
@@ -60,7 +60,7 @@ class GameReviewAdmin(admin.ModelAdmin[GameReview]):
 class GameAdmin(admin.ModelAdmin[Game]):
     """Admin model for the game model."""
 
-    readonly_fields = ("id", "cover_image_tag", "cover_image_id", "igdb_id")
+    readonly_fields = ("id", "cover_image_tag", "cover_image_id", "igdb_id", "igdb_updated_at")
     search_fields = (
         "id",
         "title",
@@ -85,7 +85,7 @@ class GameAdmin(admin.ModelAdmin[Game]):
 class GenreAdmin(BaseDictionaryModelAdmin):
     """Admin model for the genre model."""
 
-    readonly_fields = (*BaseDictionaryModelAdmin.readonly_fields, "igdb_id")
+    readonly_fields = (*BaseDictionaryModelAdmin.readonly_fields, "igdb_id", "igdb_updated_at")
     list_display = (*BaseDictionaryModelAdmin.list_display, "igdb_id")
 
 
@@ -93,7 +93,7 @@ class GenreAdmin(BaseDictionaryModelAdmin):
 class PlatformAdmin(BaseDictionaryModelAdmin):
     """Admin model for the platform model."""
 
-    readonly_fields = (*BaseDictionaryModelAdmin.readonly_fields, "igdb_id")
+    readonly_fields = (*BaseDictionaryModelAdmin.readonly_fields, "igdb_id", "igdb_updated_at")
     list_display = (*BaseDictionaryModelAdmin.list_display, "abbreviation", "igdb_id")
 
 

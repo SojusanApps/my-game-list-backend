@@ -36,7 +36,7 @@ class CompanySerializer(BaseDictionarySerializer):
         """Meta data for Company serializer."""
 
         model = Company
-        fields = (*BaseDictionarySerializer.Meta.fields, "company_logo_id", "igdb_id")
+        fields = (*BaseDictionarySerializer.Meta.fields, "company_logo_id", "igdb_id", "igdb_updated_at")
 
 
 class GameFollowSerializer(serializers.ModelSerializer[GameFollow]):
@@ -155,7 +155,7 @@ class GenreSerializer(BaseDictionarySerializer):
         """Meta data for a genre serializer."""
 
         model = Genre
-        fields = (*BaseDictionarySerializer.Meta.fields, "igdb_id")
+        fields = (*BaseDictionarySerializer.Meta.fields, "igdb_id", "igdb_updated_at")
 
 
 class PlatformSerializer(BaseDictionarySerializer):
@@ -165,7 +165,7 @@ class PlatformSerializer(BaseDictionarySerializer):
         """Meta data for the platform serializer."""
 
         model = Platform
-        fields = (*BaseDictionarySerializer.Meta.fields, "abbreviation", "igdb_id")
+        fields = (*BaseDictionarySerializer.Meta.fields, "abbreviation", "igdb_id", "igdb_updated_at")
 
 
 class GameSerializer(serializers.ModelSerializer[Game]):
@@ -190,6 +190,7 @@ class GameSerializer(serializers.ModelSerializer[Game]):
             "summary",
             "publisher",
             "igdb_id",
+            "igdb_updated_at",
             "developer",
             "genres",
             "platforms",
@@ -235,6 +236,7 @@ class GameCreateSerializer(serializers.ModelSerializer[Game]):
             "release_date",
             "cover_image_id",
             "igdb_id",
+            "igdb_updated_at",
             "summary",
             "publisher",
             "developer",

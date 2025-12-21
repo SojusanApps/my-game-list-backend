@@ -2,6 +2,13 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.3.0] - 21.12.2025
+
+* Added `igdb_updated_at` to models:
+  * `Game`, `Platform`, `Genre` and `Company`
+* Improved the IGDB import script to be based on the `updated_at`, so only the newest updates will be processed.
+* Move `dev` dependencies into `[dependency-groups]`.
+
 ## v. [4.2.5] - 26.11.2025
 
 * Added [django-tui](https://github.com/anze3db/django-tui) - a package that adds a terminal user interface for django commands.
