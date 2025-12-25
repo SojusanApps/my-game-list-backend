@@ -1,13 +1,15 @@
 """Tests for common functionalities in the friendship application."""
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from unittest.mock import ANY
 
 import pytest
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.reverse import reverse
-from rest_framework.test import APIClient
+
+if TYPE_CHECKING:
+    from rest_framework.test import APIClient
 
 User = get_user_model()
 

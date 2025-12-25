@@ -2,6 +2,11 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.4.0] -
+
+* Updated the Python version to 3.14.
+* Updated dependencies in requirements.
+
 ## v. [4.3.0] - 21.12.2025
 
 * Added `igdb_updated_at` to models:

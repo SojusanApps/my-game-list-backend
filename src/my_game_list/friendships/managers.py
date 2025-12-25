@@ -6,10 +6,9 @@ from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.db.models import Manager
 
-from my_game_list.users.models import User as UserModel
-
 if TYPE_CHECKING:
     from my_game_list.friendships.models import Friendship, FriendshipRequest
+    from my_game_list.users.models import User as UserModel
 
 User: type[UserModel] = get_user_model()
 
@@ -18,12 +17,12 @@ class FriendshipManager(Manager["Friendship"]):
     """Manager for friendship."""
 
     @staticmethod
-    def _get_friendship_model() -> type["Friendship"]:
+    def _get_friendship_model() -> type[Friendship]:
         """Returns Friendship model to omit circular import error."""
         return apps.get_model("friendships.Friendship")
 
     @staticmethod
-    def _get_friendship_request_model() -> type["FriendshipRequest"]:
+    def _get_friendship_request_model() -> type[FriendshipRequest]:
         """Returns FriendshipRequest model to omit circular import error."""
         return apps.get_model("friendships.FriendshipRequest")
 

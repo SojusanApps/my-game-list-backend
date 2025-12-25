@@ -1,7 +1,6 @@
 """This module contains the view for api version."""
 
-from collections.abc import Iterable, Mapping
-from typing import Any, Self
+from typing import TYPE_CHECKING, Any, Self
 
 from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework.permissions import AllowAny
@@ -10,6 +9,9 @@ from rest_framework.serializers import CharField
 from rest_framework.views import APIView
 
 from my_game_list import __version__
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable, Mapping
 
 
 class ApiVersion(APIView):

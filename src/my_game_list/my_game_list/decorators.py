@@ -1,12 +1,14 @@
 """This module contains the decorators."""
 
 import functools
-from collections.abc import Callable, Mapping, Sequence
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import psutil
 
 from my_game_list.my_game_list.metrics import Metrics
+
+if TYPE_CHECKING:
+    from collections.abc import Callable, Mapping, Sequence
 
 
 def calculate_cpu_usage_metric(func: Callable[[Any], Any]) -> Any:  # noqa: ANN401

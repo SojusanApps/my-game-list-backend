@@ -1,7 +1,10 @@
 """This module is used as a git hook to check if the version and changelog have been changed."""
 
 import argparse
-from collections.abc import Sequence
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 FILENAMES_TO_BE_MODIFIED = ("CHANGELOG.md", "src/my_game_list/__init__.py")
 

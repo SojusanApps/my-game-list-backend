@@ -1,9 +1,12 @@
 """Tests for user app models."""
 
+from typing import TYPE_CHECKING
+
 import pytest
 from django.contrib.auth import get_user_model
 
-from my_game_list.users.models import User as UserModel
+if TYPE_CHECKING:
+    from my_game_list.users.models import User as UserModel
 
 User: type[UserModel] = get_user_model()
 

@@ -26,7 +26,7 @@ class UserViewSet(GenericViewSet[UserModel], ListModelMixin, RetrieveModelMixin,
 
     def get_serializer_class(
         self: Self,
-    ) -> type[UserCreateSerializer] | type[UserSerializer] | type[UserDetailSerializer]:
+    ) -> type[UserCreateSerializer | UserSerializer | UserDetailSerializer]:
         """Get the serializer class for the User model."""
         if self.action == "retrieve":
             return UserDetailSerializer

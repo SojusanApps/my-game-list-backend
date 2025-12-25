@@ -56,7 +56,7 @@ class CompanyViewSet(ModelViewSet[Company], DictionaryAllValuesMixin):
 
     def get_serializer_class(
         self: Self,
-    ) -> type[CompanySerializer] | type[CompanySimpleNameSerializer]:
+    ) -> type[CompanySerializer | CompanySimpleNameSerializer]:
         """Get the serializer class for the Company model."""
         return CompanySimpleNameSerializer if self.action == "all_values" else CompanySerializer
 
@@ -80,7 +80,7 @@ class GameListViewSet(ModelViewSet[GameList]):
 
     def get_serializer_class(
         self: Self,
-    ) -> type[GameListCreateSerializer] | type[GameListSerializer]:
+    ) -> type[GameListCreateSerializer | GameListSerializer]:
         """Get the serializer class for the Game model."""
         return (
             GameListCreateSerializer
@@ -103,7 +103,7 @@ class GameReviewViewSet(ModelViewSet[GameReview]):
 
     def get_serializer_class(
         self: Self,
-    ) -> type[GameReviewCreateSerializer] | type[GameReviewSerializer]:
+    ) -> type[GameReviewCreateSerializer | GameReviewSerializer]:
         """Get the serializer class for the Game model."""
         return (
             GameReviewCreateSerializer
@@ -128,7 +128,7 @@ class GameViewSet(ModelViewSet[Game]):
 
     def get_serializer_class(
         self: Self,
-    ) -> type[GameCreateSerializer] | type[GameSerializer]:
+    ) -> type[GameCreateSerializer | GameSerializer]:
         """Get the serializer class for the Game model."""
         return GameCreateSerializer if self.action in ["create", "update", "partial_update"] else GameSerializer
 

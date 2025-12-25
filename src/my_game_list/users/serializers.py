@@ -1,7 +1,6 @@
 """This module contains the serializers for user related data."""
 
-from collections.abc import Mapping
-from typing import Any, ClassVar, Self
+from typing import TYPE_CHECKING, Any, ClassVar, Self
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import (
@@ -11,10 +10,14 @@ from django.db.models import Avg
 from drf_spectacular.helpers import lazy_serializer
 from drf_spectacular.utils import extend_schema_field, inline_serializer
 from rest_framework import serializers
-from rest_framework.utils.serializer_helpers import ReturnDict
 
 from my_game_list.games.models import GameListStatus
 from my_game_list.users.models import User as UserModel
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping
+
+    from rest_framework.utils.serializer_helpers import ReturnDict
 
 User: type[UserModel] = get_user_model()
 

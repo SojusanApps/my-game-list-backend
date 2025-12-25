@@ -1,16 +1,20 @@
 """Tests for user app views."""
 
-from collections.abc import Sequence
+from typing import TYPE_CHECKING
 from unittest.mock import ANY
 
 import pytest
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.reverse import reverse
-from rest_framework.test import APIClient
 
 from my_game_list.users.models import Gender
 from my_game_list.users.models import User as UserModel
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from rest_framework.test import APIClient
 
 User: type[UserModel] = get_user_model()
 

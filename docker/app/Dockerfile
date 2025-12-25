@@ -1,6 +1,6 @@
-FROM python:3.12.11-slim-bullseye
+FROM python:3.14.2-slim
 # Copy uv and uvx from the uv image
-COPY --from=ghcr.io/astral-sh/uv:0.8.22 /uv /uvx /bin/
+COPY --from=ghcr.io/astral-sh/uv:0.9.18 /uv /uvx /bin/
 
 # Define ARG with a default value
 ARG MGL_LOG_DIR_PATH=/var/log/my_game_list/
@@ -24,7 +24,7 @@ ENV UV_LINK_MODE=copy
 ENV UV_TOOL_BIN_DIR=/usr/local/bin
 
 RUN apt-get update \
-    && apt-get -y install --no-install-recommends curl=7.74.0-1.3+deb11u15 \
+    && apt-get -y install --no-install-recommends curl=8.14.1-2+deb13u2 \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install the project's dependencies using the lockfile and settings

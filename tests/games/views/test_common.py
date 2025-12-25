@@ -1,7 +1,6 @@
 """This module contains tests for the common functionality for the viewsets in the game application."""
 
-from collections.abc import Mapping
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from unittest.mock import ANY
 
 import pytest
@@ -10,7 +9,6 @@ from freezegun import freeze_time
 from model_bakery import baker
 from rest_framework import status
 from rest_framework.reverse import reverse
-from rest_framework.test import APIClient
 
 from my_game_list.games.models import (
     Company,
@@ -19,7 +17,13 @@ from my_game_list.games.models import (
     Genre,
     Platform,
 )
-from my_game_list.users.models import User as UserModel
+
+if TYPE_CHECKING:
+    from collections.abc import Mapping
+
+    from rest_framework.test import APIClient
+
+    from my_game_list.users.models import User as UserModel
 
 User: type[UserModel] = get_user_model()
 FORBIDDEN_DETAIL = "You do not have permission to perform this action."

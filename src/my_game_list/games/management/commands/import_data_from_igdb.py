@@ -1,8 +1,7 @@
 """A custom django command to import data from the IGDB database."""
 
-from collections.abc import Iterator
 from datetime import UTC, date, datetime
-from typing import Any, Literal, Self, TypeVar
+from typing import TYPE_CHECKING, Any, Literal, Self, TypeVar
 
 from django.core.management.base import BaseCommand, CommandParser
 from django.db.models import Max
@@ -20,6 +19,9 @@ from my_game_list.games.management.commands._igdb_wrapper import (
     IGDBWrapper,
 )
 from my_game_list.games.models import Company, Game, Genre, Platform
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 ModelType = TypeVar("ModelType", Game, Company, Genre, Platform)
 

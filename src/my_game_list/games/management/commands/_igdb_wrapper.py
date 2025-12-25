@@ -2,14 +2,16 @@
 
 import time
 from abc import ABC
-from collections.abc import Iterator
 from dataclasses import dataclass
 from enum import StrEnum
-from typing import Any, Self
+from typing import TYPE_CHECKING, Any, Self
 
 import requests
 from django.conf import settings
 from requests_futures.sessions import FuturesSession
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 type IGDBObject = "IGDBPlatformResponse | IGDBGenreResponse | IGDBCompanyResponse | IGDBGameResponse"
 type IGDBApiResponse = list[IGDBObject]

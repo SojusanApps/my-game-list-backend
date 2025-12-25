@@ -1,7 +1,6 @@
 """This module contains the model for the friendship related data."""
 
-from collections.abc import Iterable
-from typing import ClassVar, Self
+from typing import TYPE_CHECKING, ClassVar, Self
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -12,6 +11,9 @@ from django.utils.translation import gettext_lazy as _
 from my_game_list.friendships.managers import FriendshipManager
 from my_game_list.my_game_list.exceptions import ConflictException
 from my_game_list.my_game_list.models import BaseModel
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 
 class Friendship(BaseModel):
