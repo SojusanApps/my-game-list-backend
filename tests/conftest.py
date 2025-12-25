@@ -1,12 +1,15 @@
 """Includes global scope fixtures. They can be used in all tests."""
 
+from typing import TYPE_CHECKING
+
 import pytest
 from django.contrib.auth import get_user_model
 from freezegun import freeze_time
 from model_bakery import baker
 from rest_framework.test import APIClient
 
-from my_game_list.users.models import User as UserModel
+if TYPE_CHECKING:
+    from my_game_list.users.models import User as UserModel
 
 User: type[UserModel] = get_user_model()
 

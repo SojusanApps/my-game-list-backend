@@ -4,12 +4,14 @@ This module contains the mixins for the game related ViewSets.
 The mixins are used to add custom functionality to the ViewSets.
 """
 
-from typing import Self
+from typing import TYPE_CHECKING, Self
 
 from rest_framework import status
 from rest_framework.decorators import action
-from rest_framework.request import Request
 from rest_framework.response import Response
+
+if TYPE_CHECKING:
+    from rest_framework.request import Request
 
 
 class DictionaryAllValuesMixin:

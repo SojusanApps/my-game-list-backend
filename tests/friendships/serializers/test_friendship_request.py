@@ -1,13 +1,17 @@
 """This module contains tests for the friendship request serializers."""
 
+from typing import TYPE_CHECKING
+
 import pytest
 from django.contrib.auth import get_user_model
 from rest_framework.serializers import ValidationError
 
-from my_game_list.friendships.models import Friendship, FriendshipRequest
 from my_game_list.friendships.serializers import FriendshipRequestCreateSerializer
 from my_game_list.my_game_list.exceptions import SerializerValidationDetailError
-from my_game_list.users.models import User as UserModel
+
+if TYPE_CHECKING:
+    from my_game_list.friendships.models import Friendship, FriendshipRequest
+    from my_game_list.users.models import User as UserModel
 
 User: type[UserModel] = get_user_model()
 

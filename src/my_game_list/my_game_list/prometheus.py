@@ -1,14 +1,18 @@
 """This module contains the Prometheus related logic."""
 
-from django.http import HttpResponse
+from typing import TYPE_CHECKING
+
 from django.views.decorators.http import require_http_methods
 from django_prometheus.exports import ExportToDjangoView
-from rest_framework.request import Request
 
 from my_game_list.my_game_list.decorators import (
     calculate_cpu_usage_metric,
     calculate_memory_usage_metric,
 )
+
+if TYPE_CHECKING:
+    from django.http import HttpResponse
+    from rest_framework.request import Request
 
 
 @calculate_memory_usage_metric

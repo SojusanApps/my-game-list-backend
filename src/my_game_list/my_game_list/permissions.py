@@ -1,10 +1,12 @@
 """This module contains the custom permission classes."""
 
-from typing import Self
+from typing import TYPE_CHECKING, Self
 
 from rest_framework import permissions
-from rest_framework.request import Request
-from rest_framework.views import APIView
+
+if TYPE_CHECKING:
+    from rest_framework.request import Request
+    from rest_framework.views import APIView
 
 
 class IsAdminOrReadOnly(permissions.IsAdminUser):

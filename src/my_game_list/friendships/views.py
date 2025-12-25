@@ -1,6 +1,6 @@
 """This module contains the viewsets for the friendship related data."""
 
-from typing import Self
+from typing import TYPE_CHECKING, Self
 
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
@@ -13,7 +13,6 @@ from rest_framework.mixins import (
     RetrieveModelMixin,
 )
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
@@ -27,6 +26,9 @@ from my_game_list.friendships.serializers import (
     FriendshipRequestSerializer,
     FriendshipSerializer,
 )
+
+if TYPE_CHECKING:
+    from rest_framework.request import Request
 
 User = get_user_model()
 
@@ -55,7 +57,7 @@ class FriendshipRequestViewSet(
 
     def get_serializer_class(
         self: Self,
-    ) -> type[FriendshipRequestCreateSerializer] | type[FriendshipRequestSerializer]:
+    ) -> type[FriendshipRequestCreateSerializer | FriendshipRequestSerializer]:
         """Get the serializer class for the request."""
         return FriendshipRequestCreateSerializer if self.action == "create" else FriendshipRequestSerializer
 

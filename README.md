@@ -11,10 +11,10 @@ Application to manage game lists.
 
 ## Basic assumptions
 
-* [Python](https://www.python.org/) >= 3.12
-* [Django](https://www.djangoproject.com/) >= 4.0
+* [Python](https://www.python.org/) >= 3.14
+* [Django](https://www.djangoproject.com/) >= 6.0
 * REST API based on the [Django REST Framework](https://www.django-rest-framework.org/)
-* Line length 100
+* Line length 120
 * Language: English
 * Tests performed with [pytest](https://docs.pytest.org/)
 * Full compatibility with [PEP8](https://peps.python.org/pep-0008/)

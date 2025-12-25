@@ -1,5 +1,7 @@
 """The fixtures used within games test module."""
 
+from typing import TYPE_CHECKING
+
 import pytest
 from django.contrib.auth import get_user_model
 from freezegun import freeze_time
@@ -16,7 +18,9 @@ from my_game_list.games.models import (
     Genre,
     Platform,
 )
-from my_game_list.users.models import User as UserModel
+
+if TYPE_CHECKING:
+    from my_game_list.users.models import User as UserModel
 
 User: type[UserModel] = get_user_model()
 

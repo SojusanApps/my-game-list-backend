@@ -1,10 +1,14 @@
 """Test the my_game_list app views."""
 
-from django.test.client import Client
+from typing import TYPE_CHECKING
+
 from django.urls import reverse
 from rest_framework import status
 
 from my_game_list import __version__
+
+if TYPE_CHECKING:
+    from django.test.client import Client
 
 
 def test_version(client: Client) -> None:
