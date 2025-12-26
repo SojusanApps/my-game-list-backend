@@ -29,8 +29,8 @@ def test_create_model(
     """Check if creation of the new friendship request model is working properly."""
     initial_data = {
         "message": "Test message",
-        "sender": user_fixture.pk,
-        "receiver": admin_user_fixture.pk,
+        "sender": admin_user_fixture.pk,
+        "receiver": user_fixture.pk,
     }
     response = admin_authenticated_api_client.post(reverse("friendships:friendship-requests-list"), initial_data)
 
