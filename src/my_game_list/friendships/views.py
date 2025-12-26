@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Self
 
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
-from rest_framework import status
+from rest_framework import serializers, status
 from rest_framework.decorators import action
 from rest_framework.mixins import (
     CreateModelMixin,
@@ -26,9 +26,11 @@ from my_game_list.friendships.serializers import (
     FriendshipRequestSerializer,
     FriendshipSerializer,
 )
+from my_game_list.notifications.utils import notify_send
 
 if TYPE_CHECKING:
     from rest_framework.request import Request
+
 
 User = get_user_model()
 
@@ -61,11 +63,32 @@ class FriendshipRequestViewSet(
         """Get the serializer class for the request."""
         return FriendshipRequestCreateSerializer if self.action == "create" else FriendshipRequestSerializer
 
+    def perform_create(self: Self, serializer: serializers.BaseSerializer[FriendshipRequest]) -> None:
+        """Create a friendship request and send a notification."""
+        user = self.request.user
+        if not user.is_authenticated:
+            return
+        instance = serializer.save(sender=user)
+        notify_send(
+            sender=user,
+            recipient=instance.receiver,
+            verb=str(_("sent you a friend request")),
+        )
+
     @action(detail=True, methods=("post",))
     def accept(self: Self, request: Request, pk: int) -> Response:  # noqa: ARG002
         """Accept a friendship request."""
+        user = request.user
+        if not user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
         instance: FriendshipRequest = self.get_object()
         instance.accept()
+
+        notify_send(
+            sender=user,
+            recipient=instance.sender,
+            verb=str(_("accepted your friend request")),
+        )
 
         return Response({"detail": _("Success")}, status=status.HTTP_201_CREATED)
 

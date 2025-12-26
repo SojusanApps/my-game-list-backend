@@ -2,7 +2,12 @@
 
 > Date format is DD.MM.YYYY.
 
-## v. [4.4.0] -
+## v. [4.5.0] - 26.12.2025
+
+* Added `notifications` application.
+* Added a notification when user send/accepts the friend request.
+
+## v. [4.4.0] - 25.12.2025
 
 * Updated the Python version to 3.14.
 * Updated dependencies in requirements.

@@ -43,11 +43,14 @@ INSTALLED_APPS = [
     "django_filters",
     "corsheaders",
     "django_prometheus",
+    "django_celery_results",
+    "django_celery_beat",
     # Internal apps
     f"{MAIN_APP}.{MAIN_APP}",
     f"{MAIN_APP}.users",
     f"{MAIN_APP}.games",
     f"{MAIN_APP}.friendships",
+    f"{MAIN_APP}.notifications",
 ]
 
 MIDDLEWARE = [
@@ -246,3 +249,20 @@ MYPYPATH = BASE_DIR.parent.parent / "stubs"
 
 IGDB_CLIENT_ID = oeg("IGDB_CLIENT_ID", "client_id_to_change_on_production")
 IGDB_CLIENT_SECRET = oeg("IGDB_CLIENT_SECRET", "secret_key_to_change_on_production")
+
+# Celery configuration
+CELERY_BROKER_URL = oeg("CELERY_BROKER_URL", "redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = oeg("CELERY_RESULT_BACKEND", "django-db")
+CELERY_CACHE_BACKEND = "django-cache"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+
+CELERY_BEAT_SCHEDULE = {
+    "cleanup-notifications-daily": {
+        "task": "my_game_list.notifications.tasks.cleanup_old_notifications",
+        "schedule": timedelta(days=1),
+    },
+}
