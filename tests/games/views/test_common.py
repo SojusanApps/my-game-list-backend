@@ -401,6 +401,8 @@ def test_list_model(
                 "company_logo_id": "",
                 "igdb_id": ANY,
                 "igdb_updated_at": ANY,
+                "games_developed": [],
+                "games_published": [],
             },
             id="Get the company by id.",
         ),

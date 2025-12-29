@@ -41,7 +41,7 @@ class User(BaseModel, AbstractUser):
 
     def __str__(self: Self) -> str:
         """Return a string representation for this model."""
-        return f"{self.username} - {self.email}"
+        return self.username
 
     @property
     def gravatar_url(self: Self) -> str:
