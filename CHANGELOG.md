@@ -2,6 +2,13 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.6.0] - 28.12.2025
+
+* Changed the `User` model `str` method.
+* Removed `all-values` endpoints.
+* Added `CompanyGameSerializer` and `CompanyDetailSerializer`.
+* Fixed the ordering for the `latest_game_updates` in the user details.
+
 ## v. [4.5.0] - 26.12.2025
 
 * Added `notifications` application.

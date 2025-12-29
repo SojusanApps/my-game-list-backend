@@ -14,4 +14,4 @@ User: type[UserModel] = get_user_model()
 @pytest.mark.django_db()
 def test_user_dunder_str(user_fixture: UserModel) -> None:
     """Test the `User` dunder str method."""
-    assert str(user_fixture) == f"{user_fixture.username} - {user_fixture.email}"
+    assert str(user_fixture) == user_fixture.username

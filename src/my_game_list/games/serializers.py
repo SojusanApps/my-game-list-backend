@@ -29,6 +29,16 @@ class CompanySimpleNameSerializer(serializers.ModelSerializer[Company]):
         fields = ("id", "name")
 
 
+class CompanyGameSerializer(serializers.ModelSerializer[Game]):
+    """A serializer for the game model in company view."""
+
+    class Meta:
+        """Meta data for company game serializer."""
+
+        model = Game
+        fields = ("id", "cover_image_id", "title")
+
+
 class CompanySerializer(BaseDictionarySerializer):
     """A serializer for the Company model."""
 
@@ -36,7 +46,29 @@ class CompanySerializer(BaseDictionarySerializer):
         """Meta data for Company serializer."""
 
         model = Company
-        fields = (*BaseDictionarySerializer.Meta.fields, "company_logo_id", "igdb_id", "igdb_updated_at")
+        fields = (
+            *BaseDictionarySerializer.Meta.fields,
+            "company_logo_id",
+            "igdb_id",
+            "igdb_updated_at",
+        )
+
+
+class CompanyDetailSerializer(CompanySerializer):
+    """A detailed serializer for the Company model."""
+
+    games_published = CompanyGameSerializer(many=True, read_only=True)
+    games_developed = CompanyGameSerializer(many=True, read_only=True)
+
+    class Meta(CompanySerializer.Meta):
+        """Meta data for Company detail serializer."""
+
+        model = Company
+        fields = (
+            *CompanySerializer.Meta.fields,
+            "games_published",
+            "games_developed",
+        )
 
 
 class GameFollowSerializer(serializers.ModelSerializer[GameFollow]):

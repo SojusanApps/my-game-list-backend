@@ -49,13 +49,13 @@ class UserCreateSerializer(serializers.ModelSerializer[UserModel]):
 
 
 class UserSimpleSerializer(serializers.ModelSerializer[UserModel]):
-    """Simple user serializer with only avatar and url to the details."""
+    """Simple user serializer."""
 
     class Meta:
         """Meta data for the class."""
 
         model = User
-        fields = ("id", "gravatar_url")
+        fields = ("id", "username", "gravatar_url")
 
 
 class UserSerializer(serializers.ModelSerializer[UserModel]):
@@ -147,7 +147,7 @@ class UserDetailSerializer(serializers.ModelSerializer[UserModel]):
         from my_game_list.games.serializers import GameListSerializer  # noqa: PLC0415
 
         return GameListSerializer(
-            instance.game_lists.all().order_by("last_modified_at")[:5],
+            instance.game_lists.all().order_by("-last_modified_at")[:5],
             many=True,
             context=self.context,
         ).data
