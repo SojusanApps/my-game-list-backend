@@ -36,6 +36,7 @@ from my_game_list.games.serializers import (
     GameReviewCreateSerializer,
     GameReviewSerializer,
     GameSerializer,
+    GameSimpleListSerializer,
     GenreSerializer,
     PlatformSerializer,
 )
@@ -116,17 +117,23 @@ class GameReviewViewSet(ModelViewSet[GameReview]):
 class GameViewSet(ModelViewSet[Game]):
     """A ViewSet for the Game model."""
 
-    queryset = Game.objects.all().prefetch_related("game_lists").with_rank_position().with_popularity()
+    queryset = (
+        Game.objects.all().select_related("stats", "publisher", "developer").prefetch_related("genres", "platforms")
+    )
     permission_classes = (IsAdminOrReadOnly,)
     filterset_class = GameFilterSet
-    ordering_fields = ("release_date",)
+    ordering_fields = ("release_date", "created_at")
     ordering = ("release_date",)
 
     def get_serializer_class(
         self: Self,
-    ) -> type[GameCreateSerializer | GameSerializer]:
+    ) -> type[GameCreateSerializer | GameSerializer | GameSimpleListSerializer]:
         """Get the serializer class for the Game model."""
-        return GameCreateSerializer if self.action in ["create", "update", "partial_update"] else GameSerializer
+        if self.action in ["create", "update", "partial_update"]:
+            return GameCreateSerializer
+        if self.action == "list":
+            return GameSimpleListSerializer
+        return GameSerializer
 
 
 class GenreViewSet(ModelViewSet[Genre]):

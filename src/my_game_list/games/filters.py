@@ -101,8 +101,8 @@ class GameFilterSet(filters.FilterSet):
     ordering = filters.OrderingFilter(
         fields=(
             ("created_at", "created_at"),
-            ("rank_position", "rank_position"),
-            ("popularity", "popularity"),
+            ("stats__rank_position", "rank_position"),
+            ("stats__popularity", "popularity"),
         ),
     )
 

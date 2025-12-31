@@ -6,7 +6,6 @@ from django.conf import settings
 from django.contrib import admin
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.utils.functional import cached_property
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from django_stubs_ext.db.models import TypedModelMeta
@@ -195,11 +194,43 @@ class Platform(BaseDictionaryModel, IGDBModel):
         ]
 
 
+class GameStats(models.Model):
+    """Data about game statistics."""
+
+    game = models.OneToOneField("Game", on_delete=models.CASCADE, related_name="stats")
+
+    # Aggregates (Updated via Signals/Save)
+    score_sum = models.BigIntegerField(_("score sum"), default=0)
+    score_count = models.PositiveIntegerField(_("score count"), default=0)
+    average_score = models.DecimalField(
+        _("average score"),
+        max_digits=4,
+        decimal_places=2,
+        default=0,
+        db_index=True,
+    )
+    members_count = models.PositiveIntegerField(_("members count"), default=0, db_index=True)
+
+    # Ranks (Updated via Celery)
+    popularity = models.PositiveIntegerField(_("popularity"), null=True, db_index=True)
+    rank_position = models.PositiveIntegerField(_("rank position"), null=True, db_index=True)
+
+    class Meta(TypedModelMeta):
+        """Meta data for the game stats model."""
+
+        verbose_name = _("game stats")
+        verbose_name_plural = _("game stats")
+
+    def __str__(self: Self) -> str:
+        """String representation of the game stats model."""
+        return f"{self.game.title} - Stats"
+
+
 class Game(BaseModel, IGDBModel):
     """A model containing data about games."""
 
     title = models.CharField(_("title"), max_length=255)
-    created_at = models.DateTimeField(_("creation time"), auto_now_add=True)
+    created_at = models.DateTimeField(_("creation time"), auto_now_add=True, db_index=True)
     last_modified_at = models.DateTimeField(_("last modified"), auto_now=True)
     release_date = models.DateField(_("release date"), blank=True, null=True)
     cover_image_id = models.CharField(_("cover image id"), max_length=255, blank=True)
@@ -245,33 +276,37 @@ class Game(BaseModel, IGDBModel):
             )
         return ""
 
-    @cached_property
+    @property
     def average_score(self: Self) -> float:
         """Annotate the average score for the game."""
-        return Game.objects.with_average_score().get(id=self.id).average_score
+        if hasattr(self, "stats"):
+            return float(self.stats.average_score)
+        return 0.0
 
-    @cached_property
+    @property
     def scores_count(self: Self) -> int:
         """Annotate the number of all ratings for the game."""
-        return Game.objects.with_scores_count().get(id=self.id).scores_count
-
-    @cached_property
-    def rank_position(self: Self) -> int:
-        """Annotate the rank position of the game. The rank position is calculated based on the average score."""
-        for game in Game.objects.with_rank_position():
-            if game.id == self.id:
-                return game.rank_position
+        if hasattr(self, "stats"):
+            return self.stats.score_count
         return 0
 
-    @cached_property
+    @property
+    def rank_position(self: Self) -> int:
+        """Annotate the rank position of the game. The rank position is calculated based on the average score."""
+        if hasattr(self, "stats") and self.stats.rank_position is not None:
+            return self.stats.rank_position
+        return 0
+
+    @property
     def members_count(self: Self) -> int:
         """Annotate the number of all members for the game."""
-        return Game.objects.with_members_count().get(id=self.id).members_count
+        if hasattr(self, "stats"):
+            return self.stats.members_count
+        return 0
 
-    @cached_property
+    @property
     def popularity(self: Self) -> int:
         """Annotate the popularity of the game. The popularity is calculated based on the number of members."""
-        for game in Game.objects.with_popularity():
-            if game.id == self.id:
-                return game.popularity
+        if hasattr(self, "stats") and self.stats.popularity is not None:
+            return self.stats.popularity
         return 0

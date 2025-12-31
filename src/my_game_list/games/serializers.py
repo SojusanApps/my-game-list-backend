@@ -200,6 +200,26 @@ class PlatformSerializer(BaseDictionarySerializer):
         fields = (*BaseDictionarySerializer.Meta.fields, "abbreviation", "igdb_id", "igdb_updated_at")
 
 
+class GameSimpleListSerializer(serializers.ModelSerializer[Game]):
+    """A lightweight serializer for the game model list view."""
+
+    class Meta:
+        """Meta data for game list serializer."""
+
+        model = Game
+        fields = (
+            "id",
+            "title",
+            "created_at",
+            "cover_image_id",
+            "average_score",
+            "scores_count",
+            "rank_position",
+            "members_count",
+            "popularity",
+        )
+
+
 class GameSerializer(serializers.ModelSerializer[Game]):
     """A serializer for the game model."""
 
