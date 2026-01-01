@@ -4,9 +4,9 @@ from typing import ClassVar, Self
 
 from django.conf import settings
 from django.contrib import admin
+from django.contrib.postgres.fields import ArrayField
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.utils.functional import cached_property
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 from django_stubs_ext.db.models import TypedModelMeta
@@ -195,15 +195,152 @@ class Platform(BaseDictionaryModel, IGDBModel):
         ]
 
 
+class GameEngine(IGDBModel):
+    """Data about game engines."""
+
+    name = models.CharField(_("name"), max_length=255)
+
+    class Meta(BaseDictionaryModel.Meta):
+        """Meta data for the game engine model."""
+
+        verbose_name = _("game engine")
+        verbose_name_plural = _("game engines")
+
+
+class GameMode(BaseDictionaryModel, IGDBModel):
+    """Data about game modes."""
+
+    class Meta(BaseDictionaryModel.Meta):
+        """Meta data for the game mode model."""
+
+        verbose_name = _("game mode")
+        verbose_name_plural = _("game modes")
+
+
+class PlayerPerspective(BaseDictionaryModel, IGDBModel):
+    """Data about player perspectives."""
+
+    class Meta(BaseDictionaryModel.Meta):
+        """Meta data for the player perspective model."""
+
+        verbose_name = _("player perspective")
+        verbose_name_plural = _("player perspectives")
+
+
+class GameStats(models.Model):
+    """Data about game statistics."""
+
+    game = models.OneToOneField("Game", on_delete=models.CASCADE, related_name="stats")
+
+    # Aggregates (Updated via Signals/Save)
+    score_sum = models.BigIntegerField(_("score sum"), default=0)
+    score_count = models.PositiveIntegerField(_("score count"), default=0)
+    average_score = models.DecimalField(
+        _("average score"),
+        max_digits=4,
+        decimal_places=2,
+        default=0,
+        db_index=True,
+    )
+    members_count = models.PositiveIntegerField(_("members count"), default=0, db_index=True)
+
+    # Ranks (Updated via Celery)
+    popularity = models.PositiveIntegerField(_("popularity"), null=True, db_index=True)
+    rank_position = models.PositiveIntegerField(_("rank position"), null=True, db_index=True)
+
+    class Meta(TypedModelMeta):
+        """Meta data for the game stats model."""
+
+        verbose_name = _("game stats")
+        verbose_name_plural = _("game stats")
+
+    def __str__(self: Self) -> str:
+        """String representation of the game stats model."""
+        return f"{self.game.title} - Stats"
+
+
+class GameType(BaseModel, IGDBModel):
+    """Data about game types."""
+
+    type = models.CharField(_("type"), max_length=255, unique=True)
+
+    class Meta(BaseModel.Meta):
+        """Meta data for the game type model."""
+
+        verbose_name = _("game type")
+        verbose_name_plural = _("game types")
+
+    def __str__(self: Self) -> str:
+        """String representation of the game type model."""
+        return self.type
+
+
+class GameStatus(BaseModel, IGDBModel):
+    """Data about game statuses."""
+
+    status = models.CharField(_("status"), max_length=255, unique=True)
+
+    class Meta(BaseModel.Meta):
+        """Meta data for the game status model."""
+
+        verbose_name = _("game status")
+        verbose_name_plural = _("game statuses")
+
+    def __str__(self: Self) -> str:
+        """String representation of the game status model."""
+        return self.status
+
+
 class Game(BaseModel, IGDBModel):
     """A model containing data about games."""
 
     title = models.CharField(_("title"), max_length=255)
-    created_at = models.DateTimeField(_("creation time"), auto_now_add=True)
+    created_at = models.DateTimeField(_("creation time"), auto_now_add=True, db_index=True)
     last_modified_at = models.DateTimeField(_("last modified"), auto_now=True)
     release_date = models.DateField(_("release date"), blank=True, null=True)
     cover_image_id = models.CharField(_("cover image id"), max_length=255, blank=True)
     summary = models.TextField(_("summary"), blank=True, max_length=2000)
+
+    game_type = models.ForeignKey(
+        GameType,
+        on_delete=models.SET_NULL,
+        related_name="games",
+        blank=True,
+        null=True,
+    )
+    game_status = models.ForeignKey(
+        GameStatus,
+        on_delete=models.SET_NULL,
+        related_name="games",
+        blank=True,
+        null=True,
+    )
+
+    parent_game = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="children_games",
+    )
+
+    bundles = models.ManyToManyField("self", symmetrical=False, related_name="bundled_in", blank=True)
+    dlcs = models.ManyToManyField("self", symmetrical=False, related_name="dlc_of", blank=True)
+    expanded_games = models.ManyToManyField("self", symmetrical=False, related_name="expanded_by", blank=True)
+    expansions = models.ManyToManyField("self", symmetrical=False, related_name="expansion_of", blank=True)
+    forks = models.ManyToManyField("self", symmetrical=False, related_name="fork_of", blank=True)
+    ports = models.ManyToManyField("self", symmetrical=False, related_name="port_of", blank=True)
+    standalone_expansions = models.ManyToManyField(
+        "self",
+        symmetrical=False,
+        related_name="standalone_expansion_of",
+        blank=True,
+    )
+
+    game_engines = models.ManyToManyField(GameEngine, related_name="games", blank=True)
+    game_modes = models.ManyToManyField(GameMode, related_name="games", blank=True)
+    player_perspectives = models.ManyToManyField(PlayerPerspective, related_name="games", blank=True)
+    screenshots = ArrayField(models.CharField(max_length=255), default=list, blank=True)
 
     publisher = models.ForeignKey(
         Company,
@@ -245,33 +382,37 @@ class Game(BaseModel, IGDBModel):
             )
         return ""
 
-    @cached_property
+    @property
     def average_score(self: Self) -> float:
         """Annotate the average score for the game."""
-        return Game.objects.with_average_score().get(id=self.id).average_score
+        if hasattr(self, "stats"):
+            return float(self.stats.average_score)
+        return 0.0
 
-    @cached_property
+    @property
     def scores_count(self: Self) -> int:
         """Annotate the number of all ratings for the game."""
-        return Game.objects.with_scores_count().get(id=self.id).scores_count
-
-    @cached_property
-    def rank_position(self: Self) -> int:
-        """Annotate the rank position of the game. The rank position is calculated based on the average score."""
-        for game in Game.objects.with_rank_position():
-            if game.id == self.id:
-                return game.rank_position
+        if hasattr(self, "stats"):
+            return self.stats.score_count
         return 0
 
-    @cached_property
+    @property
+    def rank_position(self: Self) -> int:
+        """Annotate the rank position of the game. The rank position is calculated based on the average score."""
+        if hasattr(self, "stats") and self.stats.rank_position is not None:
+            return self.stats.rank_position
+        return 0
+
+    @property
     def members_count(self: Self) -> int:
         """Annotate the number of all members for the game."""
-        return Game.objects.with_members_count().get(id=self.id).members_count
+        if hasattr(self, "stats"):
+            return self.stats.members_count
+        return 0
 
-    @cached_property
+    @property
     def popularity(self: Self) -> int:
         """Annotate the popularity of the game. The popularity is calculated based on the number of members."""
-        for game in Game.objects.with_popularity():
-            if game.id == self.id:
-                return game.popularity
+        if hasattr(self, "stats") and self.stats.popularity is not None:
+            return self.stats.popularity
         return 0

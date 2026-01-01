@@ -10,19 +10,59 @@ from model_bakery import baker
 from my_game_list.games.models import (
     Company,
     Game,
+    GameEngine,
     GameFollow,
     GameList,
     GameListStatus,
     GameMedia,
+    GameMode,
     GameReview,
+    GameStatus,
+    GameType,
     Genre,
     Platform,
+    PlayerPerspective,
 )
 
 if TYPE_CHECKING:
     from my_game_list.users.models import User as UserModel
 
 User: type[UserModel] = get_user_model()
+
+
+@pytest.fixture
+@freeze_time("2023-06-22 16:47:12")
+def game_type_fixture() -> GameType:
+    """A fixture with a test game type."""
+    return baker.make("games.GameType")
+
+
+@pytest.fixture
+@freeze_time("2023-06-22 16:47:12")
+def game_status_fixture() -> GameStatus:
+    """A fixture with a test game status."""
+    return baker.make("games.GameStatus")
+
+
+@pytest.fixture
+@freeze_time("2023-06-22 16:47:12")
+def game_engine_fixture() -> GameEngine:
+    """A fixture with a test game engine."""
+    return baker.make("games.GameEngine")
+
+
+@pytest.fixture
+@freeze_time("2023-06-22 16:47:12")
+def game_mode_fixture() -> GameMode:
+    """A fixture with a test game mode."""
+    return baker.make("games.GameMode")
+
+
+@pytest.fixture
+@freeze_time("2023-06-22 16:47:12")
+def player_perspective_fixture() -> PlayerPerspective:
+    """A fixture with a test player perspective."""
+    return baker.make("games.PlayerPerspective")
 
 
 @pytest.fixture
@@ -66,11 +106,25 @@ def game_fixture(
     platform_fixture: Platform,
     publisher_fixture: Company,
     genre_fixture: Genre,
+    game_type_fixture: GameType,
+    game_status_fixture: GameStatus,
+    game_engine_fixture: GameEngine,
+    game_mode_fixture: GameMode,
+    player_perspective_fixture: PlayerPerspective,
 ) -> Game:
     """A fixture with a test game."""
-    game: Game = baker.make("games.Game", developer=developer_fixture, publisher=publisher_fixture)
+    game: Game = baker.make(
+        "games.Game",
+        developer=developer_fixture,
+        publisher=publisher_fixture,
+        game_type=game_type_fixture,
+        game_status=game_status_fixture,
+    )
     game.genres.add(genre_fixture)
     game.platforms.add(platform_fixture)
+    game.game_engines.add(game_engine_fixture)
+    game.game_modes.add(game_mode_fixture)
+    game.player_perspectives.add(player_perspective_fixture)
     return game
 
 

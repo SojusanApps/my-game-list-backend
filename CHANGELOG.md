@@ -2,6 +2,19 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.7.0] - 01.01.2026
+
+* Improvements to game queries to make them faster.
+* Added additional information to the Game model:
+  * `GameEngine`
+  * `GameMode`
+  * `PlayerPerspective`
+  * `GameType`
+  * `GameStatus`
+* Updated the `Game` list endpoint to include the game status and type.
+* Updated the `Game` retrieve endpoint to include the new data.
+* Updated the `Game` filters.
+
 ## v. [4.6.0] - 28.12.2025
 
 * Changed the `User` model `str` method.

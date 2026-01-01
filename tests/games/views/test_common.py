@@ -13,9 +13,14 @@ from rest_framework.reverse import reverse
 from my_game_list.games.models import (
     Company,
     Game,
+    GameEngine,
     GameListStatus,
+    GameMode,
+    GameStatus,
+    GameType,
     Genre,
     Platform,
+    PlayerPerspective,
 )
 
 if TYPE_CHECKING:
@@ -61,6 +66,26 @@ GAME_USER_DEPENDENT_DETAIL_VIEWNAMES = [
         pytest.param(
             "games:game-medias-list",
             id="Check forbidden access for the creation of game media.",
+        ),
+        pytest.param(
+            "games:game-types-list",
+            id="Check forbidden access for the creation of game type.",
+        ),
+        pytest.param(
+            "games:game-statuses-list",
+            id="Check forbidden access for the creation of game status.",
+        ),
+        pytest.param(
+            "games:game-engines-list",
+            id="Check forbidden access for the creation of game engine.",
+        ),
+        pytest.param(
+            "games:game-modes-list",
+            id="Check forbidden access for the creation of game mode.",
+        ),
+        pytest.param(
+            "games:player-perspectives-list",
+            id="Check forbidden access for the creation of player perspective.",
         ),
     ],
 )
@@ -129,6 +154,26 @@ def test_unauthorized_access_list(viewname: str, api_client: APIClient) -> None:
         pytest.param(
             "games:game-medias-detail",
             id="Check forbidden access for the game media with given id.",
+        ),
+        pytest.param(
+            "games:game-types-detail",
+            id="Check forbidden access for the game type with given id.",
+        ),
+        pytest.param(
+            "games:game-statuses-detail",
+            id="Check forbidden access for the game status with given id.",
+        ),
+        pytest.param(
+            "games:game-engines-detail",
+            id="Check forbidden access for the game engine with given id.",
+        ),
+        pytest.param(
+            "games:game-modes-detail",
+            id="Check forbidden access for the game mode with given id.",
+        ),
+        pytest.param(
+            "games:player-perspectives-detail",
+            id="Check forbidden access for the player perspective with given id.",
         ),
     ],
 )
@@ -261,38 +306,18 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
                 "previous": None,
                 "results": [
                     {
-                        "igdb_id": ANY,
-                        "igdb_updated_at": ANY,
-                        "cover_image_id": ANY,
-                        "created_at": "2023-06-22T16:47:12Z",
-                        "summary": "",
-                        "developer": {
-                            "id": ANY,
-                            "name": ANY,
-                            "company_logo_id": "",
-                            "igdb_id": ANY,
-                            "igdb_updated_at": ANY,
-                        },
-                        "genres": [{"id": ANY, "name": ANY, "igdb_id": ANY, "igdb_updated_at": ANY}],
                         "id": ANY,
-                        "last_modified_at": "2023-06-22T16:47:12Z",
-                        "platforms": [
-                            {"id": ANY, "name": ANY, "igdb_id": ANY, "abbreviation": "", "igdb_updated_at": ANY},
-                        ],
-                        "publisher": {
-                            "id": ANY,
-                            "name": ANY,
-                            "company_logo_id": ANY,
-                            "igdb_id": ANY,
-                            "igdb_updated_at": ANY,
-                        },
-                        "release_date": None,
                         "title": ANY,
+                        "release_date": None,
+                        "created_at": "2023-06-22T16:47:12Z",
+                        "cover_image_id": ANY,
                         "average_score": 0.0,
-                        "members_count": 0,
-                        "popularity": 1,
-                        "rank_position": 1,
                         "scores_count": 0,
+                        "rank_position": 0,
+                        "members_count": 0,
+                        "popularity": 0,
+                        "game_status": ANY,
+                        "game_type": ANY,
                     },
                 ],
             },
@@ -370,6 +395,96 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
                 ],
             },
             id="Test list endpoint for game media.",
+        ),
+        pytest.param(
+            "games:game-types-list",
+            "game_type_fixture",
+            {
+                "count": 1,
+                "next": None,
+                "previous": None,
+                "results": [
+                    {
+                        "id": ANY,
+                        "type": ANY,
+                        "igdb_id": ANY,
+                        "igdb_updated_at": "2023-06-22T16:47:12Z",
+                    },
+                ],
+            },
+            id="Test list endpoint for game type.",
+        ),
+        pytest.param(
+            "games:game-statuses-list",
+            "game_status_fixture",
+            {
+                "count": 1,
+                "next": None,
+                "previous": None,
+                "results": [
+                    {
+                        "id": ANY,
+                        "status": ANY,
+                        "igdb_id": ANY,
+                        "igdb_updated_at": "2023-06-22T16:47:12Z",
+                    },
+                ],
+            },
+            id="Test list endpoint for game status.",
+        ),
+        pytest.param(
+            "games:game-engines-list",
+            "game_engine_fixture",
+            {
+                "count": 1,
+                "next": None,
+                "previous": None,
+                "results": [
+                    {
+                        "id": ANY,
+                        "name": ANY,
+                        "igdb_id": ANY,
+                        "igdb_updated_at": "2023-06-22T16:47:12Z",
+                    },
+                ],
+            },
+            id="Test list endpoint for game engine.",
+        ),
+        pytest.param(
+            "games:game-modes-list",
+            "game_mode_fixture",
+            {
+                "count": 1,
+                "next": None,
+                "previous": None,
+                "results": [
+                    {
+                        "id": ANY,
+                        "name": ANY,
+                        "igdb_id": ANY,
+                        "igdb_updated_at": "2023-06-22T16:47:12Z",
+                    },
+                ],
+            },
+            id="Test list endpoint for game mode.",
+        ),
+        pytest.param(
+            "games:player-perspectives-list",
+            "player_perspective_fixture",
+            {
+                "count": 1,
+                "next": None,
+                "previous": None,
+                "results": [
+                    {
+                        "id": ANY,
+                        "name": ANY,
+                        "igdb_id": ANY,
+                        "igdb_updated_at": "2023-06-22T16:47:12Z",
+                    },
+                ],
+            },
+            id="Test list endpoint for player perspective.",
         ),
     ],
 )
@@ -479,9 +594,23 @@ def test_list_model(
                 "title": ANY,
                 "average_score": 0.0,
                 "members_count": 0,
-                "popularity": 1,
-                "rank_position": 1,
+                "popularity": 0,
+                "rank_position": 0,
                 "scores_count": 0,
+                "game_type": {"id": ANY, "type": ANY, "igdb_id": ANY, "igdb_updated_at": ANY},
+                "game_status": {"id": ANY, "status": ANY, "igdb_id": ANY, "igdb_updated_at": ANY},
+                "parent_game": None,
+                "bundles": [],
+                "dlcs": [],
+                "expanded_games": [],
+                "expansions": [],
+                "forks": [],
+                "ports": [],
+                "standalone_expansions": [],
+                "game_engines": [{"id": ANY, "name": ANY, "igdb_id": ANY, "igdb_updated_at": ANY}],
+                "game_modes": [{"id": ANY, "name": ANY, "igdb_id": ANY, "igdb_updated_at": ANY}],
+                "player_perspectives": [{"id": ANY, "name": ANY, "igdb_id": ANY, "igdb_updated_at": ANY}],
+                "screenshots": [],
             },
             id="Get the game by id.",
         ),
@@ -516,6 +645,61 @@ def test_list_model(
                 "name": ANY,
             },
             id="Get the game media by id.",
+        ),
+        pytest.param(
+            "games:game-types-detail",
+            "game_type_fixture",
+            {
+                "id": ANY,
+                "type": ANY,
+                "igdb_id": ANY,
+                "igdb_updated_at": "2023-06-22T16:47:12Z",
+            },
+            id="Get the game type by id.",
+        ),
+        pytest.param(
+            "games:game-statuses-detail",
+            "game_status_fixture",
+            {
+                "id": ANY,
+                "status": ANY,
+                "igdb_id": ANY,
+                "igdb_updated_at": "2023-06-22T16:47:12Z",
+            },
+            id="Get the game status by id.",
+        ),
+        pytest.param(
+            "games:game-engines-detail",
+            "game_engine_fixture",
+            {
+                "id": ANY,
+                "name": ANY,
+                "igdb_id": ANY,
+                "igdb_updated_at": "2023-06-22T16:47:12Z",
+            },
+            id="Get the game engine by id.",
+        ),
+        pytest.param(
+            "games:game-modes-detail",
+            "game_mode_fixture",
+            {
+                "id": ANY,
+                "name": ANY,
+                "igdb_id": ANY,
+                "igdb_updated_at": "2023-06-22T16:47:12Z",
+            },
+            id="Get the game mode by id.",
+        ),
+        pytest.param(
+            "games:player-perspectives-detail",
+            "player_perspective_fixture",
+            {
+                "id": ANY,
+                "name": ANY,
+                "igdb_id": ANY,
+                "igdb_updated_at": "2023-06-22T16:47:12Z",
+            },
+            id="Get the player perspective by id.",
         ),
     ],
 )
@@ -602,6 +786,20 @@ def test_get_model_detail(
                 "last_modified_at": "2023-06-22T22:20:01Z",
                 "release_date": None,
                 "summary": "",
+                "game_type": ANY,
+                "game_status": ANY,
+                "parent_game": None,
+                "bundles": [],
+                "dlcs": [],
+                "expanded_games": [],
+                "expansions": [],
+                "forks": [],
+                "ports": [],
+                "standalone_expansions": [],
+                "game_engines": ANY,
+                "game_modes": ANY,
+                "player_perspectives": ANY,
+                "screenshots": [],
             },
             id="Create a new game.",
         ),
@@ -640,6 +838,66 @@ def test_get_model_detail(
             },
             id="Creation of the game media.",
         ),
+        pytest.param(
+            "games:game-types-list",
+            {
+                "type": "created_type",
+                "igdb_id": 123,
+                "igdb_updated_at": "2023-06-22T22:20:01Z",
+            },
+            {
+                "id": ANY,
+            },
+            id="Creation of the game type.",
+        ),
+        pytest.param(
+            "games:game-statuses-list",
+            {
+                "status": "created_status",
+                "igdb_id": 123,
+                "igdb_updated_at": "2023-06-22T22:20:01Z",
+            },
+            {
+                "id": ANY,
+            },
+            id="Creation of the game status.",
+        ),
+        pytest.param(
+            "games:game-engines-list",
+            {
+                "name": "created_engine",
+                "igdb_id": 123,
+                "igdb_updated_at": "2023-06-22T22:20:01Z",
+            },
+            {
+                "id": ANY,
+            },
+            id="Creation of the game engine.",
+        ),
+        pytest.param(
+            "games:game-modes-list",
+            {
+                "name": "created_mode",
+                "igdb_id": 123,
+                "igdb_updated_at": "2023-06-22T22:20:01Z",
+            },
+            {
+                "id": ANY,
+            },
+            id="Creation of the game mode.",
+        ),
+        pytest.param(
+            "games:player-perspectives-list",
+            {
+                "name": "created_perspective",
+                "igdb_id": 123,
+                "igdb_updated_at": "2023-06-22T22:20:01Z",
+            },
+            {
+                "id": ANY,
+            },
+            id="Creation of the player perspective.",
+        ),
     ],
 )
 @pytest.mark.django_db()
@@ -652,6 +910,11 @@ def test_create_model(
     publisher_fixture: Company,
     genre_fixture: Genre,
     platform_fixture: Platform,
+    game_type_fixture: GameType,
+    game_status_fixture: GameStatus,
+    game_engine_fixture: GameEngine,
+    game_mode_fixture: GameMode,
+    player_perspective_fixture: PlayerPerspective,
     game_fixture: Game,
     admin_authenticated_api_client: APIClient,
 ) -> None:
@@ -662,6 +925,11 @@ def test_create_model(
             "publisher": publisher_fixture.pk,
             "genres": [genre_fixture.pk],
             "platforms": [platform_fixture.pk],
+            "game_type": game_type_fixture.pk,
+            "game_status": game_status_fixture.pk,
+            "game_engines": [game_engine_fixture.pk],
+            "game_modes": [game_mode_fixture.pk],
+            "player_perspectives": [player_perspective_fixture.pk],
         }
     elif viewname in GAME_USER_DEPENDENT_LIST_VIEWNAMES:
         initial_data |= {"user": admin_user_fixture.pk, "game": game_fixture.pk}
@@ -751,6 +1019,20 @@ def test_create_model(
                 "release_date": None,
                 "summary": "",
                 "cover_image_id": ANY,
+                "game_type": ANY,
+                "game_status": ANY,
+                "parent_game": None,
+                "bundles": [],
+                "dlcs": [],
+                "expanded_games": [],
+                "expansions": [],
+                "forks": [],
+                "ports": [],
+                "standalone_expansions": [],
+                "game_engines": ANY,
+                "game_modes": ANY,
+                "player_perspectives": ANY,
+                "screenshots": [],
             },
             id="Update a game.",
         ),
@@ -786,6 +1068,61 @@ def test_create_model(
             {},
             id="Update of the game media.",
         ),
+        pytest.param(
+            "games:game-types-detail",
+            "game_type_fixture",
+            {
+                "type": "updated_type",
+                "igdb_id": 123,
+                "igdb_updated_at": "2023-06-22T22:20:01Z",
+            },
+            {},
+            id="Update of the game type.",
+        ),
+        pytest.param(
+            "games:game-statuses-detail",
+            "game_status_fixture",
+            {
+                "status": "updated_status",
+                "igdb_id": 123,
+                "igdb_updated_at": "2023-06-22T22:20:01Z",
+            },
+            {},
+            id="Update of the game status.",
+        ),
+        pytest.param(
+            "games:game-engines-detail",
+            "game_engine_fixture",
+            {
+                "name": "updated_engine",
+                "igdb_id": 123,
+                "igdb_updated_at": "2023-06-22T22:20:01Z",
+            },
+            {},
+            id="Update of the game engine.",
+        ),
+        pytest.param(
+            "games:game-modes-detail",
+            "game_mode_fixture",
+            {
+                "name": "updated_mode",
+                "igdb_id": 123,
+                "igdb_updated_at": "2023-06-22T22:20:01Z",
+            },
+            {},
+            id="Update of the game mode.",
+        ),
+        pytest.param(
+            "games:player-perspectives-detail",
+            "player_perspective_fixture",
+            {
+                "name": "updated_perspective",
+                "igdb_id": 123,
+                "igdb_updated_at": "2023-06-22T22:20:01Z",
+            },
+            {},
+            id="Update of the player perspective.",
+        ),
     ],
 )
 @pytest.mark.django_db()
@@ -805,6 +1142,11 @@ def test_update_model(
             "publisher": baker.make(Company).pk,
             "genres": [baker.make(Genre).pk],
             "platforms": [baker.make(Platform).pk],
+            "game_type": baker.make(GameType).pk,
+            "game_status": baker.make(GameStatus).pk,
+            "game_engines": [baker.make(GameEngine).pk],
+            "game_modes": [baker.make(GameMode).pk],
+            "player_perspectives": [baker.make(PlayerPerspective).pk],
         }
     elif viewname in GAME_USER_DEPENDENT_DETAIL_VIEWNAMES:
         update_data |= {
@@ -871,6 +1213,36 @@ def test_update_model(
             "game_media_fixture",
             5,
             id="Delete the game media.",
+        ),
+        pytest.param(
+            "games:game-types-detail",
+            "game_type_fixture",
+            0,
+            id="Delete the game type.",
+        ),
+        pytest.param(
+            "games:game-statuses-detail",
+            "game_status_fixture",
+            0,
+            id="Delete the game status.",
+        ),
+        pytest.param(
+            "games:game-engines-detail",
+            "game_engine_fixture",
+            0,
+            id="Delete the game engine.",
+        ),
+        pytest.param(
+            "games:game-modes-detail",
+            "game_mode_fixture",
+            0,
+            id="Delete the game mode.",
+        ),
+        pytest.param(
+            "games:player-perspectives-detail",
+            "player_perspective_fixture",
+            0,
+            id="Delete the player perspective.",
         ),
     ],
 )

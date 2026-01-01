@@ -5,13 +5,18 @@ from rest_framework import routers
 
 from my_game_list.games.views import (
     CompanyViewSet,
+    GameEngineViewSet,
     GameFollowViewSet,
     GameListViewSet,
     GameMediaViewSet,
+    GameModeViewSet,
     GameReviewViewSet,
+    GameStatusViewSet,
+    GameTypeViewSet,
     GameViewSet,
     GenreViewSet,
     PlatformViewSet,
+    PlayerPerspectiveViewSet,
 )
 
 app_name = "games"
@@ -25,6 +30,11 @@ router.register("games", GameViewSet, basename="games")
 router.register("genres", GenreViewSet, basename="genres")
 router.register("platforms", PlatformViewSet, basename="platforms")
 router.register("game-medias", GameMediaViewSet, basename="game-medias")
+router.register("game-types", GameTypeViewSet, basename="game-types")
+router.register("game-statuses", GameStatusViewSet, basename="game-statuses")
+router.register("game-engines", GameEngineViewSet, basename="game-engines")
+router.register("game-modes", GameModeViewSet, basename="game-modes")
+router.register("player-perspectives", PlayerPerspectiveViewSet, basename="player-perspectives")
 
 urlpatterns = [
     path("", include(router.urls)),

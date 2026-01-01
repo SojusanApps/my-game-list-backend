@@ -7,12 +7,17 @@ from rest_framework import serializers
 from my_game_list.games.models import (
     Company,
     Game,
+    GameEngine,
     GameFollow,
     GameList,
     GameMedia,
+    GameMode,
     GameReview,
+    GameStatus,
+    GameType,
     Genre,
     Platform,
+    PlayerPerspective,
 )
 from my_game_list.my_game_list.serializers import BaseDictionarySerializer
 from my_game_list.users.models import User
@@ -200,6 +205,85 @@ class PlatformSerializer(BaseDictionarySerializer):
         fields = (*BaseDictionarySerializer.Meta.fields, "abbreviation", "igdb_id", "igdb_updated_at")
 
 
+class GameTypeSerializer(serializers.ModelSerializer[GameType]):
+    """A serializer for the game type model."""
+
+    class Meta:
+        """Meta data for the game type serializer."""
+
+        model = GameType
+        fields = ("id", "type", "igdb_id", "igdb_updated_at")
+
+
+class GameStatusSerializer(serializers.ModelSerializer[GameStatus]):
+    """A serializer for the game status model."""
+
+    class Meta:
+        """Meta data for the game status serializer."""
+
+        model = GameStatus
+        fields = ("id", "status", "igdb_id", "igdb_updated_at")
+
+
+class GameEngineSerializer(BaseDictionarySerializer):
+    """A serializer for the game engine model."""
+
+    class Meta(BaseDictionarySerializer.Meta):
+        """Meta data for the game engine serializer."""
+
+        model = GameEngine
+        fields = (*BaseDictionarySerializer.Meta.fields, "igdb_id", "igdb_updated_at")
+
+
+class GameModeSerializer(BaseDictionarySerializer):
+    """A serializer for the game mode model."""
+
+    class Meta(BaseDictionarySerializer.Meta):
+        """Meta data for the game mode serializer."""
+
+        model = GameMode
+        fields = (*BaseDictionarySerializer.Meta.fields, "igdb_id", "igdb_updated_at")
+
+
+class PlayerPerspectiveSerializer(BaseDictionarySerializer):
+    """A serializer for the player perspective model."""
+
+    class Meta(BaseDictionarySerializer.Meta):
+        """Meta data for the player perspective serializer."""
+
+        model = PlayerPerspective
+        fields = (*BaseDictionarySerializer.Meta.fields, "igdb_id", "igdb_updated_at")
+
+
+class GameSimpleListSerializer(serializers.ModelSerializer[Game]):
+    """A lightweight serializer for the game model list view."""
+
+    game_status: serializers.SlugRelatedField[GameStatus] = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field="status",
+    )
+    game_type: serializers.SlugRelatedField[GameType] = serializers.SlugRelatedField(read_only=True, slug_field="type")
+
+    class Meta:
+        """Meta data for game list serializer."""
+
+        model = Game
+        fields = (
+            "id",
+            "title",
+            "release_date",
+            "created_at",
+            "cover_image_id",
+            "average_score",
+            "scores_count",
+            "rank_position",
+            "members_count",
+            "popularity",
+            "game_status",
+            "game_type",
+        )
+
+
 class GameSerializer(serializers.ModelSerializer[Game]):
     """A serializer for the game model."""
 
@@ -207,6 +291,19 @@ class GameSerializer(serializers.ModelSerializer[Game]):
     developer = CompanySerializer()
     genres = GenreSerializer(many=True)
     platforms = PlatformSerializer(many=True)
+    game_type = GameTypeSerializer()
+    game_status = GameStatusSerializer()
+    parent_game = CompanyGameSerializer()
+    bundles = CompanyGameSerializer(many=True)
+    dlcs = CompanyGameSerializer(many=True)
+    expanded_games = CompanyGameSerializer(many=True)
+    expansions = CompanyGameSerializer(many=True)
+    forks = CompanyGameSerializer(many=True)
+    ports = CompanyGameSerializer(many=True)
+    standalone_expansions = CompanyGameSerializer(many=True)
+    game_engines = GameEngineSerializer(many=True)
+    game_modes = GameModeSerializer(many=True)
+    player_perspectives = PlayerPerspectiveSerializer(many=True)
 
     class Meta:
         """Meta data for game serializer."""
@@ -231,6 +328,20 @@ class GameSerializer(serializers.ModelSerializer[Game]):
             "rank_position",
             "members_count",
             "popularity",
+            "game_type",
+            "game_status",
+            "parent_game",
+            "bundles",
+            "dlcs",
+            "expanded_games",
+            "expansions",
+            "forks",
+            "ports",
+            "standalone_expansions",
+            "game_engines",
+            "game_modes",
+            "player_perspectives",
+            "screenshots",
         )
 
 
@@ -240,10 +351,14 @@ class GameCreateSerializer(serializers.ModelSerializer[Game]):
     publisher = serializers.SlugRelatedField(
         queryset=Company.objects.all(),
         slug_field="id",
+        required=False,
+        allow_null=True,
     )
     developer = serializers.SlugRelatedField(
         queryset=Company.objects.all(),
         slug_field="id",
+        required=False,
+        allow_null=True,
     )
     genres = serializers.SlugRelatedField(
         queryset=Genre.objects.all(),
@@ -254,6 +369,84 @@ class GameCreateSerializer(serializers.ModelSerializer[Game]):
         queryset=Platform.objects.all(),
         slug_field="id",
         many=True,
+    )
+    game_type = serializers.SlugRelatedField(
+        queryset=GameType.objects.all(),
+        slug_field="id",
+        required=False,
+        allow_null=True,
+    )
+    game_status = serializers.SlugRelatedField(
+        queryset=GameStatus.objects.all(),
+        slug_field="id",
+        required=False,
+        allow_null=True,
+    )
+    parent_game = serializers.SlugRelatedField(
+        queryset=Game.objects.all(),
+        slug_field="id",
+        required=False,
+        allow_null=True,
+    )
+    bundles = serializers.SlugRelatedField(
+        queryset=Game.objects.all(),
+        slug_field="id",
+        many=True,
+        required=False,
+    )
+    dlcs = serializers.SlugRelatedField(
+        queryset=Game.objects.all(),
+        slug_field="id",
+        many=True,
+        required=False,
+    )
+    expanded_games = serializers.SlugRelatedField(
+        queryset=Game.objects.all(),
+        slug_field="id",
+        many=True,
+        required=False,
+    )
+    expansions = serializers.SlugRelatedField(
+        queryset=Game.objects.all(),
+        slug_field="id",
+        many=True,
+        required=False,
+    )
+    forks = serializers.SlugRelatedField(
+        queryset=Game.objects.all(),
+        slug_field="id",
+        many=True,
+        required=False,
+    )
+    ports = serializers.SlugRelatedField(
+        queryset=Game.objects.all(),
+        slug_field="id",
+        many=True,
+        required=False,
+    )
+    standalone_expansions = serializers.SlugRelatedField(
+        queryset=Game.objects.all(),
+        slug_field="id",
+        many=True,
+        required=False,
+    )
+    game_engines = serializers.SlugRelatedField(
+        queryset=GameEngine.objects.all(),
+        slug_field="id",
+        many=True,
+        required=False,
+    )
+    game_modes = serializers.SlugRelatedField(
+        queryset=GameMode.objects.all(),
+        slug_field="id",
+        many=True,
+        required=False,
+    )
+    player_perspectives = serializers.SlugRelatedField(
+        queryset=PlayerPerspective.objects.all(),
+        slug_field="id",
+        many=True,
+        required=False,
     )
 
     class Meta:
@@ -274,4 +467,18 @@ class GameCreateSerializer(serializers.ModelSerializer[Game]):
             "developer",
             "genres",
             "platforms",
+            "game_type",
+            "game_status",
+            "parent_game",
+            "bundles",
+            "dlcs",
+            "expanded_games",
+            "expansions",
+            "forks",
+            "ports",
+            "standalone_expansions",
+            "game_engines",
+            "game_modes",
+            "player_perspectives",
+            "screenshots",
         )
