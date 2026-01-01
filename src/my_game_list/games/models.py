@@ -4,6 +4,7 @@ from typing import ClassVar, Self
 
 from django.conf import settings
 from django.contrib import admin
+from django.contrib.postgres.fields import ArrayField
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.html import format_html
@@ -194,6 +195,38 @@ class Platform(BaseDictionaryModel, IGDBModel):
         ]
 
 
+class GameEngine(IGDBModel):
+    """Data about game engines."""
+
+    name = models.CharField(_("name"), max_length=255)
+
+    class Meta(BaseDictionaryModel.Meta):
+        """Meta data for the game engine model."""
+
+        verbose_name = _("game engine")
+        verbose_name_plural = _("game engines")
+
+
+class GameMode(BaseDictionaryModel, IGDBModel):
+    """Data about game modes."""
+
+    class Meta(BaseDictionaryModel.Meta):
+        """Meta data for the game mode model."""
+
+        verbose_name = _("game mode")
+        verbose_name_plural = _("game modes")
+
+
+class PlayerPerspective(BaseDictionaryModel, IGDBModel):
+    """Data about player perspectives."""
+
+    class Meta(BaseDictionaryModel.Meta):
+        """Meta data for the player perspective model."""
+
+        verbose_name = _("player perspective")
+        verbose_name_plural = _("player perspectives")
+
+
 class GameStats(models.Model):
     """Data about game statistics."""
 
@@ -226,6 +259,38 @@ class GameStats(models.Model):
         return f"{self.game.title} - Stats"
 
 
+class GameType(BaseModel, IGDBModel):
+    """Data about game types."""
+
+    type = models.CharField(_("type"), max_length=255, unique=True)
+
+    class Meta(BaseModel.Meta):
+        """Meta data for the game type model."""
+
+        verbose_name = _("game type")
+        verbose_name_plural = _("game types")
+
+    def __str__(self: Self) -> str:
+        """String representation of the game type model."""
+        return self.type
+
+
+class GameStatus(BaseModel, IGDBModel):
+    """Data about game statuses."""
+
+    status = models.CharField(_("status"), max_length=255, unique=True)
+
+    class Meta(BaseModel.Meta):
+        """Meta data for the game status model."""
+
+        verbose_name = _("game status")
+        verbose_name_plural = _("game statuses")
+
+    def __str__(self: Self) -> str:
+        """String representation of the game status model."""
+        return self.status
+
+
 class Game(BaseModel, IGDBModel):
     """A model containing data about games."""
 
@@ -235,6 +300,47 @@ class Game(BaseModel, IGDBModel):
     release_date = models.DateField(_("release date"), blank=True, null=True)
     cover_image_id = models.CharField(_("cover image id"), max_length=255, blank=True)
     summary = models.TextField(_("summary"), blank=True, max_length=2000)
+
+    game_type = models.ForeignKey(
+        GameType,
+        on_delete=models.SET_NULL,
+        related_name="games",
+        blank=True,
+        null=True,
+    )
+    game_status = models.ForeignKey(
+        GameStatus,
+        on_delete=models.SET_NULL,
+        related_name="games",
+        blank=True,
+        null=True,
+    )
+
+    parent_game = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="children_games",
+    )
+
+    bundles = models.ManyToManyField("self", symmetrical=False, related_name="bundled_in", blank=True)
+    dlcs = models.ManyToManyField("self", symmetrical=False, related_name="dlc_of", blank=True)
+    expanded_games = models.ManyToManyField("self", symmetrical=False, related_name="expanded_by", blank=True)
+    expansions = models.ManyToManyField("self", symmetrical=False, related_name="expansion_of", blank=True)
+    forks = models.ManyToManyField("self", symmetrical=False, related_name="fork_of", blank=True)
+    ports = models.ManyToManyField("self", symmetrical=False, related_name="port_of", blank=True)
+    standalone_expansions = models.ManyToManyField(
+        "self",
+        symmetrical=False,
+        related_name="standalone_expansion_of",
+        blank=True,
+    )
+
+    game_engines = models.ManyToManyField(GameEngine, related_name="games", blank=True)
+    game_modes = models.ManyToManyField(GameMode, related_name="games", blank=True)
+    player_perspectives = models.ManyToManyField(PlayerPerspective, related_name="games", blank=True)
+    screenshots = ArrayField(models.CharField(max_length=255), default=list, blank=True)
 
     publisher = models.ForeignKey(
         Company,

@@ -5,13 +5,18 @@ from django_filters import rest_framework as filters
 from my_game_list.games.models import (
     Company,
     Game,
+    GameEngine,
     GameFollow,
     GameList,
     GameListStatus,
     GameMedia,
+    GameMode,
     GameReview,
+    GameStatus,
+    GameType,
     Genre,
     Platform,
+    PlayerPerspective,
 )
 from my_game_list.my_game_list.filters import BaseDictionaryFilterSet
 
@@ -98,6 +103,31 @@ class GameFilterSet(filters.FilterSet):
         to_field_name="name",
         queryset=Platform.objects.all(),
     )
+    game_type = filters.ModelMultipleChoiceFilter(
+        field_name="game_type__type",
+        to_field_name="type",
+        queryset=GameType.objects.all(),
+    )
+    game_status = filters.ModelMultipleChoiceFilter(
+        field_name="game_status__status",
+        to_field_name="status",
+        queryset=GameStatus.objects.all(),
+    )
+    game_engines = filters.ModelMultipleChoiceFilter(
+        field_name="game_engines__name",
+        to_field_name="name",
+        queryset=GameEngine.objects.all(),
+    )
+    game_modes = filters.ModelMultipleChoiceFilter(
+        field_name="game_modes__name",
+        to_field_name="name",
+        queryset=GameMode.objects.all(),
+    )
+    player_perspectives = filters.ModelMultipleChoiceFilter(
+        field_name="player_perspectives__name",
+        to_field_name="name",
+        queryset=PlayerPerspective.objects.all(),
+    )
     ordering = filters.OrderingFilter(
         fields=(
             ("created_at", "created_at"),
@@ -118,6 +148,11 @@ class GameFilterSet(filters.FilterSet):
             "developer",
             "genres",
             "platforms",
+            "game_type",
+            "game_status",
+            "game_engines",
+            "game_modes",
+            "player_perspectives",
         )
 
 
@@ -137,6 +172,60 @@ class PlatformFilterSet(BaseDictionaryFilterSet):
         """Meta class for PlatformFilterSet."""
 
         model = Platform
+
+
+class GameTypeFilterSet(filters.FilterSet):
+    """Filter set for game type model."""
+
+    type = filters.CharFilter(lookup_expr="icontains")
+
+    class Meta:
+        """Meta class for GameTypeFilterSet."""
+
+        model = GameType
+        fields = ("id", "type", "igdb_id")
+
+
+class GameStatusFilterSet(filters.FilterSet):
+    """Filter set for game status model."""
+
+    status = filters.CharFilter(lookup_expr="icontains")
+
+    class Meta:
+        """Meta class for GameStatusFilterSet."""
+
+        model = GameStatus
+        fields = ("id", "status", "igdb_id")
+
+
+class GameEngineFilterSet(BaseDictionaryFilterSet):
+    """Filter set for game engine model."""
+
+    class Meta(BaseDictionaryFilterSet.Meta):
+        """Meta class for GameEngineFilterSet."""
+
+        model = GameEngine
+        fields = (*BaseDictionaryFilterSet.Meta.fields, "igdb_id")
+
+
+class GameModeFilterSet(BaseDictionaryFilterSet):
+    """Filter set for game mode model."""
+
+    class Meta(BaseDictionaryFilterSet.Meta):
+        """Meta class for GameModeFilterSet."""
+
+        model = GameMode
+        fields = (*BaseDictionaryFilterSet.Meta.fields, "igdb_id")
+
+
+class PlayerPerspectiveFilterSet(BaseDictionaryFilterSet):
+    """Filter set for player perspective model."""
+
+    class Meta(BaseDictionaryFilterSet.Meta):
+        """Meta class for PlayerPerspectiveFilterSet."""
+
+        model = PlayerPerspective
+        fields = (*BaseDictionaryFilterSet.Meta.fields, "igdb_id")
 
 
 class GameMediaFilterSet(BaseDictionaryFilterSet):

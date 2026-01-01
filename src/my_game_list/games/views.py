@@ -1,46 +1,64 @@
 """This module contains the viewsets for the game related data."""
 
-from typing import Self
+from typing import TYPE_CHECKING, Self
 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
 from my_game_list.games.filters import (
     CompanyFilterSet,
+    GameEngineFilterSet,
     GameFilterSet,
     GameFollowFilterSet,
     GameListFilterSet,
     GameMediaFilterSet,
+    GameModeFilterSet,
     GameReviewFilterSet,
+    GameStatusFilterSet,
+    GameTypeFilterSet,
     GenreFilterSet,
     PlatformFilterSet,
+    PlayerPerspectiveFilterSet,
 )
 from my_game_list.games.models import (
     Company,
     Game,
+    GameEngine,
     GameFollow,
     GameList,
     GameMedia,
+    GameMode,
     GameReview,
+    GameStatus,
+    GameType,
     Genre,
     Platform,
+    PlayerPerspective,
 )
 from my_game_list.games.serializers import (
     CompanyDetailSerializer,
     CompanySerializer,
     GameCreateSerializer,
+    GameEngineSerializer,
     GameFollowSerializer,
     GameListCreateSerializer,
     GameListSerializer,
     GameMediaSerializer,
+    GameModeSerializer,
     GameReviewCreateSerializer,
     GameReviewSerializer,
     GameSerializer,
     GameSimpleListSerializer,
+    GameStatusSerializer,
+    GameTypeSerializer,
     GenreSerializer,
     PlatformSerializer,
+    PlayerPerspectiveSerializer,
 )
 from my_game_list.my_game_list.permissions import IsAdminOrReadOnly
+
+if TYPE_CHECKING:
+    from django.db.models import QuerySet
 
 
 class CompanyViewSet(ModelViewSet[Company]):
@@ -50,6 +68,13 @@ class CompanyViewSet(ModelViewSet[Company]):
     serializer_class = CompanySerializer
     permission_classes = (IsAdminOrReadOnly,)
     filterset_class = CompanyFilterSet
+
+    def get_queryset(self: Self) -> QuerySet[Company]:
+        """Get the queryset for the Company model."""
+        queryset = super().get_queryset()
+        if self.action == "retrieve":
+            return queryset.prefetch_related("games_published", "games_developed")
+        return queryset
 
     def get_serializer_class(
         self: Self,
@@ -117,13 +142,39 @@ class GameReviewViewSet(ModelViewSet[GameReview]):
 class GameViewSet(ModelViewSet[Game]):
     """A ViewSet for the Game model."""
 
-    queryset = (
-        Game.objects.all().select_related("stats", "publisher", "developer").prefetch_related("genres", "platforms")
-    )
+    queryset = Game.objects.all()
     permission_classes = (IsAdminOrReadOnly,)
     filterset_class = GameFilterSet
     ordering_fields = ("release_date", "created_at")
     ordering = ("release_date",)
+
+    def get_queryset(self: Self) -> QuerySet[Game]:
+        """Get the queryset for the Game model."""
+        queryset = super().get_queryset()
+        if self.action == "list":
+            return queryset.select_related("stats", "game_status", "game_type")
+
+        return queryset.select_related(
+            "stats",
+            "publisher",
+            "developer",
+            "game_status",
+            "game_type",
+            "parent_game",
+        ).prefetch_related(
+            "genres",
+            "platforms",
+            "bundles",
+            "dlcs",
+            "expanded_games",
+            "expansions",
+            "forks",
+            "ports",
+            "standalone_expansions",
+            "game_engines",
+            "game_modes",
+            "player_perspectives",
+        )
 
     def get_serializer_class(
         self: Self,
@@ -152,6 +203,51 @@ class PlatformViewSet(ModelViewSet[Platform]):
     serializer_class = PlatformSerializer
     permission_classes = (IsAdminOrReadOnly,)
     filterset_class = PlatformFilterSet
+
+
+class GameTypeViewSet(ModelViewSet[GameType]):
+    """A ViewSet for the GameType model."""
+
+    queryset = GameType.objects.all()
+    serializer_class = GameTypeSerializer
+    permission_classes = (IsAdminOrReadOnly,)
+    filterset_class = GameTypeFilterSet
+
+
+class GameStatusViewSet(ModelViewSet[GameStatus]):
+    """A ViewSet for the GameStatus model."""
+
+    queryset = GameStatus.objects.all()
+    serializer_class = GameStatusSerializer
+    permission_classes = (IsAdminOrReadOnly,)
+    filterset_class = GameStatusFilterSet
+
+
+class GameEngineViewSet(ModelViewSet[GameEngine]):
+    """A ViewSet for the GameEngine model."""
+
+    queryset = GameEngine.objects.all()
+    serializer_class = GameEngineSerializer
+    permission_classes = (IsAdminOrReadOnly,)
+    filterset_class = GameEngineFilterSet
+
+
+class GameModeViewSet(ModelViewSet[GameMode]):
+    """A ViewSet for the GameMode model."""
+
+    queryset = GameMode.objects.all()
+    serializer_class = GameModeSerializer
+    permission_classes = (IsAdminOrReadOnly,)
+    filterset_class = GameModeFilterSet
+
+
+class PlayerPerspectiveViewSet(ModelViewSet[PlayerPerspective]):
+    """A ViewSet for the PlayerPerspective model."""
+
+    queryset = PlayerPerspective.objects.all()
+    serializer_class = PlayerPerspectiveSerializer
+    permission_classes = (IsAdminOrReadOnly,)
+    filterset_class = PlayerPerspectiveFilterSet
 
 
 class GameMediaViewSet(ModelViewSet[GameMedia]):

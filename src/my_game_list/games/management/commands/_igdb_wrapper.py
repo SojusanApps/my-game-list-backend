@@ -13,7 +13,17 @@ from requests_futures.sessions import FuturesSession
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
-type IGDBObject = "IGDBPlatformResponse | IGDBGenreResponse | IGDBCompanyResponse | IGDBGameResponse"
+type IGDBObject = (
+    IGDBPlatformResponse
+    | IGDBGenreResponse
+    | IGDBCompanyResponse
+    | IGDBGameResponse
+    | IGDBGameModeResponse
+    | IGDBPlayerPerspectiveResponse
+    | IGDBGameEngineResponse
+    | IGDBGameTypeResponse
+    | IGDBGameStatusResponse
+)
 type IGDBApiResponse = list[IGDBObject]
 
 
@@ -24,6 +34,11 @@ class IGDBEndpoints(StrEnum):
     PLATFORMS = "platforms"
     GAMES = "games"
     COMPANIES = "companies"
+    GAME_MODES = "game_modes"
+    PLAYER_PERSPECTIVES = "player_perspectives"
+    GAME_ENGINES = "game_engines"
+    GAME_TYPES = "game_types"
+    GAME_STATUSES = "game_statuses"
 
 
 @dataclass
@@ -77,6 +92,46 @@ class IGDBGenreResponse(BaseIGDBResponse):
 
 
 @dataclass
+class IGDBGameModeResponse(BaseIGDBResponse):
+    """Class representing the data structure for IGDB game mode response."""
+
+    name: str
+    """The name of the game mode."""
+
+
+@dataclass
+class IGDBPlayerPerspectiveResponse(BaseIGDBResponse):
+    """Class representing the data structure for IGDB player perspective response."""
+
+    name: str
+    """The name of the player perspective."""
+
+
+@dataclass
+class IGDBGameEngineResponse(BaseIGDBResponse):
+    """Class representing the data structure for IGDB game engine response."""
+
+    name: str
+    """The name of the game engine."""
+
+
+@dataclass
+class IGDBGameTypeResponse(BaseIGDBResponse):
+    """Class representing the data structure for IGDB game type response."""
+
+    type: str
+    """The name of the game type."""
+
+
+@dataclass
+class IGDBGameStatusResponse(BaseIGDBResponse):
+    """Class representing the data structure for IGDB game status response."""
+
+    status: str
+    """The name of the game status."""
+
+
+@dataclass
 class IGDBCompanyResponse(BaseIGDBResponse):
     """Class representing the data structure for IGDB company response."""
 
@@ -123,6 +178,34 @@ class IGDBGameResponse(BaseIGDBResponse):
     """The list of platforms IDs for this game."""
     summary: str = ""
     """A description of the game."""
+    game_type: int | None = None
+    """The category of the game."""
+    game_status: int | None = None
+    """The status of the game."""
+    parent_game: int | None = None
+    """The parent game ID."""
+    bundles: list[int] | None = None
+    """The list of bundles IDs."""
+    dlcs: list[int] | None = None
+    """The list of DLCs IDs."""
+    expansions: list[int] | None = None
+    """The list of expansions IDs."""
+    standalone_expansions: list[int] | None = None
+    """The list of standalone expansions IDs."""
+    expanded_games: list[int] | None = None
+    """The list of expanded games IDs."""
+    forks: list[int] | None = None
+    """The list of forks IDs."""
+    ports: list[int] | None = None
+    """The list of ports IDs."""
+    game_engines: list[int] | None = None
+    """The list of game engines IDs."""
+    game_modes: list[int] | None = None
+    """The list of game modes IDs."""
+    player_perspectives: list[int] | None = None
+    """The list of player perspectives IDs."""
+    screenshots: list[IGDBImageResponse] | None = None
+    """The list of screenshots."""
 
     def __post_init__(self: Self) -> None:
         """Post initializer."""
@@ -136,6 +219,11 @@ class IGDBGameResponse(BaseIGDBResponse):
                 )
                 for company in self.involved_companies
                 if isinstance(company, dict)
+            ]
+
+        if self.screenshots and isinstance(self.screenshots, list):
+            self.screenshots = [
+                IGDBImageResponse(**screenshot) for screenshot in self.screenshots if isinstance(screenshot, dict)
             ]
 
 
@@ -184,6 +272,11 @@ class IGDBWrapper:
             IGDBEndpoints.GENRES.value: IGDBGenreResponse,
             IGDBEndpoints.COMPANIES.value: IGDBCompanyResponse,
             IGDBEndpoints.GAMES.value: IGDBGameResponse,
+            IGDBEndpoints.GAME_MODES.value: IGDBGameModeResponse,
+            IGDBEndpoints.PLAYER_PERSPECTIVES.value: IGDBPlayerPerspectiveResponse,
+            IGDBEndpoints.GAME_ENGINES.value: IGDBGameEngineResponse,
+            IGDBEndpoints.GAME_TYPES.value: IGDBGameTypeResponse,
+            IGDBEndpoints.GAME_STATUSES.value: IGDBGameStatusResponse,
         }
 
         response_type = response_map.get(endpoint.value)
