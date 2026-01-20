@@ -1,5 +1,7 @@
 """A custom django command to import data from the IGDB database."""
 
+import time
+from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from typing import TYPE_CHECKING, Any, Literal, Self, TypeVar
 
@@ -53,10 +55,20 @@ ModelType = TypeVar(
 )
 
 
+@dataclass
+class RecursiveDataCollector:
+    """Collector for recursive data during import."""
+
+    parent_updates: list[tuple[int, int]]
+    recursive_m2m_data: dict[str, list[tuple[int, int]]]
+    all_target_igdb_ids: set[int]
+
+
 class Command(BaseCommand):
     """A custom django command to import data from the IGDB database."""
 
     help = "Import data from the IGDB database."
+    NAME_UPDATED_AT_QUERY = "fields name, updated_at;"
 
     def __init__(self: Self, *args: Any, **kwargs: Any) -> None:  # noqa: ANN401
         """Initializer for the command."""
@@ -80,6 +92,11 @@ class Command(BaseCommand):
             ),
             nargs="+",
             help="What to import from the IGDB database.",
+        )
+        parser.add_argument(
+            "--all",
+            action="store_true",
+            help="Import all data from the beginning, ignoring the last update time.",
         )
 
     @staticmethod
@@ -110,12 +127,78 @@ class Command(BaseCommand):
 
         return company_igdb_to_db_mapping.get(company_id) if company_id is not None else None
 
+    def _get_game_input(
+        self: Self,
+        item_from_igdb: IGDBGameResponse,
+        company_igdb_to_db_mapping: dict[int, Company],
+        extra_mappings: dict[str, dict[int, Any]] | None = None,
+    ) -> dict[str, Any]:
+        """Get the input for the Game model."""
+        game_type_mapping = extra_mappings.get("game_type") if extra_mappings else None
+        game_status_mapping = extra_mappings.get("game_status") if extra_mappings else None
+
+        game_type = (
+            game_type_mapping.get(item_from_igdb.game_type)
+            if game_type_mapping and item_from_igdb.game_type is not None
+            else None
+        )
+        game_status = (
+            game_status_mapping.get(item_from_igdb.game_status)
+            if game_status_mapping and item_from_igdb.game_status is not None
+            else None
+        )
+
+        return {
+            "title": item_from_igdb.name,
+            "release_date": (
+                datetime.fromtimestamp(item_from_igdb.first_release_date, tz=UTC).date()
+                if item_from_igdb.first_release_date
+                else None
+            ),
+            "cover_image_id": (item_from_igdb.cover.image_id if item_from_igdb.cover else ""),
+            "summary": item_from_igdb.summary,
+            "publisher": self._get_company(
+                company_type="publisher",
+                involved_companies=item_from_igdb.involved_companies,
+                company_igdb_to_db_mapping=company_igdb_to_db_mapping,
+            ),
+            "developer": self._get_company(
+                company_type="developer",
+                involved_companies=item_from_igdb.involved_companies,
+                company_igdb_to_db_mapping=company_igdb_to_db_mapping,
+            ),
+            "game_type": game_type,
+            "game_status": game_status,
+            "screenshots": ([s.image_id for s in item_from_igdb.screenshots] if item_from_igdb.screenshots else []),
+        }
+
+    def _get_game_type_input(self: Self, item_from_igdb: IGDBGameTypeResponse) -> dict[str, Any]:
+        """Get the input for the GameType model."""
+        return {"type": item_from_igdb.type}
+
+    def _get_game_status_input(self: Self, item_from_igdb: IGDBGameStatusResponse) -> dict[str, Any]:
+        """Get the input for the GameStatus model."""
+        return {"status": item_from_igdb.status}
+
+    def _get_platform_input(self: Self, item_from_igdb: IGDBPlatformResponse) -> dict[str, Any]:
+        """Get the input for the Platform model."""
+        return {
+            "abbreviation": item_from_igdb.abbreviation,
+            "name": item_from_igdb.name,
+        }
+
+    def _get_company_input(self: Self, item_from_igdb: IGDBCompanyResponse) -> dict[str, Any]:
+        """Get the input for the Company model."""
+        return {
+            "name": item_from_igdb.name,
+            "company_logo_id": (item_from_igdb.logo.image_id if item_from_igdb.logo else ""),
+        }
+
     def _get_model_input(
         self: Self,
         item_from_igdb: IGDBObject,
         company_igdb_to_db_mapping: dict[int, Company],
-        game_type_mapping: dict[int, GameType] | None = None,
-        game_status_mapping: dict[int, GameStatus] | None = None,
+        extra_mappings: dict[str, dict[int, Any]] | None = None,
     ) -> dict[str, str | int | None | datetime | date | Company | GameType | GameStatus | list[str]]:
         """
         Get the input for the model from the item from the IGDB database.
@@ -123,16 +206,13 @@ class Command(BaseCommand):
         Args:
             item_from_igdb (IGDBObject): The item from the IGDB database.
             company_igdb_to_db_mapping (dict[int, Company]): The mapping between IGDB companies and database companies.
-            game_type_mapping (dict[int, GameType] | None): The mapping between IGDB game type IDs and database GameType
-                objects.
-            game_status_mapping (dict[int, GameStatus] | None): The mapping between IGDB game status IDs and database
-                GameStatus objects.
+            extra_mappings (dict[str, dict[int, Any]] | None): Extra mappings for game type and status.
 
         Returns:
             dict[str, str | int | None | datetime | date | Company | GameType | GameStatus | list[str]]: The input
                 for the model.
         """
-        model_input: dict[str, str | int | None | datetime | date | Company | GameType | GameStatus | list[str]] = {
+        model_input: dict[str, Any] = {
             "igdb_id": item_from_igdb.id,
             "igdb_updated_at": (
                 datetime.fromtimestamp(item_from_igdb.updated_at, tz=UTC) if item_from_igdb.updated_at else None
@@ -140,43 +220,8 @@ class Command(BaseCommand):
         }
         match item_from_igdb:
             case IGDBGameResponse():
-                game_type = (
-                    game_type_mapping.get(item_from_igdb.game_type)
-                    if game_type_mapping and item_from_igdb.game_type is not None
-                    else None
-                )
-                game_status = (
-                    game_status_mapping.get(item_from_igdb.game_status)
-                    if game_status_mapping and item_from_igdb.game_status is not None
-                    else None
-                )
-
                 model_input.update(
-                    {
-                        "title": item_from_igdb.name,
-                        "release_date": (
-                            datetime.fromtimestamp(item_from_igdb.first_release_date, tz=UTC).date()
-                            if item_from_igdb.first_release_date
-                            else None
-                        ),
-                        "cover_image_id": (item_from_igdb.cover.image_id if item_from_igdb.cover else ""),
-                        "summary": item_from_igdb.summary,
-                        "publisher": self._get_company(
-                            company_type="publisher",
-                            involved_companies=item_from_igdb.involved_companies,
-                            company_igdb_to_db_mapping=company_igdb_to_db_mapping,
-                        ),
-                        "developer": self._get_company(
-                            company_type="developer",
-                            involved_companies=item_from_igdb.involved_companies,
-                            company_igdb_to_db_mapping=company_igdb_to_db_mapping,
-                        ),
-                        "game_type": game_type,
-                        "game_status": game_status,
-                        "screenshots": (
-                            [s.image_id for s in item_from_igdb.screenshots] if item_from_igdb.screenshots else []
-                        ),
-                    },
+                    self._get_game_input(item_from_igdb, company_igdb_to_db_mapping, extra_mappings),
                 )
             case (
                 IGDBGenreResponse()
@@ -184,37 +229,15 @@ class Command(BaseCommand):
                 | IGDBPlayerPerspectiveResponse()
                 | IGDBGameEngineResponse()
             ):
-                model_input.update(
-                    {
-                        "name": item_from_igdb.name,
-                    },
-                )
+                model_input.update({"name": item_from_igdb.name})
             case IGDBGameTypeResponse():
-                model_input.update(
-                    {
-                        "type": item_from_igdb.type,
-                    },
-                )
+                model_input.update(self._get_game_type_input(item_from_igdb))
             case IGDBGameStatusResponse():
-                model_input.update(
-                    {
-                        "status": item_from_igdb.status,
-                    },
-                )
+                model_input.update(self._get_game_status_input(item_from_igdb))
             case IGDBPlatformResponse():
-                model_input.update(
-                    {
-                        "abbreviation": item_from_igdb.abbreviation,
-                        "name": item_from_igdb.name,
-                    },
-                )
+                model_input.update(self._get_platform_input(item_from_igdb))
             case IGDBCompanyResponse():
-                model_input.update(
-                    {
-                        "name": item_from_igdb.name,
-                        "company_logo_id": (item_from_igdb.logo.image_id if item_from_igdb.logo else ""),
-                    },
-                )
+                model_input.update(self._get_company_input(item_from_igdb))
             case _:
                 message_error = f"Invalid type of data from IGDB: {type(item_from_igdb)}"
                 raise IGDBInteractionError(message_error)
@@ -226,8 +249,9 @@ class Command(BaseCommand):
         endpoint: IGDBEndpoints,
         query: str,
         model: type[ModelType],
-        game_type_mapping: dict[int, GameType] | None = None,
-        game_status_mapping: dict[int, GameStatus] | None = None,
+        extra_mappings: dict[str, dict[int, Any]] | None = None,
+        *,
+        import_all: bool = False,
     ) -> Iterator[tuple[list[ModelType], IGDBApiResponse]]:
         """Import data from the IGDB database to the application database.
 
@@ -235,15 +259,15 @@ class Command(BaseCommand):
             endpoint (IGDBEndpoints): The IGDB endpoint to fetch data from.
             query (str): The query string for the IGDB API.
             model (type[ModelType]): The Django model class to map the IGDB data to.
-            game_type_mapping (dict[int, GameType] | None): Mapping for GameType.
-            game_status_mapping (dict[int, GameStatus] | None): Mapping for GameStatus.
+            extra_mappings (dict[str, dict[int, Any]] | None): Extra mappings for model creation.
+            import_all (bool): Whether to import all data ignoring last update time.
 
         Yields:
             Iterator[tuple[list[ModelType], IGDBApiResponse]]: A generator yielding a tuple containing
             a list of created model instances and the raw IGDB API response data for each batch.
         """
         last_updated_at = model.objects.aggregate(max_updated_at=Max("igdb_updated_at"))["max_updated_at"]
-        if last_updated_at:
+        if last_updated_at and not import_all:
             timestamp = int(last_updated_at.timestamp())
             query = f"{query} where updated_at > {timestamp};"
 
@@ -257,7 +281,10 @@ class Command(BaseCommand):
             data_from_igdb_dict = {item.id: item for item in data_from_igdb}
             unique_data_from_igdb = list(data_from_igdb_dict.values())
 
-            company_igdb_to_db_mapping = {company.igdb_id: company for company in Company.objects.all()}
+            # Prepare mapping for companies if importing games
+            company_igdb_to_db_mapping = (
+                {company.igdb_id: company for company in Company.objects.all()} if model == Game else {}
+            )
             data_to_import = []
             update_fields: set[str] = set()
 
@@ -265,8 +292,7 @@ class Command(BaseCommand):
                 model_input = self._get_model_input(
                     data,
                     company_igdb_to_db_mapping,
-                    game_type_mapping=game_type_mapping,
-                    game_status_mapping=game_status_mapping,
+                    extra_mappings=extra_mappings,
                 )
                 data_to_import.append(model(**model_input))
                 update_fields.update(model_input.keys())
@@ -283,7 +309,7 @@ class Command(BaseCommand):
                 unique_data_from_igdb,
             )
 
-    def import_games(self: Self) -> None:
+    def import_games(self: Self, *, import_all: bool = False) -> None:
         """Import games from the IGDB database to the application database."""
         genre_igdb_to_db_mapping = {genre.igdb_id: genre.id for genre in Genre.objects.all()}
         platform_igdb_to_db_mapping = {platform.igdb_id: platform.id for platform in Platform.objects.all()}
@@ -305,12 +331,31 @@ class Command(BaseCommand):
             "game_engines, game_modes, player_perspectives, screenshots.image_id;"
         )
 
+        collector = RecursiveDataCollector(
+            parent_updates=[],
+            recursive_m2m_data={
+                "bundles": [],
+                "dlcs": [],
+                "expanded_games": [],
+                "expansions": [],
+                "forks": [],
+                "ports": [],
+                "standalone_expansions": [],
+            },
+            all_target_igdb_ids=set(),
+        )
+
+        extra_mappings: dict[str, Any] = {
+            "game_type": game_type_mapping,
+            "game_status": game_status_mapping,
+        }
+
         for imported_games, igdb_games in self._import_data(
             endpoint=IGDBEndpoints.GAMES,
             query=query_fields,
             model=Game,
-            game_type_mapping=game_type_mapping,
-            game_status_mapping=game_status_mapping,
+            extra_mappings=extra_mappings,
+            import_all=import_all,
         ):
             total_imported_games += len(imported_games)
             self._process_game_batch(
@@ -323,10 +368,13 @@ class Command(BaseCommand):
                     "player_perspectives": player_perspective_igdb_to_db_mapping,
                     "game_engines": game_engine_igdb_to_db_mapping,
                 },
+                collector,
             )
 
+        self._handle_recursive_relations(collector)
+
         self.stdout.write(
-            self.style.SUCCESS(f"Successfully imported {total_imported_games} 'Game' from the IGDB database."),
+            self.style.SUCCESS(f"Successfully created/updated {total_imported_games} 'Game' from the IGDB database."),
         )
 
     def _process_game_batch(
@@ -334,6 +382,7 @@ class Command(BaseCommand):
         imported_games: list[Game],
         igdb_games: IGDBApiResponse,
         mappings: dict[str, dict[int, int]],
+        collector: RecursiveDataCollector,
     ) -> None:
         """Process a batch of imported games and their relations."""
         rel_containers: dict[str, list[Any]] = {
@@ -344,18 +393,6 @@ class Command(BaseCommand):
             "engines": [],
         }
 
-        parent_updates: list[tuple[Game, int]] = []
-        recursive_m2m_data: dict[str, list[tuple[int, int]]] = {
-            "bundles": [],
-            "dlcs": [],
-            "expanded_games": [],
-            "expansions": [],
-            "forks": [],
-            "ports": [],
-            "standalone_expansions": [],
-        }
-        all_target_igdb_ids: set[int] = set()
-
         for imported_game, game_from_igdb in zip(imported_games, igdb_games, strict=True):
             if not (game_from_igdb and isinstance(game_from_igdb, IGDBGameResponse)):
                 continue
@@ -364,13 +401,10 @@ class Command(BaseCommand):
             self._collect_recursive_relations(
                 imported_game,
                 game_from_igdb,
-                parent_updates,
-                recursive_m2m_data,
-                all_target_igdb_ids,
+                collector,
             )
 
         self._bulk_create_simple_relations(rel_containers)
-        self._handle_recursive_relations(parent_updates, recursive_m2m_data, all_target_igdb_ids)
 
     def _collect_simple_relations(
         self: Self,
@@ -427,19 +461,17 @@ class Command(BaseCommand):
         self: Self,
         imported_game: Game,
         game_from_igdb: IGDBGameResponse,
-        parent_updates: list[tuple[Game, int]],
-        recursive_m2m_data: dict[str, list[tuple[int, int]]],
-        all_target_igdb_ids: set[int],
+        collector: RecursiveDataCollector,
     ) -> None:
         if game_from_igdb.parent_game:
-            parent_updates.append((imported_game, game_from_igdb.parent_game))
-            all_target_igdb_ids.add(game_from_igdb.parent_game)
+            collector.parent_updates.append((imported_game.id, game_from_igdb.parent_game))
+            collector.all_target_igdb_ids.add(game_from_igdb.parent_game)
 
-        for field, target_list in recursive_m2m_data.items():
+        for field, target_list in collector.recursive_m2m_data.items():
             if targets := getattr(game_from_igdb, field):
                 for t in targets:
                     target_list.append((imported_game.id, t))
-                    all_target_igdb_ids.add(t)
+                    collector.all_target_igdb_ids.add(t)
 
     def _bulk_create_simple_relations(
         self: Self,
@@ -453,24 +485,33 @@ class Command(BaseCommand):
 
     def _handle_recursive_relations(
         self: Self,
-        parent_updates: list[tuple[Game, int]],
-        recursive_m2m_data: dict[str, list[tuple[int, int]]],
-        all_target_igdb_ids: set[int],
+        collector: RecursiveDataCollector,
     ) -> None:
-        if not all_target_igdb_ids:
+        if not collector.all_target_igdb_ids:
             return
 
-        game_map = {g.igdb_id: g.id for g in Game.objects.filter(igdb_id__in=all_target_igdb_ids)}
+        self.stdout.write(self.style.NOTICE("Fetching game ID mapping..."))
+
+        game_map = {
+            item[1]: item[0]
+            for item in Game.objects.filter(igdb_id__in=collector.all_target_igdb_ids).values_list("id", "igdb_id")
+        }
+
+        self.stdout.write(self.style.NOTICE("Game parents update - started."))
 
         to_update_parent = []
-        for game, parent_igdb_id in parent_updates:
-            if parent_id := game_map.get(parent_igdb_id):
-                game.parent_game_id = parent_id
-                to_update_parent.append(game)
-        if to_update_parent:
-            Game.objects.bulk_update(to_update_parent, ["parent_game"])
+        for game_id, parent_igdb_id in collector.parent_updates:
+            if parent_igdb_id in game_map:
+                to_update_parent.append(Game(id=game_id, parent_game_id=game_map[parent_igdb_id]))
 
-        for field, data in recursive_m2m_data.items():
+        if to_update_parent:
+            # Using a sensible batch_size for bulk_update
+            Game.objects.bulk_update(to_update_parent, ["parent_game"], batch_size=2000)
+
+        self.stdout.write(self.style.NOTICE("Game parents update - finished."))
+
+        for field, data in collector.recursive_m2m_data.items():
+            self.stdout.write(self.style.NOTICE(f"Game {field} m2m relations - started."))
             m2m_model = getattr(Game, field).through
             m2m_objs = [
                 m2m_model(from_game_id=src_id, to_game_id=game_map[tgt_igdb_id])
@@ -478,124 +519,137 @@ class Command(BaseCommand):
                 if tgt_igdb_id in game_map
             ]
             if m2m_objs:
-                m2m_model.objects.bulk_create(m2m_objs, ignore_conflicts=True)
+                # Using a sensible batch_size for bulk_create
+                m2m_model.objects.bulk_create(m2m_objs, ignore_conflicts=True, batch_size=2000)
 
-    def import_companies(self: Self) -> None:
+            self.stdout.write(self.style.NOTICE(f"Game {field} m2m relations - finished."))
+
+    def import_companies(self: Self, *, import_all: bool = False) -> None:
         """Import companies from the IGDB database to the application database."""
         total_companies = 0
         for created_companies, _ in self._import_data(
             endpoint=IGDBEndpoints.COMPANIES,
             query="fields name, logo.image_id, updated_at;",
             model=Company,
+            import_all=import_all,
         ):
             total_companies += len(created_companies)
 
         self.stdout.write(
             self.style.SUCCESS(
-                (f"Successfully created {total_companies} 'Companies' from the IGDB database."),
+                (f"Successfully created/updated {total_companies} 'Companies' from the IGDB database."),
             ),
         )
 
-    def import_genres(self: Self) -> None:
+    def import_genres(self: Self, *, import_all: bool = False) -> None:
         """Import genres from the IGDB database to the application database."""
         total_genres = 0
         for created_genres, _ in self._import_data(
             endpoint=IGDBEndpoints.GENRES,
-            query="fields name, updated_at;",
+            query=self.NAME_UPDATED_AT_QUERY,
             model=Genre,
+            import_all=import_all,
         ):
             total_genres += len(created_genres)
 
         self.stdout.write(
             self.style.SUCCESS(
-                (f"Successfully created {total_genres} 'Genres' from the IGDB database."),
+                (f"Successfully created/updated {total_genres} 'Genres' from the IGDB database."),
             ),
         )
 
-    def import_platforms(self: Self) -> None:
+    def import_platforms(self: Self, *, import_all: bool = False) -> None:
         """Import platforms from the IGDB database to the application database."""
         total_platforms = 0
         for created_platforms, _ in self._import_data(
             endpoint=IGDBEndpoints.PLATFORMS,
             query="fields abbreviation, name, updated_at;",
             model=Platform,
+            import_all=import_all,
         ):
             total_platforms += len(created_platforms)
 
         self.stdout.write(
             self.style.SUCCESS(
-                (f"Successfully created {total_platforms} 'Platforms' from the IGDB database."),
+                (f"Successfully created/updated {total_platforms} 'Platforms' from the IGDB database."),
             ),
         )
 
-    def import_game_modes(self: Self) -> None:
+    def import_game_modes(self: Self, *, import_all: bool = False) -> None:
         """Import game modes from the IGDB database."""
         total_items = 0
         for created_items, _ in self._import_data(
             endpoint=IGDBEndpoints.GAME_MODES,
-            query="fields name, updated_at;",
+            query=self.NAME_UPDATED_AT_QUERY,
             model=GameMode,
+            import_all=import_all,
         ):
             total_items += len(created_items)
 
         self.stdout.write(
-            self.style.SUCCESS(f"Successfully created {total_items} 'Game Modes' from the IGDB database."),
+            self.style.SUCCESS(f"Successfully created/updated {total_items} 'Game Modes' from the IGDB database."),
         )
 
-    def import_player_perspectives(self: Self) -> None:
+    def import_player_perspectives(self: Self, *, import_all: bool = False) -> None:
         """Import player perspectives from the IGDB database."""
         total_items = 0
         for created_items, _ in self._import_data(
             endpoint=IGDBEndpoints.PLAYER_PERSPECTIVES,
-            query="fields name, updated_at;",
+            query=self.NAME_UPDATED_AT_QUERY,
             model=PlayerPerspective,
+            import_all=import_all,
         ):
             total_items += len(created_items)
 
         self.stdout.write(
-            self.style.SUCCESS(f"Successfully created {total_items} 'Player Perspectives' from the IGDB database."),
+            self.style.SUCCESS(
+                f"Successfully created/updated {total_items} 'Player Perspectives' from the IGDB database.",
+            ),
         )
 
-    def import_game_engines(self: Self) -> None:
+    def import_game_engines(self: Self, *, import_all: bool = False) -> None:
         """Import game engines from the IGDB database."""
         total_items = 0
         for created_items, _ in self._import_data(
             endpoint=IGDBEndpoints.GAME_ENGINES,
-            query="fields name, updated_at;",
+            query=self.NAME_UPDATED_AT_QUERY,
             model=GameEngine,
+            import_all=import_all,
         ):
             total_items += len(created_items)
 
         self.stdout.write(
-            self.style.SUCCESS(f"Successfully created {total_items} 'Game Engines' from the IGDB database."),
+            self.style.SUCCESS(f"Successfully created/updated {total_items} 'Game Engines' from the IGDB database."),
         )
 
-    def import_game_types(self: Self) -> None:
+    def import_game_types(self: Self, *, import_all: bool = False) -> None:
         """Import game types from the IGDB database."""
         total_items = 0
         for created_items, _ in self._import_data(
             endpoint=IGDBEndpoints.GAME_TYPES,
             query="fields type, updated_at;",
             model=GameType,
+            import_all=import_all,
         ):
             total_items += len(created_items)
 
         self.stdout.write(
-            self.style.SUCCESS(f"Successfully created {total_items} 'Game Types' from the IGDB database."),
+            self.style.SUCCESS(f"Successfully created/updated {total_items} 'Game Types' from the IGDB database."),
         )
 
-    def import_game_statuses(self: Self) -> None:
+    def import_game_statuses(self: Self, *, import_all: bool = False) -> None:
         """Import game statuses from the IGDB database."""
         total_items = 0
         for created_items, _ in self._import_data(
             endpoint=IGDBEndpoints.GAME_STATUSES,
             query="fields status, updated_at;",
             model=GameStatus,
+            import_all=import_all,
         ):
             total_items += len(created_items)
 
         self.stdout.write(
-            self.style.SUCCESS(f"Successfully created {total_items} 'Game Statuses' from the IGDB database."),
+            self.style.SUCCESS(f"Successfully created/updated {total_items} 'Game Statuses' from the IGDB database."),
         )
 
     def handle(self: Self, *args: None, **options: dict[str, int | None | str]) -> None:
@@ -614,10 +668,13 @@ class Command(BaseCommand):
             "game_statuses": self.import_game_statuses,
         }
 
+        import_all = bool(options.get("all", False))
+
         for item in options["what_to_import"]:
             action = actions.get(item)
             if action:
-                action()
+                action(import_all=import_all)
+            time.sleep(1)  # To avoid hitting IGDB rate limits
 
         self.stdout.write(
             self.style.SUCCESS("Import process completed."),
