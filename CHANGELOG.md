@@ -2,6 +2,10 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.7.1] - 21.01.2026
+
+* Fix the m2m relation import in the `import_data_from_igdb.py` script for games objects.
+
 ## v. [4.7.0] - 01.01.2026
 
 * Improvements to game queries to make them faster.

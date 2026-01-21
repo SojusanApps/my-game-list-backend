@@ -363,7 +363,7 @@ class IGDBWrapper:
                 url=f"{self.IGDB_BASE_URL}{endpoint.value}",
                 data=f"{query}offset {new_offset};sort id;",
                 headers=self.basic_auth_headers,
-                timeout=10,
+                timeout=60,
             )
             for new_offset in range(
                 offset,

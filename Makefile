@@ -12,6 +12,8 @@ help:
 	@echo "test_db - Run a Docker container with test database."
 	@echo "app_db - Run a Docker container with app database."
 	@echo "test - Run all tests for the application."
+	@echo "tui - Run the custom TUI for managing the application."
+	@echo "import_igdb_data - Import data from IGDB to the application database"
 
 sync:
 	uv sync --all-extras
@@ -62,6 +64,10 @@ test:
 tui:
 	uv run scripts/my-game-list-manage.py custom_tui
 
+import_igdb_data:
+	uv run scripts/my-game-list-manage.py import_data_from_igdb platforms genres game_modes player_perspectives \
+	game_engines game_types game_statuses companies games
+
 # .PHONY defines parts of the makefile that are not dependant on any specific file
 # This is most often used to store functions
-.PHONY: help uv-install install sync uv-compile run fresh_run check translations app_db test_db coverage sync tui
+.PHONY: help uv-install install sync uv-compile run fresh_run check translations app_db test_db coverage sync tui import_igdb_data
