@@ -1,0 +1,26 @@
+meta {
+  name: Create Collection Item
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{protocol}}/{{host}}:{{port}}/api/collection/collection-items/
+  body: json
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+body:json {
+  {
+    "order": 1,
+    "tier": "S",
+    "description": "Masterpiece",
+    "collection": 2,
+    "game": 1
+  }
+}

@@ -1,0 +1,26 @@
+meta {
+  name: Create Collection
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{protocol}}/{{host}}:{{port}}/api/collection/collections/
+  body: json
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+body:json {
+  {
+    "name": "My Favorite RPGs",
+    "description": "A list of the best RPGs I've played",
+    "is_favorite": true,
+    "visibility": "PUB",
+    "mode": "S"
+  }
+}
