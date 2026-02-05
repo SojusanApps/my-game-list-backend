@@ -1,0 +1,177 @@
+"""This module contains the serializers for the collection related data."""
+
+from typing import Self
+
+from rest_framework import serializers
+
+from my_game_list.collections.models import Collection, CollectionItem, CollectionMode, CollectionVisibility, Tier
+from my_game_list.games.models import Game
+from my_game_list.users.models import User
+from my_game_list.users.serializers import UserSerializer
+
+
+class CollectionItemGameSerializer(serializers.ModelSerializer[Game]):
+    """A simple serializer for the Game model used in collection items."""
+
+    class Meta:
+        """Meta data for the collection item game serializer."""
+
+        model = Game
+        fields = ("id", "title", "cover_image_id")
+
+
+class CollectionItemSerializer(serializers.ModelSerializer[CollectionItem]):
+    """A serializer for the collection item model."""
+
+    game = CollectionItemGameSerializer(read_only=True)
+    tier_display = serializers.CharField(source="get_tier_display", read_only=True)
+    added_by = UserSerializer(read_only=True)
+
+    class Meta:
+        """Meta data for the collection item serializer."""
+
+        model = CollectionItem
+        fields = (
+            "id",
+            "order",
+            "tier",
+            "tier_display",
+            "description",
+            "created_at",
+            "last_modified_at",
+            "collection",
+            "game",
+            "added_by",
+        )
+
+
+class CollectionItemCreateSerializer(serializers.ModelSerializer[CollectionItem]):
+    """A serializer for creating collection items."""
+
+    game = serializers.SlugRelatedField(
+        queryset=Game.objects.all(),
+        slug_field="id",
+    )
+    tier = serializers.ChoiceField(choices=Tier.choices, required=False, allow_blank=True)
+
+    class Meta:
+        """Meta data for the collection item create serializer."""
+
+        model = CollectionItem
+        fields = (
+            "id",
+            "order",
+            "tier",
+            "description",
+            "created_at",
+            "last_modified_at",
+            "collection",
+            "game",
+            "added_by",
+        )
+        read_only_fields = ("added_by",)
+
+
+class CollectionSerializer(serializers.ModelSerializer[Collection]):
+    """A serializer for the collection model."""
+
+    visibility_display = serializers.CharField(source="get_visibility_display", read_only=True)
+    mode_display = serializers.CharField(source="get_mode_display", read_only=True)
+    user = UserSerializer(read_only=True)
+    collaborators = UserSerializer(many=True, read_only=True)
+    items_count = serializers.SerializerMethodField()
+    items_cover_image_ids = serializers.SerializerMethodField()
+
+    class Meta:
+        """Meta data for the collection serializer."""
+
+        model = Collection
+        fields = (
+            "id",
+            "name",
+            "description",
+            "is_favorite",
+            "visibility",
+            "visibility_display",
+            "mode",
+            "mode_display",
+            "created_at",
+            "last_modified_at",
+            "user",
+            "collaborators",
+            "items_count",
+            "items_cover_image_ids",
+        )
+
+    def get_items_count(self: Self, instance: Collection) -> int:
+        """Get the number of items in the collection."""
+        return instance.items.count()
+
+    def get_items_cover_image_ids(self: Self, instance: Collection) -> list[str | None]:
+        """Get the first 5 items in the collection.
+
+        Just the cover image IDs for associated games so it could be displayed on the frontend.
+        """
+        cache = getattr(instance, "_prefetched_objects_cache", None)
+        if cache is not None and "items" in cache:
+            items_from_cache = sorted(cache["items"], key=lambda x: x.order)[:5]
+            return [item.game.cover_image_id for item in items_from_cache]
+
+        items = instance.items.select_related("game").order_by("order")[:5]
+        return [item.game.cover_image_id for item in items]
+
+
+class CollectionDetailSerializer(CollectionSerializer):
+    """A detailed serializer for the collection model including items."""
+
+    items = CollectionItemSerializer(many=True, read_only=True)
+
+    class Meta(CollectionSerializer.Meta):
+        """Meta data for the collection detail serializer."""
+
+        fields = (*CollectionSerializer.Meta.fields, "items")  # type: ignore[assignment]
+
+
+class CollectionCreateSerializer(serializers.ModelSerializer[Collection]):
+    """A serializer for creating collections."""
+
+    visibility = serializers.ChoiceField(
+        choices=CollectionVisibility.choices,
+        default=CollectionVisibility.PRIVATE,
+    )
+    mode = serializers.ChoiceField(
+        choices=CollectionMode.choices,
+        default=CollectionMode.SOLO,
+    )
+    collaborators = serializers.SlugRelatedField(
+        queryset=User.objects.all(),
+        slug_field="id",
+        many=True,
+        required=False,
+    )
+
+    class Meta:
+        """Meta data for the collection create serializer."""
+
+        model = Collection
+        fields = (
+            "id",
+            "name",
+            "description",
+            "is_favorite",
+            "visibility",
+            "mode",
+            "created_at",
+            "last_modified_at",
+            "user",
+            "collaborators",
+        )
+        read_only_fields = ("user",)
+
+
+class CollectionItemReorderSerializer(serializers.Serializer[CollectionItem]):
+    """A serializer for reordering collection items."""
+
+    id = serializers.IntegerField()
+    order = serializers.IntegerField(min_value=0)
+    description = serializers.CharField(required=False, allow_blank=True, max_length=500)
