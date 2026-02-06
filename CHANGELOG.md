@@ -2,6 +2,11 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.8.0] - 30.01.2026
+
+* Added Bruno endpoints for collections.
+* Added `Collections` app.
+
 ## v. [4.7.1] - 21.01.2026
 
 * Fix the m2m relation import in the `import_data_from_igdb.py` script for games objects.

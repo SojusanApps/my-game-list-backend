@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     f"{MAIN_APP}.{MAIN_APP}",
     f"{MAIN_APP}.users",
     f"{MAIN_APP}.games",
+    f"{MAIN_APP}.collections",
     f"{MAIN_APP}.friendships",
     f"{MAIN_APP}.notifications",
 ]

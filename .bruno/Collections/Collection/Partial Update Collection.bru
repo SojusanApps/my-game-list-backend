@@ -1,0 +1,22 @@
+meta {
+  name: Partial Update Collection
+  type: http
+  seq: 5
+}
+
+patch {
+  url: {{protocol}}/{{host}}:{{port}}/api/collection/collections/1/
+  body: json
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+body:json {
+  {
+    "name": "Partially Updated Name"
+  }
+}

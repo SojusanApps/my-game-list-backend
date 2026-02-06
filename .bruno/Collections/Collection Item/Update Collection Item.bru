@@ -1,0 +1,26 @@
+meta {
+  name: Update Collection Item
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{protocol}}/{{host}}:{{port}}/api/collection/collection-items/1/
+  body: json
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+body:json {
+  {
+    "order": 2,
+    "tier": "A",
+    "description": "Updated description",
+    "collection": 2,
+    "game": 1
+  }
+}

@@ -1,0 +1,16 @@
+meta {
+  name: List Collections
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{protocol}}/{{host}}:{{port}}/api/collection/collections/
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
