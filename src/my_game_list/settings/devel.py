@@ -1,5 +1,6 @@
 # ruff: noqa: F403, F405
 """This a configuration of the Django application for local development purposes."""
+
 from my_game_list.settings.base import *  # NOSONAR
 
 DEBUG = oeg("DJANGO_DEBUG", "True").lower() == "true"

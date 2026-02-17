@@ -1,5 +1,6 @@
 # ruff: noqa: F403, F405, S108
 """This a configuration of the Django application for test runner."""
+
 import os
 
 os.environ["DJANGO_CORS_ALLOWED_ORIGINS"] = "https://test"
