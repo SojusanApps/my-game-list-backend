@@ -24,6 +24,14 @@ class CollectionMode(models.TextChoices):
     COLLABORATIVE = "C", _("Collaborative")
 
 
+class CollectionType(models.TextChoices):
+    """Type options for collections."""
+
+    NORMAL = "NOR", _("Normal")
+    RANK = "RNK", _("Ranking")
+    TIER = "TIE", _("Tier list")
+
+
 class Tier(models.TextChoices):
     """Tier options for collection items."""
 
@@ -57,6 +65,12 @@ class Collection(BaseModel):
         max_length=1,
         choices=CollectionMode.choices,
         default=CollectionMode.SOLO,
+    )
+    type = models.CharField(
+        _("type"),
+        max_length=3,
+        choices=CollectionType.choices,
+        default=CollectionType.NORMAL,
     )
     created_at = models.DateTimeField(_("creation time"), auto_now_add=True)
     last_modified_at = models.DateTimeField(_("last modified"), auto_now=True)
@@ -92,12 +106,13 @@ class CollectionItem(BaseModel):
     like ranking order, optional tier classification, and justification notes.
     """
 
-    order = models.PositiveIntegerField(_("order"))
+    order = models.DecimalField(_("order"), max_digits=20, decimal_places=10, null=True, db_index=True)
     tier = models.CharField(
         _("tier"),
         max_length=1,
         choices=Tier.choices,
         blank=True,
+        db_index=True,
     )
     description = models.TextField(_("description"), blank=True, max_length=500)
     created_at = models.DateTimeField(_("creation time"), auto_now_add=True)

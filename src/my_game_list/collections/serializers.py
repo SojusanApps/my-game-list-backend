@@ -4,7 +4,14 @@ from typing import Self
 
 from rest_framework import serializers
 
-from my_game_list.collections.models import Collection, CollectionItem, CollectionMode, CollectionVisibility, Tier
+from my_game_list.collections.models import (
+    Collection,
+    CollectionItem,
+    CollectionMode,
+    CollectionType,
+    CollectionVisibility,
+    Tier,
+)
 from my_game_list.games.models import Game
 from my_game_list.users.models import User
 from my_game_list.users.serializers import UserSerializer
@@ -52,7 +59,7 @@ class CollectionItemCreateSerializer(serializers.ModelSerializer[CollectionItem]
         queryset=Game.objects.all(),
         slug_field="id",
     )
-    tier = serializers.ChoiceField(choices=Tier.choices, required=False, allow_blank=True)
+    tier = serializers.ChoiceField(choices=Tier.choices, required=False, allow_blank=True, default="")
 
     class Meta:
         """Meta data for the collection item create serializer."""
@@ -69,7 +76,7 @@ class CollectionItemCreateSerializer(serializers.ModelSerializer[CollectionItem]
             "game",
             "added_by",
         )
-        read_only_fields = ("added_by",)
+        read_only_fields = ("added_by", "order")
 
 
 class CollectionSerializer(serializers.ModelSerializer[Collection]):
@@ -77,6 +84,7 @@ class CollectionSerializer(serializers.ModelSerializer[Collection]):
 
     visibility_display = serializers.CharField(source="get_visibility_display", read_only=True)
     mode_display = serializers.CharField(source="get_mode_display", read_only=True)
+    type_display = serializers.CharField(source="get_type_display", read_only=True)
     user = UserSerializer(read_only=True)
     collaborators = UserSerializer(many=True, read_only=True)
     items_count = serializers.SerializerMethodField()
@@ -95,6 +103,8 @@ class CollectionSerializer(serializers.ModelSerializer[Collection]):
             "visibility_display",
             "mode",
             "mode_display",
+            "type",
+            "type_display",
             "created_at",
             "last_modified_at",
             "user",
@@ -114,7 +124,7 @@ class CollectionSerializer(serializers.ModelSerializer[Collection]):
         """
         cache = getattr(instance, "_prefetched_objects_cache", None)
         if cache is not None and "items" in cache:
-            items_from_cache = sorted(cache["items"], key=lambda x: x.order)[:5]
+            items_from_cache = sorted(cache["items"], key=lambda x: (x.order, x.id))[:5]
             return [item.game.cover_image_id for item in items_from_cache]
 
         items = instance.items.select_related("game").order_by("order")[:5]
@@ -143,6 +153,10 @@ class CollectionCreateSerializer(serializers.ModelSerializer[Collection]):
         choices=CollectionMode.choices,
         default=CollectionMode.SOLO,
     )
+    type = serializers.ChoiceField(
+        choices=CollectionType.choices,
+        default=CollectionType.NORMAL,
+    )
     collaborators = serializers.SlugRelatedField(
         queryset=User.objects.all(),
         slug_field="id",
@@ -161,6 +175,7 @@ class CollectionCreateSerializer(serializers.ModelSerializer[Collection]):
             "is_favorite",
             "visibility",
             "mode",
+            "type",
             "created_at",
             "last_modified_at",
             "user",
@@ -170,8 +185,13 @@ class CollectionCreateSerializer(serializers.ModelSerializer[Collection]):
 
 
 class CollectionItemReorderSerializer(serializers.Serializer[CollectionItem]):
-    """A serializer for reordering collection items."""
+    """A serializer for reordering a single collection item."""
 
-    id = serializers.IntegerField()
-    order = serializers.IntegerField(min_value=0)
-    description = serializers.CharField(required=False, allow_blank=True, max_length=500)
+    position = serializers.IntegerField(min_value=0)
+
+
+class CollectionItemTierUpdateSerializer(serializers.Serializer[CollectionItem]):
+    """A serializer for updating a collection item's tier."""
+
+    tier = serializers.ChoiceField(choices=Tier.choices, allow_blank=True)
+    position = serializers.IntegerField(min_value=0, required=False)
