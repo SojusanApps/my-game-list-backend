@@ -2,6 +2,10 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.10.0] - 17.02.2026
+
+* implemented bulk reorder functionality for collection items with validation and tests
+
 ## v. [4.9.1] - 17.02.2026
 
 * Updated dependencies in requirements.

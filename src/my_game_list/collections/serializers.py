@@ -195,3 +195,47 @@ class CollectionItemTierUpdateSerializer(serializers.Serializer[CollectionItem])
 
     tier = serializers.ChoiceField(choices=Tier.choices, allow_blank=True)
     position = serializers.IntegerField(min_value=0, required=False)
+
+
+class CollectionItemPositionSerializer(serializers.Serializer[CollectionItem]):
+    """A serializer for a single item position entry used in bulk reorder."""
+
+    id = serializers.IntegerField()
+    position = serializers.IntegerField(min_value=0)
+
+
+class CollectionItemBulkReorderSerializer(serializers.Serializer[CollectionItem]):
+    """A serializer for bulk-reordering all items in a collection.
+
+    Accepts a list of items with their new positions. This resets the fractional
+    ordering system and assigns each item a clean integer order value.
+
+    Expected payload:
+    {
+        "items": [
+            {"id": 5, "position": 0},
+            {"id": 3, "position": 1},
+            {"id": 7, "position": 2}
+        ]
+    }
+    """
+
+    items = CollectionItemPositionSerializer(many=True)
+
+    def validate_items(
+        self: Self,
+        value: list[dict[str, int]],
+    ) -> list[dict[str, int]]:
+        """Validate that there are no duplicate IDs or positions."""
+        ids = [entry["id"] for entry in value]
+        positions = [entry["position"] for entry in value]
+
+        if len(ids) != len(set(ids)):
+            message = "Duplicate item IDs are not allowed."
+            raise serializers.ValidationError(message)
+
+        if len(positions) != len(set(positions)):
+            message = "Duplicate positions are not allowed."
+            raise serializers.ValidationError(message)
+
+        return value

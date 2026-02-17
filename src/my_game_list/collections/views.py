@@ -21,6 +21,7 @@ from my_game_list.collections.permissions import (
 from my_game_list.collections.serializers import (
     CollectionCreateSerializer,
     CollectionDetailSerializer,
+    CollectionItemBulkReorderSerializer,
     CollectionItemCreateSerializer,
     CollectionItemReorderSerializer,
     CollectionItemSerializer,
@@ -271,6 +272,71 @@ class CollectionViewSet(ModelViewSet[Collection]):
         item.save(update_fields=["tier", "order"])
 
         return Response({"tier": tier, "order": str(new_order)}, status=status.HTTP_200_OK)
+
+    @action(
+        detail=True,
+        methods=["post"],
+        url_path="bulk-reorder",
+        permission_classes=[IsAuthenticated, IsCollectionOwnerOrCollaborator],
+    )
+    def bulk_reorder(
+        self: Self,
+        request: Request,
+        pk: str | None = None,  # noqa: ARG002
+    ) -> Response:
+        """Bulk-reorder all items in the collection by assigning explicit positions.
+
+        Accepts a list of all collection item IDs with their new positions. The
+        fractional ordering state is reset: each item receives a clean integer
+        order value equal to its declared position. Every item currently in the
+        collection must be present in the payload.
+
+        Args:
+            request: The HTTP request containing the items list.
+            pk: Collection ID (from URL).
+
+        Expected payload:
+        {
+            "items": [
+                {"id": 5, "position": 0},
+                {"id": 3, "position": 1},
+                {"id": 7, "position": 2}
+            ]
+        }
+        """
+        collection = self.get_object()
+        serializer = CollectionItemBulkReorderSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        items_data: list[dict[str, int]] = serializer.validated_data["items"]
+        item_ids = [entry["id"] for entry in items_data]
+
+        # Fetch items that belong to this collection
+        db_items = CollectionItem.objects.filter(collection=collection, id__in=item_ids)
+        db_items_dict = {item.id: item for item in db_items}
+
+        if len(db_items_dict) != len(item_ids):
+            missing = set(item_ids) - set(db_items_dict)
+            return Response(
+                {"detail": f"Items not found in this collection: {sorted(missing)}."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        # Validate that the payload covers every item in the collection
+        total_in_collection = CollectionItem.objects.filter(collection=collection).count()
+        if len(item_ids) != total_in_collection:
+            return Response(
+                {"detail": "The payload must include all items in the collection."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Assign new integer order values, resetting fractional ordering
+        for entry in items_data:
+            db_items_dict[entry["id"]].order = Decimal(str(entry["position"]))
+
+        CollectionItem.objects.bulk_update(list(db_items_dict.values()), ["order"])
+
+        return Response(status=status.HTTP_200_OK)
 
 
 class CollectionItemViewSet(ModelViewSet[CollectionItem]):
