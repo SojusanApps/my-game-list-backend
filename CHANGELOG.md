@@ -2,6 +2,10 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.9.1] - 17.02.2026
+
+* Updated dependencies in requirements.
+
 ## v. [4.9.0] - 17.02.2026
 
 * Changed the `order` field in collections to be `DecimalField`, as now the items uses fractional order.

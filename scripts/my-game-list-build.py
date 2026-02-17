@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # ruff: noqa: S603, S607
 """This module contains features for building and pushing docker images."""
+
 import shutil
 import subprocess
 import sys

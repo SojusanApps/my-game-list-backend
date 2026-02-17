@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 """The task of this module is to provide the functionality to check if the PostgreSQL database is ready to work."""
+
 import os
 from time import sleep
 

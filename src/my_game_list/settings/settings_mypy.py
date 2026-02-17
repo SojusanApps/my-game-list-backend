@@ -1,5 +1,6 @@
 # ruff: noqa: F403, F405
 """This is a configuration of the Django application for mypy type checker."""
+
 from my_game_list.settings.base import *  # NOSONAR
 
 # Remove django_prometheus to avoid duplicate metrics in type-checking

@@ -6,7 +6,6 @@ from django.apps.registry import Apps
 from django.db import migrations
 from django.db.backends.base.schema import BaseDatabaseSchemaEditor
 
-
 INITIAL_DATA = [
     {"name": "Steam"},
     {"name": "GOG"},
