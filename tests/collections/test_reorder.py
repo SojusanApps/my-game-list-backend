@@ -13,11 +13,6 @@ if TYPE_CHECKING:
     from my_game_list.collections.models import Collection, CollectionItem
     from my_game_list.users.models import User
 
-# Named constants to avoid magic numbers in tests
-REORDER_ORDER_1 = 10
-REORDER_ORDER_2 = 20
-COLLAB_ORDER = 5
-
 
 @pytest.mark.django_db()
 class TestCollectionReorderItems:
@@ -31,22 +26,26 @@ class TestCollectionReorderItems:
         """Test successfully reordering items in a collection."""
         collection: Collection = baker.make("collections.Collection", user=user_fixture)
         item1: CollectionItem = baker.make("collections.CollectionItem", collection=collection, order=1)
-        item2: CollectionItem = baker.make("collections.CollectionItem", collection=collection, order=2)
+        item3: CollectionItem = baker.make("collections.CollectionItem", collection=collection, order=3)
 
-        url = reverse("collections:collections-reorder-items", kwargs={"pk": collection.pk})
-        data = [
-            {"id": item1.id, "order": REORDER_ORDER_1},
-            {"id": item2.id, "order": REORDER_ORDER_2},
-        ]
+        # Move item3 to position 0 (beginning)
+        url = reverse(
+            "collections:collections-reorder-item",
+            kwargs={"pk": collection.pk, "item_id": item3.pk},
+        )
+        data = {"position": 0}
 
         response = authenticated_api_client.post(url, data, format="json")
 
-        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert response.status_code == status.HTTP_200_OK
+        assert "order" in response.data
 
+        item3.refresh_from_db()
         item1.refresh_from_db()
-        item2.refresh_from_db()
-        assert item1.order == REORDER_ORDER_1
-        assert item2.order == REORDER_ORDER_2
+        # item3's new order should be less than item1's order (it's now first)
+        assert item3.order is not None
+        assert item1.order is not None
+        assert item3.order < item1.order
 
     def test_reorder_items_not_owner(
         self,
@@ -57,8 +56,11 @@ class TestCollectionReorderItems:
         collection: Collection = baker.make("collections.Collection", user=other_user, visibility="PRI")
         item: CollectionItem = baker.make("collections.CollectionItem", collection=collection, order=1)
 
-        url = reverse("collections:collections-reorder-items", kwargs={"pk": collection.pk})
-        data = [{"id": item.id, "order": REORDER_ORDER_1}]
+        url = reverse(
+            "collections:collections-reorder-item",
+            kwargs={"pk": collection.pk, "item_id": item.pk},
+        )
+        data = {"position": 0}
 
         response = authenticated_api_client.post(url, data, format="json")
 
@@ -71,14 +73,18 @@ class TestCollectionReorderItems:
     ) -> None:
         """Test reordering with an item ID that doesn't belong to the collection."""
         collection: Collection = baker.make("collections.Collection", user=user_fixture)
-        other_item: CollectionItem = baker.make("collections.CollectionItem")
+        other_collection: Collection = baker.make("collections.Collection", user=user_fixture)
+        other_item: CollectionItem = baker.make("collections.CollectionItem", collection=other_collection)
 
-        url = reverse("collections:collections-reorder-items", kwargs={"pk": collection.pk})
-        data = [{"id": other_item.id, "order": 10}]
+        url = reverse(
+            "collections:collections-reorder-item",
+            kwargs={"pk": collection.pk, "item_id": other_item.pk},
+        )
+        data = {"position": 0}
 
         response = authenticated_api_client.post(url, data, format="json")
 
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.status_code == status.HTTP_404_NOT_FOUND
         assert "not found in this collection" in response.data["detail"]
 
     def test_reorder_items_collaborative(
@@ -95,65 +101,83 @@ class TestCollectionReorderItems:
             visibility="PUB",
         )
         collection.collaborators.add(user_fixture)
-        item: CollectionItem = baker.make("collections.CollectionItem", collection=collection, order=1)
+        item1: CollectionItem = baker.make("collections.CollectionItem", collection=collection, order=1)
+        item2: CollectionItem = baker.make("collections.CollectionItem", collection=collection, order=2)
 
-        url = reverse("collections:collections-reorder-items", kwargs={"pk": collection.pk})
-        data = [{"id": item.id, "order": COLLAB_ORDER}]
+        url = reverse(
+            "collections:collections-reorder-item",
+            kwargs={"pk": collection.pk, "item_id": item2.pk},
+        )
+        data = {"position": 0}
 
         response = authenticated_api_client.post(url, data, format="json")
 
-        assert response.status_code == status.HTTP_204_NO_CONTENT
-        item.refresh_from_db()
-        assert item.order == COLLAB_ORDER
+        assert response.status_code == status.HTTP_200_OK
+        assert "order" in response.data
+        item2.refresh_from_db()
+        item1.refresh_from_db()
+        # item2 should now be before item1
+        assert item2.order is not None
+        assert item1.order is not None
+        assert item2.order < item1.order
 
-    def test_reorder_items_with_description(
+    def test_reorder_item_to_middle_position(
         self,
         authenticated_api_client: APIClient,
         user_fixture: User,
     ) -> None:
-        """Test successfully reordering items and updating description."""
+        """Test reordering an item to the middle of a collection."""
         collection: Collection = baker.make("collections.Collection", user=user_fixture)
-        item: CollectionItem = baker.make(
-            "collections.CollectionItem",
-            collection=collection,
-            order=1,
-            description="old description",
-        )
+        item1: CollectionItem = baker.make("collections.CollectionItem", collection=collection, order=1)
+        item2: CollectionItem = baker.make("collections.CollectionItem", collection=collection, order=2)
+        item3: CollectionItem = baker.make("collections.CollectionItem", collection=collection, order=3)
 
-        url = reverse("collections:collections-reorder-items", kwargs={"pk": collection.pk})
-        new_description = "new description"
-        data = [{"id": item.id, "order": REORDER_ORDER_1, "description": new_description}]
+        # Move item1 to position 1 (between item2 and item3 in the list without item1)
+        # After excluding item1, the list is: [item2 at pos 0, item3 at pos 1]
+        # Position 1 means "between pos 0 and pos 1", i.e., between item2 and item3
+        url = reverse(
+            "collections:collections-reorder-item",
+            kwargs={"pk": collection.pk, "item_id": item1.pk},
+        )
+        data = {"position": 1}
 
         response = authenticated_api_client.post(url, data, format="json")
 
-        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert response.status_code == status.HTTP_200_OK
 
-        item.refresh_from_db()
-        assert item.order == REORDER_ORDER_1
-        assert item.description == new_description
+        item1.refresh_from_db()
+        item2.refresh_from_db()
+        item3.refresh_from_db()
+        # item1 should now be between item2 and item3
+        assert item1.order is not None
+        assert item2.order is not None
+        assert item3.order is not None
+        assert item2.order < item1.order < item3.order
 
-    def test_reorder_items_description_optional(
+    def test_reorder_item_to_end(
         self,
         authenticated_api_client: APIClient,
         user_fixture: User,
     ) -> None:
-        """Test that description is optional and not cleared if not provided."""
+        """Test reordering an item to the end of a collection."""
         collection: Collection = baker.make("collections.Collection", user=user_fixture)
-        initial_description = "keep me"
-        item: CollectionItem = baker.make(
-            "collections.CollectionItem",
-            collection=collection,
-            order=1,
-            description=initial_description,
-        )
+        item1: CollectionItem = baker.make("collections.CollectionItem", collection=collection, order=1)
+        item3: CollectionItem = baker.make("collections.CollectionItem", collection=collection, order=3)
 
-        url = reverse("collections:collections-reorder-items", kwargs={"pk": collection.pk})
-        data = [{"id": item.id, "order": REORDER_ORDER_2}]
+        # Move item1 to the end (position 3 or higher)
+        url = reverse(
+            "collections:collections-reorder-item",
+            kwargs={"pk": collection.pk, "item_id": item1.pk},
+        )
+        data = {"position": 10}  # Position beyond the end
 
         response = authenticated_api_client.post(url, data, format="json")
 
-        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert response.status_code == status.HTTP_200_OK
 
-        item.refresh_from_db()
-        assert item.order == REORDER_ORDER_2
-        assert item.description == initial_description
+        item1.refresh_from_db()
+        item3.refresh_from_db()
+        # item1 should now be after item3
+        assert item1.order is not None
+        assert item3.order is not None
+        assert item1.order > item3.order

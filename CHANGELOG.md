@@ -2,6 +2,16 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.9.0] - 17.02.2026
+
+* Changed the `order` field in collections to be `DecimalField`, as now the items uses fractional order.
+* Introduced `CollectionType` model with choices for collection types.
+* Updated Collection model to include a type field.
+* Enhanced CollectionFilterSet to filter by collection type.
+* Added has_tier filter to CollectionItemFilterSet for tier classification.
+* Adjusted migrations to reflect changes in the database schema.
+* [BREAKING] Updated the collection items reorder endpoint: URL changed from `/collections/{pk}/reorder-items/` to `/collections/{pk}/items/{item_id}/reorder/`, request body changed from an array of items to a single item with `position`, and response changed from `204 No Content` to `200 OK` with an `order` field.
+
 ## v. [4.8.0] - 30.01.2026
 
 * Added Bruno endpoints for collections.
