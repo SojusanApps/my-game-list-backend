@@ -2,6 +2,10 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.10.1] - 23.02.2026
+
+* add `import_start_timestamp` to IGDB import script.
+
 ## v. [4.10.0] - 17.02.2026
 
 * implemented bulk reorder functionality for collection items with validation and tests
