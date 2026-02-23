@@ -244,7 +244,42 @@ class Command(BaseCommand):
 
         return model_input
 
-    def _import_data(
+    def _build_query(
+        self: Self,
+        query: str,
+        model: type[ModelType],
+        *,
+        import_all: bool,
+        import_start_timestamp: int | None,
+    ) -> str:
+        """Build the query string with appropriate time bounds."""
+        last_updated_at = model.objects.aggregate(max_updated_at=Max("igdb_updated_at"))["max_updated_at"]
+
+        where_clauses = []
+        if last_updated_at and not import_all:
+            timestamp = int(last_updated_at.timestamp())
+            where_clauses.append(f"updated_at > {timestamp}")
+
+        if import_start_timestamp:
+            where_clauses.append(f"updated_at <= {import_start_timestamp}")
+
+        if where_clauses:
+            return f"{query} where {' & '.join(where_clauses)};"
+        return query
+
+    def _get_company_mapping(self: Self, unique_data_from_igdb: list[IGDBObject]) -> dict[int, Company]:
+        """Get the mapping of IGDB company IDs to local Company objects for a batch of games."""
+        company_ids = set()
+        for data in unique_data_from_igdb:
+            if isinstance(data, IGDBGameResponse) and data.involved_companies:
+                for involved_company in data.involved_companies:
+                    company_ids.add(involved_company.company)
+
+        if company_ids:
+            return {company.igdb_id: company for company in Company.objects.filter(igdb_id__in=company_ids)}
+        return {}
+
+    def _import_data(  # noqa: PLR0913
         self: Self,
         endpoint: IGDBEndpoints,
         query: str,
@@ -252,6 +287,7 @@ class Command(BaseCommand):
         extra_mappings: dict[str, dict[int, Any]] | None = None,
         *,
         import_all: bool = False,
+        import_start_timestamp: int | None = None,
     ) -> Iterator[tuple[list[ModelType], IGDBApiResponse]]:
         """Import data from the IGDB database to the application database.
 
@@ -261,15 +297,13 @@ class Command(BaseCommand):
             model (type[ModelType]): The Django model class to map the IGDB data to.
             extra_mappings (dict[str, dict[int, Any]] | None): Extra mappings for model creation.
             import_all (bool): Whether to import all data ignoring last update time.
+            import_start_timestamp (int | None): The timestamp when the import process started.
 
         Yields:
             Iterator[tuple[list[ModelType], IGDBApiResponse]]: A generator yielding a tuple containing
             a list of created model instances and the raw IGDB API response data for each batch.
         """
-        last_updated_at = model.objects.aggregate(max_updated_at=Max("igdb_updated_at"))["max_updated_at"]
-        if last_updated_at and not import_all:
-            timestamp = int(last_updated_at.timestamp())
-            query = f"{query} where updated_at > {timestamp};"
+        query = self._build_query(query, model, import_all=import_all, import_start_timestamp=import_start_timestamp)
 
         self.stdout.write(f"Fetching data from IGDB endpoint: {endpoint.value}, query: {query}")
 
@@ -282,9 +316,10 @@ class Command(BaseCommand):
             unique_data_from_igdb = list(data_from_igdb_dict.values())
 
             # Prepare mapping for companies if importing games
-            company_igdb_to_db_mapping = (
-                {company.igdb_id: company for company in Company.objects.all()} if model == Game else {}
-            )
+            company_igdb_to_db_mapping = {}
+            if model == Game:
+                company_igdb_to_db_mapping = self._get_company_mapping(unique_data_from_igdb)
+
             data_to_import = []
             update_fields: set[str] = set()
 
@@ -309,7 +344,7 @@ class Command(BaseCommand):
                 unique_data_from_igdb,
             )
 
-    def import_games(self: Self, *, import_all: bool = False) -> None:
+    def import_games(self: Self, *, import_all: bool = False, import_start_timestamp: int | None = None) -> None:
         """Import games from the IGDB database to the application database."""
         genre_igdb_to_db_mapping = {genre.igdb_id: genre.id for genre in Genre.objects.all()}
         platform_igdb_to_db_mapping = {platform.igdb_id: platform.id for platform in Platform.objects.all()}
@@ -356,6 +391,7 @@ class Command(BaseCommand):
             model=Game,
             extra_mappings=extra_mappings,
             import_all=import_all,
+            import_start_timestamp=import_start_timestamp,
         ):
             total_imported_games += len(imported_games)
             self._process_game_batch(
@@ -524,7 +560,7 @@ class Command(BaseCommand):
 
             self.stdout.write(self.style.NOTICE(f"Game {field} m2m relations - finished."))
 
-    def import_companies(self: Self, *, import_all: bool = False) -> None:
+    def import_companies(self: Self, *, import_all: bool = False, import_start_timestamp: int | None = None) -> None:
         """Import companies from the IGDB database to the application database."""
         total_companies = 0
         for created_companies, _ in self._import_data(
@@ -532,6 +568,7 @@ class Command(BaseCommand):
             query="fields name, logo.image_id, updated_at;",
             model=Company,
             import_all=import_all,
+            import_start_timestamp=import_start_timestamp,
         ):
             total_companies += len(created_companies)
 
@@ -541,7 +578,7 @@ class Command(BaseCommand):
             ),
         )
 
-    def import_genres(self: Self, *, import_all: bool = False) -> None:
+    def import_genres(self: Self, *, import_all: bool = False, import_start_timestamp: int | None = None) -> None:
         """Import genres from the IGDB database to the application database."""
         total_genres = 0
         for created_genres, _ in self._import_data(
@@ -549,6 +586,7 @@ class Command(BaseCommand):
             query=self.NAME_UPDATED_AT_QUERY,
             model=Genre,
             import_all=import_all,
+            import_start_timestamp=import_start_timestamp,
         ):
             total_genres += len(created_genres)
 
@@ -558,7 +596,7 @@ class Command(BaseCommand):
             ),
         )
 
-    def import_platforms(self: Self, *, import_all: bool = False) -> None:
+    def import_platforms(self: Self, *, import_all: bool = False, import_start_timestamp: int | None = None) -> None:
         """Import platforms from the IGDB database to the application database."""
         total_platforms = 0
         for created_platforms, _ in self._import_data(
@@ -566,6 +604,7 @@ class Command(BaseCommand):
             query="fields abbreviation, name, updated_at;",
             model=Platform,
             import_all=import_all,
+            import_start_timestamp=import_start_timestamp,
         ):
             total_platforms += len(created_platforms)
 
@@ -575,7 +614,7 @@ class Command(BaseCommand):
             ),
         )
 
-    def import_game_modes(self: Self, *, import_all: bool = False) -> None:
+    def import_game_modes(self: Self, *, import_all: bool = False, import_start_timestamp: int | None = None) -> None:
         """Import game modes from the IGDB database."""
         total_items = 0
         for created_items, _ in self._import_data(
@@ -583,6 +622,7 @@ class Command(BaseCommand):
             query=self.NAME_UPDATED_AT_QUERY,
             model=GameMode,
             import_all=import_all,
+            import_start_timestamp=import_start_timestamp,
         ):
             total_items += len(created_items)
 
@@ -590,7 +630,12 @@ class Command(BaseCommand):
             self.style.SUCCESS(f"Successfully created/updated {total_items} 'Game Modes' from the IGDB database."),
         )
 
-    def import_player_perspectives(self: Self, *, import_all: bool = False) -> None:
+    def import_player_perspectives(
+        self: Self,
+        *,
+        import_all: bool = False,
+        import_start_timestamp: int | None = None,
+    ) -> None:
         """Import player perspectives from the IGDB database."""
         total_items = 0
         for created_items, _ in self._import_data(
@@ -598,6 +643,7 @@ class Command(BaseCommand):
             query=self.NAME_UPDATED_AT_QUERY,
             model=PlayerPerspective,
             import_all=import_all,
+            import_start_timestamp=import_start_timestamp,
         ):
             total_items += len(created_items)
 
@@ -607,7 +653,7 @@ class Command(BaseCommand):
             ),
         )
 
-    def import_game_engines(self: Self, *, import_all: bool = False) -> None:
+    def import_game_engines(self: Self, *, import_all: bool = False, import_start_timestamp: int | None = None) -> None:
         """Import game engines from the IGDB database."""
         total_items = 0
         for created_items, _ in self._import_data(
@@ -615,6 +661,7 @@ class Command(BaseCommand):
             query=self.NAME_UPDATED_AT_QUERY,
             model=GameEngine,
             import_all=import_all,
+            import_start_timestamp=import_start_timestamp,
         ):
             total_items += len(created_items)
 
@@ -622,7 +669,7 @@ class Command(BaseCommand):
             self.style.SUCCESS(f"Successfully created/updated {total_items} 'Game Engines' from the IGDB database."),
         )
 
-    def import_game_types(self: Self, *, import_all: bool = False) -> None:
+    def import_game_types(self: Self, *, import_all: bool = False, import_start_timestamp: int | None = None) -> None:
         """Import game types from the IGDB database."""
         total_items = 0
         for created_items, _ in self._import_data(
@@ -630,6 +677,7 @@ class Command(BaseCommand):
             query="fields type, updated_at;",
             model=GameType,
             import_all=import_all,
+            import_start_timestamp=import_start_timestamp,
         ):
             total_items += len(created_items)
 
@@ -637,7 +685,12 @@ class Command(BaseCommand):
             self.style.SUCCESS(f"Successfully created/updated {total_items} 'Game Types' from the IGDB database."),
         )
 
-    def import_game_statuses(self: Self, *, import_all: bool = False) -> None:
+    def import_game_statuses(
+        self: Self,
+        *,
+        import_all: bool = False,
+        import_start_timestamp: int | None = None,
+    ) -> None:
         """Import game statuses from the IGDB database."""
         total_items = 0
         for created_items, _ in self._import_data(
@@ -645,6 +698,7 @@ class Command(BaseCommand):
             query="fields status, updated_at;",
             model=GameStatus,
             import_all=import_all,
+            import_start_timestamp=import_start_timestamp,
         ):
             total_items += len(created_items)
 
@@ -669,11 +723,15 @@ class Command(BaseCommand):
         }
 
         import_all = bool(options.get("all", False))
+        import_start_timestamp = int(datetime.now(tz=UTC).timestamp())
 
         for item in options["what_to_import"]:
             action = actions.get(item)
             if action:
-                action(import_all=import_all)
+                try:
+                    action(import_all=import_all, import_start_timestamp=import_start_timestamp)
+                except Exception as e:  # noqa: BLE001
+                    self.stdout.write(self.style.ERROR(f"Error importing {item}: {e}"))
             time.sleep(1)  # To avoid hitting IGDB rate limits
 
         self.stdout.write(
