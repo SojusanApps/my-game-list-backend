@@ -1,0 +1,21 @@
+meta {
+  name: Get Random PTP game
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{protocol}}/{{host}}:{{port}}/api/game/game-lists/random-ptp
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

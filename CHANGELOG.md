@@ -2,6 +2,10 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.11.0] - 03.03.2026
+
+* added `random-ptp` endpoint for getting a random plan to play item from the user game list.
+
 ## v. [4.10.1] - 23.02.2026
 
 * add `import_start_timestamp` to IGDB import script.
