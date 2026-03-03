@@ -2,7 +2,10 @@
 
 from typing import TYPE_CHECKING, Self
 
+from rest_framework import status
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from my_game_list.games.filters import (
@@ -26,6 +29,7 @@ from my_game_list.games.models import (
     GameEngine,
     GameFollow,
     GameList,
+    GameListStatus,
     GameMedia,
     GameMode,
     GameReview,
@@ -59,6 +63,7 @@ from my_game_list.my_game_list.permissions import IsAdminOrReadOnly
 
 if TYPE_CHECKING:
     from django.db.models import QuerySet
+    from rest_framework.request import Request
 
 
 class CompanyViewSet(ModelViewSet[Company]):
@@ -114,6 +119,24 @@ class GameListViewSet(ModelViewSet[GameList]):
             ]
             else GameListSerializer
         )
+
+    @action(detail=False, methods=["get"], url_path="random-ptp")
+    def random_ptp(self: Self, request: Request) -> Response:
+        """Return a random game from the user's game list in status Plan To Play."""
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        ptp_game = (
+            self.get_queryset()
+            .filter(user_id=request.user.pk, status=GameListStatus.PLAN_TO_PLAY)
+            .order_by("?")
+            .first()
+        )
+        if not ptp_game:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        serializer = self.get_serializer(ptp_game)
+        return Response(serializer.data)
 
 
 class GameReviewViewSet(ModelViewSet[GameReview]):
