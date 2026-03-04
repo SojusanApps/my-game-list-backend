@@ -35,11 +35,17 @@ class NotificationSerializer(serializers.ModelSerializer[Notification]):
     def get_actor(self, obj: Notification) -> dict[str, Any] | None:
         """Get the actor representation."""
         if obj.actor:
-            return {"id": obj.actor.pk, "str": str(obj.actor), "type": obj.actor_content_type.model}
+            data: dict[str, Any] = {"id": obj.actor.pk, "str": str(obj.actor), "type": obj.actor_content_type.model}
+            if isinstance(obj.actor, User):
+                data["gravatar_url"] = obj.actor.gravatar_url
+            return data
         return None
 
     def get_target(self, obj: Notification) -> dict[str, Any] | None:
         """Get the target representation."""
         if obj.target and obj.target_content_type:
-            return {"id": obj.target.pk, "str": str(obj.target), "type": obj.target_content_type.model}
+            data: dict[str, Any] = {"id": obj.target.pk, "str": str(obj.target), "type": obj.target_content_type.model}
+            if isinstance(obj.target, User):
+                data["gravatar_url"] = obj.target.gravatar_url
+            return data
         return None
