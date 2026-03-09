@@ -4,11 +4,11 @@
 
 ## v. [4.12.0] - 09.03.2026
 
-- added new fields to the `GameList` model:
-  - `description`,
-  - `completed_at`,
-  - `started_at`,
-  - `playtime`.
+* added new fields to the `GameList` model:
+  * `description`,
+  * `completed_at`,
+  * `started_at`,
+  * `playtime`.
 
 ## v. [4.11.1] - 04.03.2026
 
