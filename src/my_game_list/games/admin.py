@@ -42,7 +42,7 @@ class GameListAdmin(admin.ModelAdmin[GameList]):
     search_fields = (*readonly_fields, "game__title", "user__username")
     raw_id_fields = ("game", "user")
     list_filter = ("status", "created_at", "last_modified_at", "score")
-    list_display = (*readonly_fields, *list_filter, *raw_id_fields)
+    list_display = (*readonly_fields, *list_filter, "playtime", *raw_id_fields)
 
 
 @admin.register(GameReview)

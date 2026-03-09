@@ -269,6 +269,10 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
                         "score": 5,
                         "status": GameListStatus.PLAN_TO_PLAY.label,
                         "status_code": GameListStatus.PLAN_TO_PLAY.value,
+                        "description": "",
+                        "completed_at": None,
+                        "started_at": None,
+                        "playtime": None,
                         "last_modified_at": "2023-06-22T16:47:12Z",
                         "created_at": "2023-06-22T16:47:12Z",
                         "owned_on": ANY,
@@ -544,6 +548,10 @@ def test_list_model(
                 "score": 5,
                 "status": GameListStatus.PLAN_TO_PLAY.label,
                 "status_code": GameListStatus.PLAN_TO_PLAY.value,
+                "description": "",
+                "completed_at": None,
+                "started_at": None,
+                "playtime": None,
                 "last_modified_at": "2023-06-22T16:47:12Z",
                 "created_at": "2023-06-22T16:47:12Z",
                 "owned_on": ANY,
@@ -755,6 +763,10 @@ def test_get_model_detail(
                 "id": ANY,
                 "score": 1,
                 "status": GameListStatus.PLAN_TO_PLAY.value,
+                "description": "",
+                "completed_at": None,
+                "started_at": None,
+                "playtime": None,
                 "created_at": "2023-06-22T22:20:01Z",
                 "last_modified_at": "2023-06-22T22:20:01Z",
                 "owned_on": ANY,
@@ -902,7 +914,7 @@ def test_get_model_detail(
 )
 @pytest.mark.django_db()
 def test_create_model(
-    viewname: str,
+    viewname: str,  # NOSONAR
     initial_data: dict[str, Any],
     expected_result: dict[str, Any],
     admin_user_fixture: UserModel,
@@ -988,6 +1000,10 @@ def test_create_model(
             {
                 "score": 10,
                 "status": GameListStatus.COMPLETED.value,
+                "description": "",
+                "completed_at": None,
+                "started_at": None,
+                "playtime": None,
                 "created_at": "2023-06-22T16:47:12Z",
                 "last_modified_at": "2023-06-22T22:20:01Z",
                 "owned_on": ANY,

@@ -122,6 +122,10 @@ class GameList(BaseModel):
         blank=True,
     )
     status = models.CharField(_("status"), max_length=3, choices=GameListStatus.choices)
+    description = models.CharField(_("description"), max_length=200, blank=True)
+    completed_at = models.DateField(_("completed at"), null=True, blank=True)
+    started_at = models.DateField(_("started at"), null=True, blank=True)
+    playtime = models.PositiveIntegerField(_("playtime"), null=True, blank=True)
     created_at = models.DateTimeField(_("creation time"), auto_now_add=True)
     last_modified_at = models.DateTimeField(_("last modified"), auto_now=True)
 
