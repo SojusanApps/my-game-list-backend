@@ -133,6 +133,7 @@ class GameFilterSet(filters.FilterSet):
             ("created_at", "created_at"),
             ("stats__rank_position", "rank_position"),
             ("stats__popularity", "popularity"),
+            ("release_date", "release_date"),
         ),
     )
 

@@ -1,6 +1,6 @@
 """This module contains the serializers for the game related data."""
 
-from typing import Self
+from typing import Any, Self
 
 from rest_framework import serializers
 
@@ -490,3 +490,10 @@ class GameCreateSerializer(serializers.ModelSerializer[Game]):
             "player_perspectives",
             "screenshots",
         )
+
+
+class ReleaseCalendarQuerySerializer(serializers.Serializer[Any]):
+    """A serializer for validating the query parameters for the release calendar endpoint."""
+
+    start_date = serializers.DateField(required=True)
+    end_date = serializers.DateField(required=True)

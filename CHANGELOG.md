@@ -2,6 +2,11 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.13.0] - 11.03.2026
+
+* added `release-calendar` endpoint for games.
+* added ordering by `release_date` for games.
+
 ## v. [4.12.0] - 09.03.2026
 
 * added new fields to the `GameList` model:

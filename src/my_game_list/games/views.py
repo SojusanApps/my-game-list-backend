@@ -2,6 +2,7 @@
 
 from typing import TYPE_CHECKING, Self
 
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -58,12 +59,19 @@ from my_game_list.games.serializers import (
     GenreSerializer,
     PlatformSerializer,
     PlayerPerspectiveSerializer,
+    ReleaseCalendarQuerySerializer,
 )
 from my_game_list.my_game_list.permissions import IsAdminOrReadOnly
 
 if TYPE_CHECKING:
+    import datetime
+
     from django.db.models import QuerySet
     from rest_framework.request import Request
+
+
+HIGHEST_NUMBER_OF_DAYS_IN_MONTH = 31
+MAX_GAMES_PER_DAY_IN_CALENDAR = 2
 
 
 class CompanyViewSet(ModelViewSet[Company]):
@@ -168,8 +176,6 @@ class GameViewSet(ModelViewSet[Game]):
     queryset = Game.objects.all()
     permission_classes = (IsAdminOrReadOnly,)
     filterset_class = GameFilterSet
-    ordering_fields = ("release_date", "created_at")
-    ordering = ("release_date",)
 
     def get_queryset(self: Self) -> QuerySet[Game]:
         """Get the queryset for the Game model."""
@@ -205,9 +211,61 @@ class GameViewSet(ModelViewSet[Game]):
         """Get the serializer class for the Game model."""
         if self.action in ["create", "update", "partial_update"]:
             return GameCreateSerializer
-        if self.action == "list":
+        if self.action in ("list", "release_calendar"):
             return GameSimpleListSerializer
         return GameSerializer
+
+    @extend_schema(
+        request=None,
+        parameters=[ReleaseCalendarQuerySerializer],
+        responses={200: GameSimpleListSerializer(many=True), 400: None},
+    )
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="release-calendar",
+        pagination_class=None,
+        filter_backends=[],
+    )
+    def release_calendar(self: Self, request: Request) -> Response:
+        """Get the game release calendar data."""
+        query_serializer = ReleaseCalendarQuerySerializer(data=request.query_params)
+        query_serializer.is_valid(raise_exception=True)
+
+        start_date = query_serializer.validated_data.get("start_date")
+        end_date = query_serializer.validated_data.get("end_date")
+
+        delta = end_date - start_date
+        if delta.days < 0 or delta.days > HIGHEST_NUMBER_OF_DAYS_IN_MONTH:
+            return Response(
+                {"detail": f"The date range must be between 0 and {HIGHEST_NUMBER_OF_DAYS_IN_MONTH} days."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        queryset = (
+            self.get_queryset()
+            .filter(release_date__range=(start_date, end_date))
+            .order_by("release_date", "-stats__popularity")
+        )
+
+        grouped_games: dict[datetime.date, list[Game]] = {}
+        for game in queryset:
+            release_date = game.release_date
+            if release_date is None:
+                continue
+
+            if release_date not in grouped_games:
+                grouped_games[release_date] = []
+
+            if len(grouped_games[release_date]) < MAX_GAMES_PER_DAY_IN_CALENDAR:
+                grouped_games[release_date].append(game)
+
+        final_games = []
+        for date_games in grouped_games.values():
+            final_games.extend(date_games)
+
+        serializer = self.get_serializer(final_games, many=True)
+        return Response(serializer.data)
 
 
 class GenreViewSet(ModelViewSet[Genre]):

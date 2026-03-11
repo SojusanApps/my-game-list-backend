@@ -1,0 +1,21 @@
+meta {
+  name: Release Calendar
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{protocol}}/{{host}}:{{port}}/api/game/games/release-calendar/?start_date=2026-03-01&end_date=2026-03-31
+  body: none
+  auth: inherit
+}
+
+params:query {
+  start_date: 2026-03-01
+  end_date: 2026-03-31
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
