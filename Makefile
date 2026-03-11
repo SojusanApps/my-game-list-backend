@@ -68,6 +68,9 @@ import_igdb_data:
 	uv run scripts/my-game-list-manage.py import_data_from_igdb platforms genres game_modes player_perspectives \
 	game_engines game_types game_statuses companies games
 
+recalculate_stats:
+	uv run scripts/my-game-list-manage.py recalculate_stats
+
 # .PHONY defines parts of the makefile that are not dependant on any specific file
 # This is most often used to store functions
-.PHONY: help uv-install install sync uv-compile run fresh_run check translations app_db test_db coverage sync tui import_igdb_data
+.PHONY: help uv-install install sync uv-compile run fresh_run check translations app_db test_db coverage sync tui import_igdb_data recalculate_stats
