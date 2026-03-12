@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Self
 
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
+from drf_spectacular.utils import extend_schema
 from rest_framework import serializers, status
 from rest_framework.decorators import action
 from rest_framework.mixins import (
@@ -75,12 +76,17 @@ class FriendshipRequestViewSet(
             verb=str(_("sent you a friend request")),
         )
 
+    @extend_schema(
+        request=None,
+        responses={204: None},
+    )
     @action(detail=True, methods=("post",))
     def accept(self: Self, request: Request, pk: int) -> Response:  # noqa: ARG002
         """Accept a friendship request."""
         user = request.user
         if not user.is_authenticated:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
+
         instance: FriendshipRequest = self.get_object()
         instance.accept()
 
@@ -90,12 +96,16 @@ class FriendshipRequestViewSet(
             verb=str(_("accepted your friend request")),
         )
 
-        return Response({"detail": _("Success")}, status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @extend_schema(
+        request=None,
+        responses={204: None},
+    )
     @action(detail=True, methods=("post",))
     def reject(self: Self, request: Request, pk: int) -> Response:  # noqa: ARG002
         """Reject a friendship request."""
         instance: FriendshipRequest = self.get_object()
         instance.reject()
 
-        return Response({"detail": _("Success")}, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT)

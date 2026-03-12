@@ -4,11 +4,14 @@ from decimal import Decimal
 from typing import TYPE_CHECKING, Self
 
 from django.db.models import F, Max, Q
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import OpenApiParameter, extend_schema, inline_serializer
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.serializers import CharField, DecimalField
 from rest_framework.viewsets import ModelViewSet
 
 from my_game_list.collections.filters import CollectionFilterSet, CollectionItemFilterSet
@@ -157,6 +160,31 @@ class CollectionViewSet(ModelViewSet[Collection]):
         # Calculate midpoint
         return (prev_order + next_order) / Decimal("2.0")
 
+    @extend_schema(
+        request=CollectionItemReorderSerializer,
+        parameters=[
+            OpenApiParameter(
+                name="item_id",
+                description="ID of the collection item to reorder",
+                required=True,
+                location=OpenApiParameter.PATH,
+                type=OpenApiTypes.STR,
+            ),
+        ],
+        responses={
+            200: inline_serializer(
+                name="CollectionItemReorderResponse",
+                fields={
+                    "order": DecimalField(
+                        help_text="The new fractional order of the item after reordering.",
+                        min_value=Decimal("0.0"),
+                        max_digits=20,
+                        decimal_places=10,
+                    ),
+                },
+            ),
+        },
+    )
     @action(
         detail=True,
         methods=["post"],
@@ -208,6 +236,34 @@ class CollectionViewSet(ModelViewSet[Collection]):
 
         return Response({"order": str(new_order)}, status=status.HTTP_200_OK)
 
+    @extend_schema(
+        request=CollectionItemTierUpdateSerializer,
+        parameters=[
+            OpenApiParameter(
+                name="item_id",
+                description="ID of the collection item to reorder",
+                required=True,
+                location=OpenApiParameter.PATH,
+                type=OpenApiTypes.STR,
+            ),
+        ],
+        responses={
+            200: inline_serializer(
+                name="CollectionItemTierUpdateResponse",
+                fields={
+                    "tier": CharField(
+                        help_text="The new tier of the item after the update.",
+                    ),
+                    "order": DecimalField(
+                        help_text="The new fractional order of the item within the new tier.",
+                        min_value=Decimal("0.0"),
+                        max_digits=20,
+                        decimal_places=10,
+                    ),
+                },
+            ),
+        },
+    )
     @action(
         detail=True,
         methods=["post"],
@@ -273,6 +329,10 @@ class CollectionViewSet(ModelViewSet[Collection]):
 
         return Response({"tier": tier, "order": str(new_order)}, status=status.HTTP_200_OK)
 
+    @extend_schema(
+        request=CollectionItemBulkReorderSerializer,
+        responses={204: None},
+    )
     @action(
         detail=True,
         methods=["post"],
@@ -336,7 +396,7 @@ class CollectionViewSet(ModelViewSet[Collection]):
 
         CollectionItem.objects.bulk_update(list(db_items_dict.values()), ["order"])
 
-        return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class CollectionItemViewSet(ModelViewSet[CollectionItem]):

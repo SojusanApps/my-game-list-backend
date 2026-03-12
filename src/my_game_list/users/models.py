@@ -17,7 +17,6 @@ class Gender(models.TextChoices):
 
     MALE = "M", _("Male")
     FEMALE = "F", _("Female")
-    PREFER_NOT_TO_SAY = "X", _("Prefer not to say")
 
 
 class User(BaseModel, AbstractUser):
@@ -28,7 +27,7 @@ class User(BaseModel, AbstractUser):
         _("gender"),
         max_length=1,
         choices=Gender.choices,
-        default=Gender.PREFER_NOT_TO_SAY,
+        blank=True,
     )
 
     # Delete the unwanted fields from the `AbstractUser`
