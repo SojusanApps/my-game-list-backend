@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from my_game_list.games.filters import (
     CompanyFilterSet,
@@ -268,7 +268,7 @@ class GameViewSet(ModelViewSet[Game]):
         return Response(serializer.data)
 
 
-class GenreViewSet(ModelViewSet[Genre]):
+class GenreViewSet(ReadOnlyModelViewSet[Genre]):
     """A ViewSet for the Genre model."""
 
     queryset = Genre.objects.all()
@@ -277,7 +277,7 @@ class GenreViewSet(ModelViewSet[Genre]):
     filterset_class = GenreFilterSet
 
 
-class PlatformViewSet(ModelViewSet[Platform]):
+class PlatformViewSet(ReadOnlyModelViewSet[Platform]):
     """A ViewSet for the Platform model."""
 
     queryset = Platform.objects.all()
@@ -286,7 +286,7 @@ class PlatformViewSet(ModelViewSet[Platform]):
     filterset_class = PlatformFilterSet
 
 
-class GameTypeViewSet(ModelViewSet[GameType]):
+class GameTypeViewSet(ReadOnlyModelViewSet[GameType]):
     """A ViewSet for the GameType model."""
 
     queryset = GameType.objects.all()
@@ -295,7 +295,7 @@ class GameTypeViewSet(ModelViewSet[GameType]):
     filterset_class = GameTypeFilterSet
 
 
-class GameStatusViewSet(ModelViewSet[GameStatus]):
+class GameStatusViewSet(ReadOnlyModelViewSet[GameStatus]):
     """A ViewSet for the GameStatus model."""
 
     queryset = GameStatus.objects.all()
@@ -304,7 +304,7 @@ class GameStatusViewSet(ModelViewSet[GameStatus]):
     filterset_class = GameStatusFilterSet
 
 
-class GameEngineViewSet(ModelViewSet[GameEngine]):
+class GameEngineViewSet(ReadOnlyModelViewSet[GameEngine]):
     """A ViewSet for the GameEngine model."""
 
     queryset = GameEngine.objects.all()
@@ -313,7 +313,7 @@ class GameEngineViewSet(ModelViewSet[GameEngine]):
     filterset_class = GameEngineFilterSet
 
 
-class GameModeViewSet(ModelViewSet[GameMode]):
+class GameModeViewSet(ReadOnlyModelViewSet[GameMode]):
     """A ViewSet for the GameMode model."""
 
     queryset = GameMode.objects.all()
@@ -322,7 +322,7 @@ class GameModeViewSet(ModelViewSet[GameMode]):
     filterset_class = GameModeFilterSet
 
 
-class PlayerPerspectiveViewSet(ModelViewSet[PlayerPerspective]):
+class PlayerPerspectiveViewSet(ReadOnlyModelViewSet[PlayerPerspective]):
     """A ViewSet for the PlayerPerspective model."""
 
     queryset = PlayerPerspective.objects.all()

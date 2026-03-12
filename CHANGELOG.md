@@ -2,14 +2,19 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.13.1] - 12.03.2026
+
+* Simplify `gender` field by removing an option `X - prefer not to say`, a blank option is the same.
+* OpenAPI schema adjustments.
+
 ## v. [4.13.0] - 11.03.2026
 
-* added `release-calendar` endpoint for games.
-* added ordering by `release_date` for games.
+* Added `release-calendar` endpoint for games.
+* Added ordering by `release_date` for games.
 
 ## v. [4.12.0] - 09.03.2026
 
-* added new fields to the `GameList` model:
+* Added new fields to the `GameList` model:
   * `description`,
   * `completed_at`,
   * `started_at`,
@@ -17,19 +22,19 @@
 
 ## v. [4.11.1] - 04.03.2026
 
-* added `gravatar_url` to `actor` and `target` in `Notifications` if their model is `User`.
+* Added `gravatar_url` to `actor` and `target` in `Notifications` if their model is `User`.
 
 ## v. [4.11.0] - 03.03.2026
 
-* added `random-ptp` endpoint for getting a random plan to play item from the user game list.
+* Added `random-ptp` endpoint for getting a random plan to play item from the user game list.
 
 ## v. [4.10.1] - 23.02.2026
 
-* add `import_start_timestamp` to IGDB import script.
+* Add `import_start_timestamp` to IGDB import script.
 
 ## v. [4.10.0] - 17.02.2026
 
-* implemented bulk reorder functionality for collection items with validation and tests
+* Implemented bulk reorder functionality for collection items with validation and tests
 
 ## v. [4.9.1] - 17.02.2026
 

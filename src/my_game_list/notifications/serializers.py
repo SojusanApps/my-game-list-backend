@@ -3,11 +3,36 @@
 from typing import Any
 
 from django.contrib.auth import get_user_model
+from drf_spectacular.utils import PolymorphicProxySerializer, extend_schema_field
 from rest_framework import serializers
 
 from my_game_list.notifications.models import Notification
 
 User = get_user_model()
+
+
+class NotificationGenericActorSerializer(serializers.Serializer[Any]):
+    """Serializer for generic notification actors."""
+
+    id = serializers.IntegerField()
+    str = serializers.CharField()
+    type = serializers.CharField()
+
+
+class NotificationUserActorSerializer(NotificationGenericActorSerializer):
+    """Serializer for user notification actors."""
+
+    gravatar_url = serializers.CharField()
+
+
+actor_serializer = PolymorphicProxySerializer(
+    component_name="NotificationActor",
+    # Needs to explicitly specify any supported actor types here for correct OpenAPI schema generation.
+    serializers={
+        "user": NotificationUserActorSerializer,
+    },
+    resource_type_field_name="type",
+)
 
 
 class NotificationSerializer(serializers.ModelSerializer[Notification]):
@@ -32,6 +57,7 @@ class NotificationSerializer(serializers.ModelSerializer[Notification]):
             "data",
         )
 
+    @extend_schema_field(actor_serializer)
     def get_actor(self, obj: Notification) -> dict[str, Any] | None:
         """Get the actor representation."""
         if obj.actor:
@@ -41,6 +67,7 @@ class NotificationSerializer(serializers.ModelSerializer[Notification]):
             return data
         return None
 
+    @extend_schema_field(actor_serializer)
     def get_target(self, obj: Notification) -> dict[str, Any] | None:
         """Get the target representation."""
         if obj.target and obj.target_content_type:
