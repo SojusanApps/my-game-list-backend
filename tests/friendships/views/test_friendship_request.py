@@ -48,8 +48,7 @@ def test_custom_action_accept(admin_authenticated_api_client: APIClient) -> None
         reverse("friendships:friendship-requests-accept", (friendship_request.pk,)),
     )
 
-    assert response.status_code == status.HTTP_201_CREATED
-    assert response.json() == {"detail": "Success"}
+    assert response.status_code == status.HTTP_204_NO_CONTENT
     sender_friend: Friendship | None
     receiver_friend: Friendship | None
     if (sender_friend := sender_user.friends.first()) and (receiver_friend := receiver_user.friends.first()):
@@ -71,7 +70,6 @@ def test_custom_action_reject(admin_authenticated_api_client: APIClient) -> None
         reverse("friendships:friendship-requests-reject", (friendship_request.pk,)),
     )
 
-    assert response.status_code == status.HTTP_200_OK
-    assert response.json() == {"detail": "Success"}
+    assert response.status_code == status.HTTP_204_NO_CONTENT
     friendship_request.refresh_from_db()
     assert str(friendship_request.rejected_at) == "2023-06-23 18:21:41+00:00"

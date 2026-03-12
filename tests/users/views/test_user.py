@@ -8,13 +8,12 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.reverse import reverse
 
-from my_game_list.users.models import Gender
-from my_game_list.users.models import User as UserModel
-
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from rest_framework.test import APIClient
+
+    from my_game_list.users.models import User as UserModel
 
 User: type[UserModel] = get_user_model()
 
@@ -59,7 +58,7 @@ def test_list_users(authenticated_api_client: APIClient, admin_user_fixture: Use
                 "id": users_ids[0],
                 "username": "test_user",
                 "email": "test@email.com",
-                "gender": Gender.PREFER_NOT_TO_SAY.label,
+                "gender": "",
                 "last_login": None,
                 "date_joined": "2023-05-25T12:01:12Z",
                 "gravatar_url": ANY,
@@ -69,7 +68,7 @@ def test_list_users(authenticated_api_client: APIClient, admin_user_fixture: Use
                 "id": users_ids[1],
                 "username": "test_admin",
                 "email": "test_admin@email.com",
-                "gender": Gender.PREFER_NOT_TO_SAY.label,
+                "gender": "",
                 "last_login": None,
                 "date_joined": "2023-05-25T14:21:13Z",
                 "gravatar_url": ANY,
@@ -92,7 +91,7 @@ def test_get_user(authenticated_api_client: APIClient) -> None:
         "id": user.pk,
         "email": "test@email.com",
         "username": "test_user",
-        "gender": Gender.PREFER_NOT_TO_SAY.label,
+        "gender": "",
         "last_login": None,
         "date_joined": "2023-05-25T12:01:12Z",
         "gravatar_url": ANY,

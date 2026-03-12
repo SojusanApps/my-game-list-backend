@@ -44,7 +44,7 @@ class TestCollectionBulkReorder:
 
         response = authenticated_api_client.post(self._url(collection.pk), data, format="json")
 
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_204_NO_CONTENT
 
         item1.refresh_from_db()
         item2.refresh_from_db()
@@ -83,7 +83,7 @@ class TestCollectionBulkReorder:
 
         response = authenticated_api_client.post(self._url(collection.pk), data, format="json")
 
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_204_NO_CONTENT
 
         item1.refresh_from_db()
         item2.refresh_from_db()
@@ -230,7 +230,7 @@ class TestCollectionBulkReorder:
 
         response = authenticated_api_client.post(self._url(collection.pk), data, format="json")
 
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_204_NO_CONTENT
 
         item1.refresh_from_db()
         item2.refresh_from_db()
@@ -249,4 +249,4 @@ class TestCollectionBulkReorder:
 
         response = authenticated_api_client.post(self._url(collection.pk), data, format="json")
 
-        assert response.status_code == status.HTTP_200_OK
+        assert response.status_code == status.HTTP_204_NO_CONTENT

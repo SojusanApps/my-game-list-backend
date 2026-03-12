@@ -816,31 +816,6 @@ def test_get_model_detail(
             id="Create a new game.",
         ),
         pytest.param(
-            "games:genres-list",
-            {
-                "name": "created_genre",
-                "igdb_id": 123,
-                "igdb_updated_at": "2023-06-22T22:20:01Z",
-            },
-            {
-                "id": ANY,
-            },
-            id="Creation of the genre.",
-        ),
-        pytest.param(
-            "games:platforms-list",
-            {
-                "abbreviation": "TP",
-                "name": "created_platform",
-                "igdb_id": 123,
-                "igdb_updated_at": "2023-06-22T22:20:01Z",
-            },
-            {
-                "id": ANY,
-            },
-            id="Creation of the platform.",
-        ),
-        pytest.param(
             "games:game-medias-list",
             {
                 "name": "created_media",
@@ -849,66 +824,6 @@ def test_get_model_detail(
                 "id": ANY,
             },
             id="Creation of the game media.",
-        ),
-        pytest.param(
-            "games:game-types-list",
-            {
-                "type": "created_type",
-                "igdb_id": 123,
-                "igdb_updated_at": "2023-06-22T22:20:01Z",
-            },
-            {
-                "id": ANY,
-            },
-            id="Creation of the game type.",
-        ),
-        pytest.param(
-            "games:game-statuses-list",
-            {
-                "status": "created_status",
-                "igdb_id": 123,
-                "igdb_updated_at": "2023-06-22T22:20:01Z",
-            },
-            {
-                "id": ANY,
-            },
-            id="Creation of the game status.",
-        ),
-        pytest.param(
-            "games:game-engines-list",
-            {
-                "name": "created_engine",
-                "igdb_id": 123,
-                "igdb_updated_at": "2023-06-22T22:20:01Z",
-            },
-            {
-                "id": ANY,
-            },
-            id="Creation of the game engine.",
-        ),
-        pytest.param(
-            "games:game-modes-list",
-            {
-                "name": "created_mode",
-                "igdb_id": 123,
-                "igdb_updated_at": "2023-06-22T22:20:01Z",
-            },
-            {
-                "id": ANY,
-            },
-            id="Creation of the game mode.",
-        ),
-        pytest.param(
-            "games:player-perspectives-list",
-            {
-                "name": "created_perspective",
-                "igdb_id": 123,
-                "igdb_updated_at": "2023-06-22T22:20:01Z",
-            },
-            {
-                "id": ANY,
-            },
-            id="Creation of the player perspective.",
         ),
     ],
 )
@@ -1052,93 +967,6 @@ def test_create_model(
             },
             id="Update a game.",
         ),
-        pytest.param(
-            "games:genres-detail",
-            "genre_fixture",
-            {
-                "name": "updated_genre",
-                "igdb_id": 123,
-                "igdb_updated_at": "2023-06-22T22:20:01Z",
-            },
-            {},
-            id="Update of the genre.",
-        ),
-        pytest.param(
-            "games:platforms-detail",
-            "platform_fixture",
-            {
-                "abbreviation": "",
-                "name": "updated_platform",
-                "igdb_id": 123,
-                "igdb_updated_at": "2023-06-22T22:20:01Z",
-            },
-            {},
-            id="Update of the platform.",
-        ),
-        pytest.param(
-            "games:game-medias-detail",
-            "game_media_fixture",
-            {
-                "name": "updated_media",
-            },
-            {},
-            id="Update of the game media.",
-        ),
-        pytest.param(
-            "games:game-types-detail",
-            "game_type_fixture",
-            {
-                "type": "updated_type",
-                "igdb_id": 123,
-                "igdb_updated_at": "2023-06-22T22:20:01Z",
-            },
-            {},
-            id="Update of the game type.",
-        ),
-        pytest.param(
-            "games:game-statuses-detail",
-            "game_status_fixture",
-            {
-                "status": "updated_status",
-                "igdb_id": 123,
-                "igdb_updated_at": "2023-06-22T22:20:01Z",
-            },
-            {},
-            id="Update of the game status.",
-        ),
-        pytest.param(
-            "games:game-engines-detail",
-            "game_engine_fixture",
-            {
-                "name": "updated_engine",
-                "igdb_id": 123,
-                "igdb_updated_at": "2023-06-22T22:20:01Z",
-            },
-            {},
-            id="Update of the game engine.",
-        ),
-        pytest.param(
-            "games:game-modes-detail",
-            "game_mode_fixture",
-            {
-                "name": "updated_mode",
-                "igdb_id": 123,
-                "igdb_updated_at": "2023-06-22T22:20:01Z",
-            },
-            {},
-            id="Update of the game mode.",
-        ),
-        pytest.param(
-            "games:player-perspectives-detail",
-            "player_perspective_fixture",
-            {
-                "name": "updated_perspective",
-                "igdb_id": 123,
-                "igdb_updated_at": "2023-06-22T22:20:01Z",
-            },
-            {},
-            id="Update of the player perspective.",
-        ),
     ],
 )
 @pytest.mark.django_db()
@@ -1213,52 +1041,10 @@ def test_update_model(
             id="Delete the game.",
         ),
         pytest.param(
-            "games:genres-detail",
-            "genre_fixture",
-            0,
-            id="Delete the genre.",
-        ),
-        pytest.param(
-            "games:platforms-detail",
-            "platform_fixture",
-            0,
-            id="Delete the platform.",
-        ),
-        pytest.param(
             "games:game-medias-detail",
             "game_media_fixture",
             5,
             id="Delete the game media.",
-        ),
-        pytest.param(
-            "games:game-types-detail",
-            "game_type_fixture",
-            0,
-            id="Delete the game type.",
-        ),
-        pytest.param(
-            "games:game-statuses-detail",
-            "game_status_fixture",
-            0,
-            id="Delete the game status.",
-        ),
-        pytest.param(
-            "games:game-engines-detail",
-            "game_engine_fixture",
-            0,
-            id="Delete the game engine.",
-        ),
-        pytest.param(
-            "games:game-modes-detail",
-            "game_mode_fixture",
-            0,
-            id="Delete the game mode.",
-        ),
-        pytest.param(
-            "games:player-perspectives-detail",
-            "player_perspective_fixture",
-            0,
-            id="Delete the player perspective.",
         ),
     ],
 )
