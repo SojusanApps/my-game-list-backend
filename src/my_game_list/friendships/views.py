@@ -27,6 +27,7 @@ from my_game_list.friendships.serializers import (
     FriendshipRequestSerializer,
     FriendshipSerializer,
 )
+from my_game_list.notifications.models import Notification
 from my_game_list.notifications.utils import notify_send
 
 if TYPE_CHECKING:
@@ -74,6 +75,7 @@ class FriendshipRequestViewSet(
             sender=user,
             recipient=instance.receiver,
             verb=str(_("sent you a friend request")),
+            category=Notification.CATEGORY_FRIENDSHIP,
         )
 
     @extend_schema(
@@ -94,6 +96,7 @@ class FriendshipRequestViewSet(
             sender=user,
             recipient=instance.sender,
             verb=str(_("accepted your friend request")),
+            category=Notification.CATEGORY_FRIENDSHIP,
         )
 
         return Response(status=status.HTTP_204_NO_CONTENT)

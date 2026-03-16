@@ -19,6 +19,7 @@ def notify_send(  # noqa: PLR0913
     verb: str,
     target: models.Model | None = None,
     level: str = Notification.LEVEL_INFO,
+    category: str = Notification.CATEGORY_SYSTEM,
     description: str = "",
     data: dict[str, Any] | None = None,
 ) -> Notification:
@@ -38,6 +39,7 @@ def notify_send(  # noqa: PLR0913
         target_content_type=target_ct,
         target_object_id=target.pk if target else None,
         level=level,
+        category=category,
         description=description,
         data=data,
     )

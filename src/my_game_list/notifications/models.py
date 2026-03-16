@@ -35,6 +35,15 @@ class Notification(models.Model):
         (LEVEL_ERROR, _("Error")),
     )
 
+    CATEGORY_SYSTEM = "system"
+    CATEGORY_FRIENDSHIP = "friendship"
+    CATEGORY_RELEASE = "game_release"
+    CATEGORY_CHOICES = (
+        (CATEGORY_SYSTEM, _("System")),
+        (CATEGORY_FRIENDSHIP, _("Friendship")),
+        (CATEGORY_RELEASE, _("Game Release")),
+    )
+
     recipient = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -91,6 +100,13 @@ class Notification(models.Model):
         choices=LEVEL_CHOICES,
         default=LEVEL_INFO,
         help_text="The level of the notification.",
+    )
+    category = models.CharField(
+        verbose_name=_("category"),
+        max_length=20,
+        choices=CATEGORY_CHOICES,
+        default=CATEGORY_SYSTEM,
+        help_text="The category of the notification.",
     )
     timestamp = models.DateTimeField(
         verbose_name=_("timestamp"),
