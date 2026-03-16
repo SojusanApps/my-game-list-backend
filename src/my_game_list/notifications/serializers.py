@@ -48,6 +48,7 @@ class NotificationSerializer(serializers.ModelSerializer[Notification]):
         fields = (
             "id",
             "level",
+            "category",
             "unread",
             "actor",
             "verb",

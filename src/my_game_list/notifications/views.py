@@ -11,6 +11,7 @@ from rest_framework.response import Response
 from rest_framework.serializers import IntegerField
 from rest_framework.viewsets import GenericViewSet
 
+from my_game_list.notifications.filters import NotificationFilterSet
 from my_game_list.notifications.models import Notification
 from my_game_list.notifications.serializers import NotificationSerializer
 
@@ -25,6 +26,7 @@ class NotificationViewSet(ListModelMixin, RetrieveModelMixin, DestroyModelMixin,
 
     serializer_class = NotificationSerializer
     permission_classes = (IsAuthenticated,)
+    filterset_class = NotificationFilterSet
 
     def get_queryset(self: Self) -> NotificationQuerySet:
         """Get the queryset for the current user."""

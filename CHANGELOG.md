@@ -2,6 +2,10 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.13.2] - 16.03.2026
+
+* Added `category` to the `Notification` model.
+
 ## v. [4.13.1] - 12.03.2026
 
 * Simplify `gender` field by removing an option `X - prefer not to say`, a blank option is the same.

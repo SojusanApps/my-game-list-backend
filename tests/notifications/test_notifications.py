@@ -21,6 +21,7 @@ def test_notify_send() -> None:
     assert notification.recipient == user2
     assert notification.actor == user1
     assert notification.verb == "sent you a friend request"
+    assert notification.category == Notification.CATEGORY_SYSTEM
     assert notification.unread is True
 
 
@@ -35,3 +36,23 @@ def test_mark_as_read() -> None:
 
     notification.mark_as_read()
     assert notification.unread is False
+
+
+@pytest.mark.django_db()
+def test_filter_notification() -> None:
+    """Test filtering notifications by category."""
+    user1 = User.objects.create_user(username="user1", password="password", email="user1@email.com")  # noqa: S106
+    user2 = User.objects.create_user(username="user2", password="password", email="user2@email.com")  # noqa: S106
+
+    notify_send(sender=user1, recipient=user2, verb="system info", category=Notification.CATEGORY_SYSTEM)
+    notify_send(sender=user1, recipient=user2, verb="friend request", category=Notification.CATEGORY_FRIENDSHIP)
+
+    friendship_notifications = Notification.objects.filter(category=Notification.CATEGORY_FRIENDSHIP)
+    friendship_notification = friendship_notifications.first()
+    assert friendship_notification is not None
+    assert friendship_notification.verb == "friend request"
+
+    system_notifications = Notification.objects.filter(category=Notification.CATEGORY_SYSTEM)
+    system_notification = system_notifications.first()
+    assert system_notification is not None
+    assert system_notification.verb == "system info"
