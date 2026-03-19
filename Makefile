@@ -42,13 +42,13 @@ generate_openapi:
 	uv run scripts/my-game-list-manage.py spectacular --format openapi-json --file openapi.json
 
 app_db:
-	docker run --name my-game-list-postgres \
+	docker run --name dev-my-game-list-postgres \
 	-p 5432:5432 \
 	-e POSTGRES_DB=my_game_list \
 	-e POSTGRES_USER=my_game_list \
 	-e POSTGRES_PASSWORD=my_game_list \
-	-v my-game-list-postgres-data:/var/lib/postgresql \
-	-d postgres:18.0-alpine
+	-v dev-my-game-list-postgres-data:/var/lib/postgresql \
+	-d postgres:18.3-alpine
 
 test_db:
 	docker run --name pytest_postgresql \
@@ -56,7 +56,7 @@ test_db:
 	-e POSTGRES_PASSWORD=pytest_postgresql \
 	-e POSTGRES_DB=pytest_postgresql \
 	-p 127.0.0.1:9999:5432 \
-	-d postgres:18.0-alpine
+	-d postgres:18.3-alpine
 
 test:
 	uv run pytest -n auto

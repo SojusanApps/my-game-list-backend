@@ -22,6 +22,7 @@ DEBUG = oeg("DJANGO_DEBUG", "False").lower() == "true"
 
 CORS_ALLOWED_ORIGINS = oeg("DJANGO_CORS_ALLOWED_ORIGINS", "*").split(",")
 ALLOWED_HOSTS = oeg("DJANGO_ALLOWED_HOSTS", "*").split(",")
+CSRF_TRUSTED_ORIGINS = oeg("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",")
 
 DOCUMENTATION_ENABLED = oeg("DJANGO_DOCUMENTATION_ENABLED", "True").lower() == "true"
 
@@ -253,7 +254,7 @@ IGDB_CLIENT_ID = oeg("IGDB_CLIENT_ID", "client_id_to_change_on_production")
 IGDB_CLIENT_SECRET = oeg("IGDB_CLIENT_SECRET", "secret_key_to_change_on_production")
 
 # Celery configuration
-CELERY_BROKER_URL = oeg("CELERY_BROKER_URL", "redis://localhost:6379/0")
+CELERY_BROKER_URL = oeg("CELERY_BROKER_URL", "amqp://guest:guest@rabbitmq:5672//")
 CELERY_RESULT_BACKEND = oeg("CELERY_RESULT_BACKEND", "django-db")
 CELERY_CACHE_BACKEND = "django-cache"
 CELERY_ACCEPT_CONTENT = ["json"]

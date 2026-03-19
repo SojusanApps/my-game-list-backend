@@ -47,6 +47,7 @@ RUN mkdir -p "${MGL_LOG_DIR_PATH}" && chown -R nonroot: "${MGL_LOG_DIR_PATH}" &&
     mkdir -p /opt/my_game_list/static && chown -R nonroot: /opt/my_game_list/static && \
     mkdir -p /home/nonroot/.cache && chown -R nonroot: /home/nonroot/.cache
 
+ENV HOME=/home/nonroot
 # Run application as non-root user
 USER nonroot
 

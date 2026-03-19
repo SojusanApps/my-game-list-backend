@@ -8,7 +8,13 @@ case "$1" in
         uv run django-admin collectstatic --no-input && \
         uv run django-admin migrate --no-input
     ;;
+    celery_worker)
+        uv run celery -A my_game_list.my_game_list worker -l info
+    ;;
+    celery_beat)
+        uv run celery -A my_game_list.my_game_list beat -l info
+    ;;
     *)
-        bash -c "$@"
+        exec "$@"
     ;;
 esac

@@ -17,11 +17,11 @@ x-base-app: &base_app
 
 services:
   postgres:
-    image: postgres:18.0-alpine
+    image: postgres:18.3-alpine
     container_name: my-game-list-postgres
     restart: "unless-stopped"
     ports:
-      - "5432"
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql
     env_file:
@@ -34,12 +34,32 @@ services:
     networks:
       - loki
 
+  rabbitmq:
+    image: rabbitmq:4.2.5-management-alpine
+    container_name: my-game-list-rabbitmq
+    restart: "unless-stopped"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+      - "15692:15692"
+    env_file:
+      - ./.env
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - loki
+
   app:
     <<: *base_app
     container_name: my-game-list-app
     restart: "unless-stopped"
     depends_on:
       postgres:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
       set_state:
         condition: service_completed_successfully
@@ -60,6 +80,32 @@ services:
     command: set_state
     volumes:
       - static_volume:/opt/my_game_list/static
+
+  celery_worker:
+    <<: *base_app
+    container_name: my-game-list-celery-worker
+    restart: "unless-stopped"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      set_state:
+        condition: service_completed_successfully
+    command: celery_worker
+
+  celery_beat:
+    <<: *base_app
+    container_name: my-game-list-celery-beat
+    restart: "unless-stopped"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      set_state:
+        condition: service_completed_successfully
+    command: celery_beat
 
   nginx:
     image: ghcr.io/sojusanapps/my-game-list-backend/nginx:latest
