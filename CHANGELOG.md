@@ -2,6 +2,12 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.14.0] - 19.03.2026
+
+* Upgraded PostgreSQL version to `18.3`.
+* Changed the celery broker from `regis` to `rabbitmq`.
+* Updated dependencies in requirements.
+
 ## v. [4.13.2] - 16.03.2026
 
 * Added `category` to the `Notification` model.

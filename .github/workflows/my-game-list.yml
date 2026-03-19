@@ -23,7 +23,7 @@ jobs:
       # Label used to access the service container
       postgres:
         # Docker Hub image
-        image: postgres:18.0-alpine
+        image: postgres:18.3-alpine
         env:
           POSTGRES_DB: pytest_postgresql
           POSTGRES_USER: pytest_postgresql
