@@ -2,6 +2,10 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.14.1] - 23.03.2026
+
+* Add `last_active` to `User` model.
+
 ## v. [4.14.0] - 19.03.2026
 
 * Upgraded PostgreSQL version to `18.3`.

@@ -52,6 +52,20 @@ services:
     networks:
       - loki
 
+  redis:
+    image: redis:8.6.1-alpine
+    container_name: my-game-list-redis
+    restart: "unless-stopped"
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - loki
+
   app:
     <<: *base_app
     container_name: my-game-list-app
@@ -60,6 +74,8 @@ services:
       postgres:
         condition: service_healthy
       rabbitmq:
+        condition: service_healthy
+      redis:
         condition: service_healthy
       set_state:
         condition: service_completed_successfully
@@ -77,6 +93,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     command: set_state
     volumes:
       - static_volume:/opt/my_game_list/static
@@ -90,6 +108,8 @@ services:
         condition: service_healthy
       postgres:
         condition: service_healthy
+      redis:
+        condition: service_healthy
       set_state:
         condition: service_completed_successfully
     command: celery_worker
@@ -102,6 +122,8 @@ services:
       rabbitmq:
         condition: service_healthy
       postgres:
+        condition: service_healthy
+      redis:
         condition: service_healthy
       set_state:
         condition: service_completed_successfully

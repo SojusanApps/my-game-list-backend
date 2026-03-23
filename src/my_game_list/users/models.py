@@ -29,6 +29,7 @@ class User(BaseModel, AbstractUser):
         choices=Gender.choices,
         blank=True,
     )
+    last_active = models.DateTimeField(_("last active"), null=True, blank=True)
 
     # Delete the unwanted fields from the `AbstractUser`
     # first and last name of the user are sensitive data that will not be used in the application

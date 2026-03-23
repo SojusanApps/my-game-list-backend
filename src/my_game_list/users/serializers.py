@@ -73,11 +73,12 @@ class UserSerializer(serializers.ModelSerializer[UserModel]):
             "email",
             "gender",
             "last_login",
+            "last_active",
             "date_joined",
             "gravatar_url",
             "is_active",
         )
-        read_only_fields = ("id", "gravatar_url", "last_login", "date_joined")
+        read_only_fields = ("id", "gravatar_url", "last_login", "last_active", "date_joined")
 
 
 class UserDetailSerializer(serializers.ModelSerializer[UserModel]):
@@ -98,6 +99,7 @@ class UserDetailSerializer(serializers.ModelSerializer[UserModel]):
             "email",
             "gender",
             "last_login",
+            "last_active",
             "date_joined",
             "gravatar_url",
             "game_list_statistics",
