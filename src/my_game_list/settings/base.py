@@ -69,6 +69,7 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
+    "my_game_list.users.middleware.UpdateLastActivityMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_prometheus.middleware.PrometheusAfterMiddleware",
 ]
@@ -101,6 +102,13 @@ DATABASES = {
         "PASSWORD": oeg("POSTGRES_PASSWORD", "my_game_list"),
         "HOST": oeg("POSTGRES_HOST", "localhost"),
         "PORT": oeg("POSTGRES_PORT", "5432"),
+    },
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": oeg("REDIS_URL", "redis://localhost:6379"),
     },
 }
 
