@@ -4,6 +4,7 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
+from celery.schedules import crontab
 from django.utils.translation import gettext_lazy as _
 
 from my_game_list import __version__
@@ -273,10 +274,13 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = TIME_ZONE
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
-
 CELERY_BEAT_SCHEDULE = {
     "cleanup-notifications-daily": {
         "task": "my_game_list.notifications.tasks.cleanup_old_notifications",
         "schedule": timedelta(days=1),
+    },
+    "notify-game-releases-daily": {
+        "task": "my_game_list.notifications.tasks.notify_game_releases",
+        "schedule": crontab(hour=3, minute=0),
     },
 }

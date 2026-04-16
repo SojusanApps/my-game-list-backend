@@ -2,6 +2,10 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.15.0] - 16.04.2026
+
+* Add `notify_game_releases` - a celery task to create notification about game release to users that have the game in `GameFollow`.
+
 ## v. [4.14.1] - 23.03.2026
 
 * Add `last_active` to `User` model.
