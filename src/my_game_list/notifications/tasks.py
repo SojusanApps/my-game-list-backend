@@ -5,10 +5,60 @@ from datetime import timedelta
 
 from celery import shared_task
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
+from my_game_list.games.models import GameFollow
 from my_game_list.notifications.models import Notification
+from my_game_list.notifications.utils import notify_send
 
 logger = logging.getLogger(__name__)
+
+
+@shared_task
+def notify_game_releases() -> None:
+    """Send notifications for games releasing today and in 7 days."""
+    today = timezone.now().date()
+    next_week = today + timedelta(days=7)
+
+    # Releasing today
+    follows_today = GameFollow.objects.filter(game__release_date=today).select_related("game", "user")
+    for follow in follows_today:
+        verb = str(_("premieres today!"))
+        if not Notification.objects.filter(
+            recipient=follow.user,
+            verb=verb,
+            category=Notification.CATEGORY_RELEASE,
+            data__game_id=follow.game_id,
+        ).exists():
+            notify_send(
+                sender=follow.game,
+                recipient=follow.user,
+                verb=verb,
+                level=Notification.LEVEL_INFO,
+                category=Notification.CATEGORY_RELEASE,
+                description=str(_("{game} is out now. Time to play!")).format(game=follow.game.title),
+                data={"game_id": follow.game_id},
+            )
+
+    # Releasing in 7 days
+    follows_next_week = GameFollow.objects.filter(game__release_date=next_week).select_related("game", "user")
+    for follow in follows_next_week:
+        verb = str(_("premieres in a week!"))
+        if not Notification.objects.filter(
+            recipient=follow.user,
+            verb=verb,
+            category=Notification.CATEGORY_RELEASE,
+            data__game_id=follow.game_id,
+        ).exists():
+            notify_send(
+                sender=follow.game,
+                recipient=follow.user,
+                verb=verb,
+                level=Notification.LEVEL_INFO,
+                category=Notification.CATEGORY_RELEASE,
+                description=str(_("{game} will be released in 7 days.")).format(game=follow.game.title),
+                data={"game_id": follow.game_id},
+            )
 
 
 @shared_task
