@@ -2,6 +2,10 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.15.1] - 21.04.2026
+
+* Add `.editorconfig`.
+
 ## v. [4.15.0] - 16.04.2026
 
 * Add `notify_game_releases` - a celery task to create notification about game release to users that have the game in `GameFollow`.
