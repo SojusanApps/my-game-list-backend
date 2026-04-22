@@ -2,6 +2,11 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.15.2] - 22.04.2026
+
+* Add `build-and-push.yml` - GitHub Action to build and push the docker images.
+* Add `AGENTS.md` - instructions for AI agents to interact with the repository.
+
 ## v. [4.15.1] - 21.04.2026
 
 * Add `.editorconfig`.
