@@ -5,6 +5,7 @@ from rest_framework import routers
 
 from my_game_list.games.views import (
     CompanyViewSet,
+    ExternalGameSourceViewSet,
     GameEngineViewSet,
     GameFollowViewSet,
     GameListViewSet,
@@ -35,6 +36,7 @@ router.register("game-statuses", GameStatusViewSet, basename="game-statuses")
 router.register("game-engines", GameEngineViewSet, basename="game-engines")
 router.register("game-modes", GameModeViewSet, basename="game-modes")
 router.register("player-perspectives", PlayerPerspectiveViewSet, basename="player-perspectives")
+router.register("external-game-sources", ExternalGameSourceViewSet, basename="external-game-sources")
 
 urlpatterns = [
     path("", include(router.urls)),

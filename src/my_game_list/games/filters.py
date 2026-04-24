@@ -4,6 +4,7 @@ from django_filters import rest_framework as filters
 
 from my_game_list.games.models import (
     Company,
+    ExternalGameSource,
     Game,
     GameEngine,
     GameFollow,
@@ -128,6 +129,11 @@ class GameFilterSet(filters.FilterSet):
         to_field_name="name",
         queryset=PlayerPerspective.objects.all(),
     )
+    external_games = filters.ModelMultipleChoiceFilter(
+        field_name="external_games__external_game_source__name",
+        to_field_name="name",
+        queryset=ExternalGameSource.objects.all(),
+    )
     ordering = filters.OrderingFilter(
         fields=(
             ("created_at", "created_at"),
@@ -226,6 +232,16 @@ class PlayerPerspectiveFilterSet(BaseDictionaryFilterSet):
         """Meta class for PlayerPerspectiveFilterSet."""
 
         model = PlayerPerspective
+        fields = (*BaseDictionaryFilterSet.Meta.fields, "igdb_id")
+
+
+class ExternalGameSourceFilterSet(BaseDictionaryFilterSet):
+    """Filter set for external game source model."""
+
+    class Meta(BaseDictionaryFilterSet.Meta):
+        """Meta class for ExternalGameSourceFilterSet."""
+
+        model = ExternalGameSource
         fields = (*BaseDictionaryFilterSet.Meta.fields, "igdb_id")
 
 

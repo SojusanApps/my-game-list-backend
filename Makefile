@@ -66,7 +66,7 @@ tui:
 
 import_igdb_data:
 	uv run scripts/my-game-list-manage.py import_data_from_igdb platforms genres game_modes player_perspectives \
-	game_engines game_types game_statuses companies games
+	game_engines game_types game_statuses external_game_sources external_games companies games
 
 recalculate_stats:
 	uv run scripts/my-game-list-manage.py recalculate_stats

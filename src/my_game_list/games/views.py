@@ -11,6 +11,7 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from my_game_list.games.filters import (
     CompanyFilterSet,
+    ExternalGameSourceFilterSet,
     GameEngineFilterSet,
     GameFilterSet,
     GameFollowFilterSet,
@@ -26,6 +27,7 @@ from my_game_list.games.filters import (
 )
 from my_game_list.games.models import (
     Company,
+    ExternalGameSource,
     Game,
     GameEngine,
     GameFollow,
@@ -43,6 +45,7 @@ from my_game_list.games.models import (
 from my_game_list.games.serializers import (
     CompanyDetailSerializer,
     CompanySerializer,
+    ExternalGameSourceSerializer,
     GameCreateSerializer,
     GameEngineSerializer,
     GameFollowSerializer,
@@ -329,6 +332,15 @@ class PlayerPerspectiveViewSet(ReadOnlyModelViewSet[PlayerPerspective]):
     serializer_class = PlayerPerspectiveSerializer
     permission_classes = (IsAdminOrReadOnly,)
     filterset_class = PlayerPerspectiveFilterSet
+
+
+class ExternalGameSourceViewSet(ReadOnlyModelViewSet[ExternalGameSource]):
+    """A ViewSet for the ExternalGameSource model."""
+
+    queryset = ExternalGameSource.objects.all()
+    serializer_class = ExternalGameSourceSerializer
+    permission_classes = (IsAdminOrReadOnly,)
+    filterset_class = ExternalGameSourceFilterSet
 
 
 class GameMediaViewSet(ModelViewSet[GameMedia]):
