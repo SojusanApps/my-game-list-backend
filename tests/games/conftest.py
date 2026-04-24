@@ -9,6 +9,8 @@ from model_bakery import baker
 
 from my_game_list.games.models import (
     Company,
+    ExternalGame,
+    ExternalGameSource,
     Game,
     GameEngine,
     GameFollow,
@@ -67,6 +69,20 @@ def player_perspective_fixture() -> PlayerPerspective:
 
 @pytest.fixture
 @freeze_time("2023-06-22 16:47:12")
+def external_game_source_fixture() -> ExternalGameSource:
+    """A fixture with a test external game source."""
+    return baker.make("games.ExternalGameSource")
+
+
+@pytest.fixture
+@freeze_time("2023-06-22 16:47:12")
+def external_game_fixture(external_game_source_fixture: ExternalGameSource) -> ExternalGame:
+    """A fixture with a test external game."""
+    return baker.make("games.ExternalGame", external_game_source=external_game_source_fixture)
+
+
+@pytest.fixture
+@freeze_time("2023-06-22 16:47:12")
 def developer_fixture() -> Company:
     """A fixture with a test developer."""
     return baker.make("games.Company")
@@ -111,6 +127,7 @@ def game_fixture(
     game_engine_fixture: GameEngine,
     game_mode_fixture: GameMode,
     player_perspective_fixture: PlayerPerspective,
+    external_game_fixture: ExternalGame,
 ) -> Game:
     """A fixture with a test game."""
     game: Game = baker.make(
@@ -125,6 +142,7 @@ def game_fixture(
     game.game_engines.add(game_engine_fixture)
     game.game_modes.add(game_mode_fixture)
     game.player_perspectives.add(player_perspective_fixture)
+    game.external_games.add(external_game_fixture)
     return game
 
 

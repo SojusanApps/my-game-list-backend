@@ -6,6 +6,8 @@ from rest_framework import serializers
 
 from my_game_list.games.models import (
     Company,
+    ExternalGame,
+    ExternalGameSource,
     Game,
     GameEngine,
     GameFollow,
@@ -263,6 +265,35 @@ class PlayerPerspectiveSerializer(BaseDictionarySerializer):
         fields = (*BaseDictionarySerializer.Meta.fields, "igdb_id", "igdb_updated_at")
 
 
+class ExternalGameSourceSerializer(BaseDictionarySerializer):
+    """A serializer for the external game source model."""
+
+    class Meta(BaseDictionarySerializer.Meta):
+        """Meta data for the external game source serializer."""
+
+        model = ExternalGameSource
+        fields = (*BaseDictionarySerializer.Meta.fields, "igdb_id", "igdb_updated_at")
+
+
+class ExternalGameSerializer(serializers.ModelSerializer[ExternalGame]):
+    """A serializer for the external game model."""
+
+    external_game_source = serializers.CharField(source="external_game_source.name", read_only=True)
+
+    class Meta:
+        """Meta data for the external game serializer."""
+
+        model = ExternalGame
+        fields = (
+            "id",
+            "external_game_source",
+            "external_id",
+            "url",
+            "igdb_id",
+            "igdb_updated_at",
+        )
+
+
 class GameSimpleListSerializer(serializers.ModelSerializer[Game]):
     """A lightweight serializer for the game model list view."""
 
@@ -312,6 +343,7 @@ class GameSerializer(serializers.ModelSerializer[Game]):
     game_engines = GameEngineSerializer(many=True)
     game_modes = GameModeSerializer(many=True)
     player_perspectives = PlayerPerspectiveSerializer(many=True)
+    external_games = ExternalGameSerializer(many=True)
 
     class Meta:
         """Meta data for game serializer."""
@@ -349,6 +381,7 @@ class GameSerializer(serializers.ModelSerializer[Game]):
             "game_engines",
             "game_modes",
             "player_perspectives",
+            "external_games",
             "screenshots",
         )
 
@@ -456,6 +489,12 @@ class GameCreateSerializer(serializers.ModelSerializer[Game]):
         many=True,
         required=False,
     )
+    external_games = serializers.SlugRelatedField(
+        queryset=ExternalGame.objects.all(),
+        slug_field="id",
+        many=True,
+        required=False,
+    )
 
     class Meta:
         """Meta data for game create serializer."""
@@ -488,6 +527,7 @@ class GameCreateSerializer(serializers.ModelSerializer[Game]):
             "game_engines",
             "game_modes",
             "player_perspectives",
+            "external_games",
             "screenshots",
         )
 

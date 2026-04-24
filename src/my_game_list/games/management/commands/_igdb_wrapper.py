@@ -23,6 +23,8 @@ type IGDBObject = (
     | IGDBGameEngineResponse
     | IGDBGameTypeResponse
     | IGDBGameStatusResponse
+    | IGDBExternalGameResponse
+    | IGDBExternalGameSourceResponse
 )
 type IGDBApiResponse = list[IGDBObject]
 
@@ -39,6 +41,8 @@ class IGDBEndpoints(StrEnum):
     GAME_ENGINES = "game_engines"
     GAME_TYPES = "game_types"
     GAME_STATUSES = "game_statuses"
+    EXTERNAL_GAMES = "external_games"
+    EXTERNAL_GAME_SOURCES = "external_game_sources"
 
 
 @dataclass
@@ -132,6 +136,26 @@ class IGDBGameStatusResponse(BaseIGDBResponse):
 
 
 @dataclass
+class IGDBExternalGameSourceResponse(BaseIGDBResponse):
+    """Class representing the data structure for IGDB external game source response."""
+
+    name: str
+    """The name of the external game source."""
+
+
+@dataclass
+class IGDBExternalGameResponse(BaseIGDBResponse):
+    """Class representing the data structure for IGDB external game response."""
+
+    uid: str
+    """The unique ID of the external game in the external game source."""
+    external_game_source: int
+    """Reference ID for ExternalGameSource object."""
+    url: str = ""
+    """The URL of the external game in the external game source."""
+
+
+@dataclass
 class IGDBCompanyResponse(BaseIGDBResponse):
     """Class representing the data structure for IGDB company response."""
 
@@ -206,6 +230,8 @@ class IGDBGameResponse(BaseIGDBResponse):
     """The list of player perspectives IDs."""
     screenshots: list[IGDBImageResponse] | None = None
     """The list of screenshots."""
+    external_games: list[int] | None = None
+    """The list of external games IDs."""
 
     def __post_init__(self: Self) -> None:
         """Post initializer."""
@@ -277,6 +303,8 @@ class IGDBWrapper:
             IGDBEndpoints.GAME_ENGINES.value: IGDBGameEngineResponse,
             IGDBEndpoints.GAME_TYPES.value: IGDBGameTypeResponse,
             IGDBEndpoints.GAME_STATUSES.value: IGDBGameStatusResponse,
+            IGDBEndpoints.EXTERNAL_GAMES.value: IGDBExternalGameResponse,
+            IGDBEndpoints.EXTERNAL_GAME_SOURCES.value: IGDBExternalGameSourceResponse,
         }
 
         response_type = response_map.get(endpoint.value)

@@ -295,6 +295,34 @@ class GameStatus(BaseModel, IGDBModel):
         return self.status
 
 
+class ExternalGameSource(BaseDictionaryModel, IGDBModel):
+    """Data about external game sources."""
+
+    class Meta(BaseDictionaryModel.Meta):
+        """Meta data for the external game source model."""
+
+        verbose_name = _("external game source")
+        verbose_name_plural = _("external game sources")
+
+
+class ExternalGame(BaseModel, IGDBModel):
+    """Data about external games."""
+
+    external_game_source = models.ForeignKey(
+        ExternalGameSource,
+        on_delete=models.CASCADE,
+        related_name="external_games",
+    )
+    external_id = models.CharField(_("external id"), max_length=255)
+    url = models.URLField(_("url"), max_length=1024, blank=True)
+
+    class Meta(BaseModel.Meta):
+        """Meta data for the external game model."""
+
+        verbose_name = _("external game")
+        verbose_name_plural = _("external games")
+
+
 class Game(BaseModel, IGDBModel):
     """A model containing data about games."""
 
@@ -344,6 +372,7 @@ class Game(BaseModel, IGDBModel):
     game_engines = models.ManyToManyField(GameEngine, related_name="games", blank=True)
     game_modes = models.ManyToManyField(GameMode, related_name="games", blank=True)
     player_perspectives = models.ManyToManyField(PlayerPerspective, related_name="games", blank=True)
+    external_games = models.ManyToManyField(ExternalGame, related_name="games", blank=True)
     screenshots = ArrayField(models.CharField(max_length=255), default=list, blank=True)
 
     publisher = models.ForeignKey(

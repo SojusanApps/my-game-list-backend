@@ -12,6 +12,8 @@ from my_game_list.games.management.commands._igdb_wrapper import (
     IGDBApiResponse,
     IGDBCompanyResponse,
     IGDBEndpoints,
+    IGDBExternalGameResponse,
+    IGDBExternalGameSourceResponse,
     IGDBGameEngineResponse,
     IGDBGameModeResponse,
     IGDBGameResponse,
@@ -27,6 +29,8 @@ from my_game_list.games.management.commands._igdb_wrapper import (
 )
 from my_game_list.games.models import (
     Company,
+    ExternalGame,
+    ExternalGameSource,
     Game,
     GameEngine,
     GameMode,
@@ -52,6 +56,8 @@ ModelType = TypeVar(
     PlayerPerspective,
     GameStatus,
     GameType,
+    ExternalGame,
+    ExternalGameSource,
 )
 
 
@@ -64,7 +70,7 @@ class RecursiveDataCollector:
     all_target_igdb_ids: set[int]
 
 
-class Command(BaseCommand):
+class Command(BaseCommand):  # NOSONAR(S8443) - Already inheriting from BaseCommand
     """A custom django command to import data from the IGDB database."""
 
     help = "Import data from the IGDB database."
@@ -89,6 +95,8 @@ class Command(BaseCommand):
                 "game_engines",
                 "game_types",
                 "game_statuses",
+                "external_games",
+                "external_game_sources",
             ),
             nargs="+",
             help="What to import from the IGDB database.",
@@ -228,8 +236,23 @@ class Command(BaseCommand):
                 | IGDBGameModeResponse()
                 | IGDBPlayerPerspectiveResponse()
                 | IGDBGameEngineResponse()
+                | IGDBExternalGameSourceResponse()
             ):
                 model_input.update({"name": item_from_igdb.name})
+            case IGDBExternalGameResponse():
+                egs_mapping = extra_mappings.get("external_game_sources") if extra_mappings else None
+                egs_id = (
+                    egs_mapping.get(item_from_igdb.external_game_source)
+                    if egs_mapping and item_from_igdb.external_game_source is not None
+                    else None
+                )
+                model_input.update(
+                    {
+                        "external_id": item_from_igdb.uid,
+                        "url": item_from_igdb.url,
+                        "external_game_source_id": egs_id,
+                    },
+                )
             case IGDBGameTypeResponse():
                 model_input.update(self._get_game_type_input(item_from_igdb))
             case IGDBGameStatusResponse():
@@ -351,6 +374,7 @@ class Command(BaseCommand):
         game_mode_igdb_to_db_mapping = {mode.igdb_id: mode.id for mode in GameMode.objects.all()}
         player_perspective_igdb_to_db_mapping = {pp.igdb_id: pp.id for pp in PlayerPerspective.objects.all()}
         game_engine_igdb_to_db_mapping = {engine.igdb_id: engine.id for engine in GameEngine.objects.all()}
+        external_game_igdb_to_db_mapping = {eg.igdb_id: eg.id for eg in ExternalGame.objects.all()}
 
         game_type_mapping = {gt.igdb_id: gt for gt in GameType.objects.all()}
         game_status_mapping = {gs.igdb_id: gs for gs in GameStatus.objects.all()}
@@ -363,7 +387,7 @@ class Command(BaseCommand):
             "platforms, summary, updated_at, "
             "game_type, game_status, parent_game, "
             "bundles, dlcs, expanded_games, expansions, forks, ports, standalone_expansions, "
-            "game_engines, game_modes, player_perspectives, screenshots.image_id;"
+            "game_engines, game_modes, player_perspectives, screenshots.image_id, external_games;"
         )
 
         collector = RecursiveDataCollector(
@@ -403,6 +427,7 @@ class Command(BaseCommand):
                     "game_modes": game_mode_igdb_to_db_mapping,
                     "player_perspectives": player_perspective_igdb_to_db_mapping,
                     "game_engines": game_engine_igdb_to_db_mapping,
+                    "external_games": external_game_igdb_to_db_mapping,
                 },
                 collector,
             )
@@ -427,6 +452,7 @@ class Command(BaseCommand):
             "modes": [],
             "perspectives": [],
             "engines": [],
+            "external_games": [],
         }
 
         for imported_game, game_from_igdb in zip(imported_games, igdb_games, strict=True):
@@ -492,6 +518,17 @@ class Command(BaseCommand):
                     if eid in mappings["game_engines"]
                 ],
             )
+        if external_game_ids := game_from_igdb.external_games:
+            rel_containers["external_games"].extend(
+                [
+                    Game.external_games.through(
+                        game_id=imported_game.id,
+                        externalgame_id=mappings["external_games"][egid],
+                    )
+                    for egid in external_game_ids
+                    if egid in mappings["external_games"]
+                ],
+            )
 
     def _collect_recursive_relations(
         self: Self,
@@ -518,6 +555,7 @@ class Command(BaseCommand):
         Game.game_modes.through.objects.bulk_create(rel_containers["modes"], ignore_conflicts=True)
         Game.player_perspectives.through.objects.bulk_create(rel_containers["perspectives"], ignore_conflicts=True)
         Game.game_engines.through.objects.bulk_create(rel_containers["engines"], ignore_conflicts=True)
+        Game.external_games.through.objects.bulk_create(rel_containers["external_games"], ignore_conflicts=True)
 
     def _handle_recursive_relations(
         self: Self,
@@ -706,6 +744,57 @@ class Command(BaseCommand):
             self.style.SUCCESS(f"Successfully created/updated {total_items} 'Game Statuses' from the IGDB database."),
         )
 
+    def import_external_game_sources(
+        self: Self,
+        *,
+        import_all: bool = False,
+        import_start_timestamp: int | None = None,
+    ) -> None:
+        """Import external game sources from the IGDB database."""
+        total_items = 0
+        for created_items, _ in self._import_data(
+            endpoint=IGDBEndpoints.EXTERNAL_GAME_SOURCES,
+            query=self.NAME_UPDATED_AT_QUERY,
+            model=ExternalGameSource,
+            import_all=import_all,
+            import_start_timestamp=import_start_timestamp,
+        ):
+            total_items += len(created_items)
+
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Successfully created/updated {total_items} 'External Game Sources' from the IGDB database.",
+            ),
+        )
+
+    def import_external_games(
+        self: Self,
+        *,
+        import_all: bool = False,
+        import_start_timestamp: int | None = None,
+    ) -> None:
+        """Import external games from the IGDB database."""
+        total_items = 0
+        external_game_source_mapping = {egs.igdb_id: egs.id for egs in ExternalGameSource.objects.all()}
+        extra_mappings: dict[str, Any] = {
+            "external_game_sources": external_game_source_mapping,
+        }
+        for created_items, _ in self._import_data(
+            endpoint=IGDBEndpoints.EXTERNAL_GAMES,
+            query="fields uid, url, external_game_source, updated_at;",
+            model=ExternalGame,
+            extra_mappings=extra_mappings,
+            import_all=import_all,
+            import_start_timestamp=import_start_timestamp,
+        ):
+            total_items += len(created_items)
+
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Successfully created/updated {total_items} 'External Games' from the IGDB database.",
+            ),
+        )
+
     def handle(self: Self, *args: None, **options: dict[str, int | None | str]) -> None:
         """Handle the command logic."""
         self.stdout.write(f"{args=}")
@@ -720,6 +809,8 @@ class Command(BaseCommand):
             "game_engines": self.import_game_engines,
             "game_types": self.import_game_types,
             "game_statuses": self.import_game_statuses,
+            "external_games": self.import_external_games,
+            "external_game_sources": self.import_external_game_sources,
         }
 
         import_all = bool(options.get("all", False))

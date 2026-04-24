@@ -2,6 +2,10 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.16.0] - 24.04.2026
+
+* Add `ExternalGameSource` and `ExternalGame` models.
+
 ## v. [4.15.2] - 22.04.2026
 
 * Add `build-and-push.yml` - GitHub Action to build and push the docker images.

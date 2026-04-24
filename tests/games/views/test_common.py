@@ -12,6 +12,7 @@ from rest_framework.reverse import reverse
 
 from my_game_list.games.models import (
     Company,
+    ExternalGame,
     Game,
     GameEngine,
     GameListStatus,
@@ -490,6 +491,24 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
             },
             id="Test list endpoint for player perspective.",
         ),
+        pytest.param(
+            "games:external-game-sources-list",
+            "external_game_source_fixture",
+            {
+                "count": 1,
+                "next": None,
+                "previous": None,
+                "results": [
+                    {
+                        "id": ANY,
+                        "name": ANY,
+                        "igdb_id": ANY,
+                        "igdb_updated_at": "2023-06-22T16:47:12Z",
+                    },
+                ],
+            },
+            id="Test list endpoint for external game source.",
+        ),
     ],
 )
 @pytest.mark.django_db()
@@ -598,6 +617,16 @@ def test_list_model(
                     "igdb_id": ANY,
                     "igdb_updated_at": ANY,
                 },
+                "external_games": [
+                    {
+                        "id": ANY,
+                        "external_game_source": ANY,
+                        "igdb_id": ANY,
+                        "igdb_updated_at": ANY,
+                        "url": ANY,
+                        "external_id": ANY,
+                    },
+                ],
                 "release_date": None,
                 "title": ANY,
                 "average_score": 0.0,
@@ -709,6 +738,17 @@ def test_list_model(
             },
             id="Get the player perspective by id.",
         ),
+        pytest.param(
+            "games:external-game-sources-detail",
+            "external_game_source_fixture",
+            {
+                "id": ANY,
+                "name": ANY,
+                "igdb_id": ANY,
+                "igdb_updated_at": "2023-06-22T16:47:12Z",
+            },
+            id="Get the external game source by id.",
+        ),
     ],
 )
 @pytest.mark.django_db()
@@ -811,6 +851,7 @@ def test_get_model_detail(
                 "game_engines": ANY,
                 "game_modes": ANY,
                 "player_perspectives": ANY,
+                "external_games": ANY,
                 "screenshots": [],
             },
             id="Create a new game.",
@@ -842,6 +883,7 @@ def test_create_model(
     game_engine_fixture: GameEngine,
     game_mode_fixture: GameMode,
     player_perspective_fixture: PlayerPerspective,
+    external_game_fixture: ExternalGame,
     game_fixture: Game,
     admin_authenticated_api_client: APIClient,
 ) -> None:
@@ -857,6 +899,7 @@ def test_create_model(
             "game_engines": [game_engine_fixture.pk],
             "game_modes": [game_mode_fixture.pk],
             "player_perspectives": [player_perspective_fixture.pk],
+            "external_games": [external_game_fixture.pk],
         }
     elif viewname in GAME_USER_DEPENDENT_LIST_VIEWNAMES:
         initial_data |= {"user": admin_user_fixture.pk, "game": game_fixture.pk}
@@ -991,6 +1034,7 @@ def test_update_model(
             "game_engines": [baker.make(GameEngine).pk],
             "game_modes": [baker.make(GameMode).pk],
             "player_perspectives": [baker.make(PlayerPerspective).pk],
+            "external_games": [baker.make(ExternalGame).pk],
         }
     elif viewname in GAME_USER_DEPENDENT_DETAIL_VIEWNAMES:
         update_data |= {

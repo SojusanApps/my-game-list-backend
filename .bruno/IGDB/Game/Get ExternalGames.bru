@@ -1,0 +1,26 @@
+meta {
+  name: Get ExternalGames
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{igdb_api_base_url}}/external_games/
+  body: text
+  auth: none
+}
+
+headers {
+  Client-ID: {{igdb_client_id}}
+  Authorization: Bearer {{igdb_access_token}}
+}
+
+body:text {
+  fields *, external_game_source.name, game_release_format.format, platform.name;
+  where game = 1942;
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
