@@ -96,3 +96,31 @@ def test_collection_collaborators(collection_fixture: Collection, admin_user_fix
     collection_fixture.collaborators.add(admin_user_fixture)
     assert collection_fixture.collaborators.count() == 1
     assert admin_user_fixture in collection_fixture.collaborators.all()
+
+
+@pytest.mark.django_db()
+def test_collection_slug_generation(admin_user_fixture: UserModel) -> None:
+    """Test that saving a collection generates a correct and unique slug."""
+    first_collection: Collection = baker.make(
+        Collection,
+        name="My Favorites",
+        user=admin_user_fixture,
+        slug="",
+    )
+    assert first_collection.slug == f"{admin_user_fixture.username}-my-favorites"
+
+    second_collection: Collection = baker.make(
+        Collection,
+        name="My Favorites",
+        user=admin_user_fixture,
+        slug="",
+    )
+    assert second_collection.slug == f"{admin_user_fixture.username}-my-favorites-1"
+
+    third_collection: Collection = baker.make(
+        Collection,
+        name="My Favorites",
+        user=admin_user_fixture,
+        slug="",
+    )
+    assert third_collection.slug == f"{admin_user_fixture.username}-my-favorites-2"

@@ -37,7 +37,7 @@ def notify_game_releases() -> None:
                 level=Notification.LEVEL_INFO,
                 category=Notification.CATEGORY_RELEASE,
                 description=str(_("{game} is out now. Time to play!")).format(game=follow.game.title),
-                data={"game_id": follow.game_id},
+                data={"game_id": follow.game_id, "game_slug": follow.game.slug},
             )
 
     # Releasing in 7 days
@@ -57,7 +57,7 @@ def notify_game_releases() -> None:
                 level=Notification.LEVEL_INFO,
                 category=Notification.CATEGORY_RELEASE,
                 description=str(_("{game} will be released in 7 days.")).format(game=follow.game.title),
-                data={"game_id": follow.game_id},
+                data={"game_id": follow.game_id, "game_slug": follow.game.slug},
             )
 
 

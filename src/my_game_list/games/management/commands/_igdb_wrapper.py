@@ -161,6 +161,8 @@ class IGDBCompanyResponse(BaseIGDBResponse):
 
     name: str
     """The name of the company."""
+    slug: str
+    """The slug of the company."""
     logo: IGDBImageResponse | None = None
     """The company's logo."""
 
@@ -190,6 +192,8 @@ class IGDBGameResponse(BaseIGDBResponse):
 
     name: str
     """The name of the game."""
+    slug: str
+    """The slug of the game."""
     cover: IGDBImageResponse | None = None
     """The cover of this game."""
     first_release_date: int | None = None

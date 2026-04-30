@@ -2,6 +2,11 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.17.0] - 29.04.2026
+
+* Add `slug` filed to `Game`, `Company`, `User` and `Collection` models.
+* Updated dependencies in requirements.
+
 ## v. [4.16.0] - 24.04.2026
 
 * Add `ExternalGameSource` and `ExternalGame` models.

@@ -24,7 +24,7 @@ class CollectionItemGameSerializer(serializers.ModelSerializer[Game]):
         """Meta data for the collection item game serializer."""
 
         model = Game
-        fields = ("id", "title", "cover_image_id")
+        fields = ("id", "title", "cover_image_id", "slug")
 
 
 class CollectionItemSerializer(serializers.ModelSerializer[CollectionItem]):
@@ -96,6 +96,7 @@ class CollectionSerializer(serializers.ModelSerializer[Collection]):
         model = Collection
         fields = (
             "id",
+            "slug",
             "name",
             "description",
             "is_favorite",

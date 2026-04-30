@@ -1,6 +1,7 @@
 """This module contains the models for the game related data."""
 
-from typing import ClassVar, Self
+from typing import Any, ClassVar, Self
+from uuid import uuid4
 
 from django.conf import settings
 from django.contrib import admin
@@ -8,6 +9,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.html import format_html
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from django_stubs_ext.db.models import TypedModelMeta
 
@@ -43,12 +45,21 @@ class Company(BaseDictionaryModel, IGDBModel):
 
     name = models.CharField(_("name"), max_length=255)
     company_logo_id = models.CharField(_("company logo id"), max_length=255, blank=True)
+    slug = models.SlugField(_("slug"), max_length=512, unique=True, blank=True)
 
     class Meta(BaseDictionaryModel.Meta):
         """Meta data for the company model."""
 
         verbose_name = _("company")
         verbose_name_plural = _("companies")
+
+    def save(self: Self, *args: Any, **kwargs: Any) -> None:  # noqa: ANN401
+        """Save the company."""
+        if not self.slug and self.name:
+            self.slug = slugify(self.name)
+        if not self.slug:
+            self.slug = str(uuid4())
+        super().save(*args, **kwargs)
 
     @property
     @admin.display(description="Company logo preview")
@@ -332,6 +343,7 @@ class Game(BaseModel, IGDBModel):
     release_date = models.DateField(_("release date"), blank=True, null=True)
     cover_image_id = models.CharField(_("cover image id"), max_length=255, blank=True)
     summary = models.TextField(_("summary"), blank=True, max_length=2000)
+    slug = models.SlugField(_("slug"), max_length=512, unique=True, blank=True)
 
     game_type = models.ForeignKey(
         GameType,
@@ -403,6 +415,14 @@ class Game(BaseModel, IGDBModel):
     def __str__(self: Self) -> str:
         """String representation of the game model."""
         return self.title
+
+    def save(self: Self, *args: Any, **kwargs: Any) -> None:  # noqa: ANN401
+        """Save the game."""
+        if not self.slug and self.title:
+            self.slug = slugify(self.title)
+        if not self.slug:
+            self.slug = str(uuid4())
+        super().save(*args, **kwargs)
 
     @property
     @admin.display(description="Cover image preview")

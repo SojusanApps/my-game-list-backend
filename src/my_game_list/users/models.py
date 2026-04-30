@@ -1,12 +1,13 @@
 """This module contains the user related models."""
 
 import hashlib
-from typing import ClassVar, Self
+from typing import Any, ClassVar, Self
 
 from django.contrib import admin
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.html import format_html
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
 from my_game_list.my_game_list.models import BaseModel
@@ -23,6 +24,7 @@ class User(BaseModel, AbstractUser):
     """A model for the application user."""
 
     email = models.EmailField(_("email address"), unique=True)
+    slug = models.SlugField(_("slug"), max_length=255, unique=True, blank=True)
     gender = models.CharField(
         _("gender"),
         max_length=1,
@@ -38,6 +40,12 @@ class User(BaseModel, AbstractUser):
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS: ClassVar[list[str]] = ["username"]
+
+    def save(self: Self, *args: Any, **kwargs: Any) -> None:  # noqa: ANN401
+        """Save the model and generate a slug based on the username."""
+        if not self.slug and self.username:
+            self.slug = slugify(self.username)
+        super().save(*args, **kwargs)
 
     def __str__(self: Self) -> str:
         """Return a string representation for this model."""
