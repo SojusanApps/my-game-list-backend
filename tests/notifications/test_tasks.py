@@ -46,14 +46,14 @@ def test_notify_game_releases() -> None:
     assert notification_today.verb == "premieres today!"
     assert notification_today.actor == game_today
     assert notification_today.category == Notification.CATEGORY_RELEASE
-    assert notification_today.data == {"game_id": game_today.id}
+    assert notification_today.data == {"game_id": game_today.id, "game_slug": game_today.slug}
     assert "is out now. Time to play!" in notification_today.description
 
     notification_next_week = Notification.objects.get(recipient=user2)
     assert notification_next_week.verb == "premieres in a week!"
     assert notification_next_week.actor == game_next_week
     assert notification_next_week.category == Notification.CATEGORY_RELEASE
-    assert notification_next_week.data == {"game_id": game_next_week.id}
+    assert notification_next_week.data == {"game_id": game_next_week.id, "game_slug": game_next_week.slug}
     assert "will be released in 7 days" in notification_next_week.description
 
     # Test running it again doesn't create duplicate notifications

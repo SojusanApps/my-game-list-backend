@@ -14,6 +14,7 @@ help:
 	@echo "test - Run all tests for the application."
 	@echo "tui - Run the custom TUI for managing the application."
 	@echo "import_igdb_data - Import data from IGDB to the application database"
+	@echo "recalculate_stats - Recalculate all the stats for games and users. Use it after importing data from IGDB."
 
 sync:
 	uv sync --all-extras

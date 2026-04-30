@@ -158,6 +158,7 @@ class Command(BaseCommand):  # NOSONAR(S8443) - Already inheriting from BaseComm
 
         return {
             "title": item_from_igdb.name,
+            "slug": item_from_igdb.slug,
             "release_date": (
                 datetime.fromtimestamp(item_from_igdb.first_release_date, tz=UTC).date()
                 if item_from_igdb.first_release_date
@@ -199,6 +200,7 @@ class Command(BaseCommand):  # NOSONAR(S8443) - Already inheriting from BaseComm
         """Get the input for the Company model."""
         return {
             "name": item_from_igdb.name,
+            "slug": item_from_igdb.slug,
             "company_logo_id": (item_from_igdb.logo.image_id if item_from_igdb.logo else ""),
         }
 
@@ -382,7 +384,7 @@ class Command(BaseCommand):  # NOSONAR(S8443) - Already inheriting from BaseComm
         total_imported_games = 0
 
         query_fields = (
-            "fields name, cover.image_id, first_release_date, genres, "
+            "fields name, slug, cover.image_id, first_release_date, genres, "
             "involved_companies.developer, involved_companies.publisher, involved_companies.company, "
             "platforms, summary, updated_at, "
             "game_type, game_status, parent_game, "
@@ -603,7 +605,7 @@ class Command(BaseCommand):  # NOSONAR(S8443) - Already inheriting from BaseComm
         total_companies = 0
         for created_companies, _ in self._import_data(
             endpoint=IGDBEndpoints.COMPANIES,
-            query="fields name, logo.image_id, updated_at;",
+            query="fields name, slug, logo.image_id, updated_at;",
             model=Company,
             import_all=import_all,
             import_start_timestamp=import_start_timestamp,

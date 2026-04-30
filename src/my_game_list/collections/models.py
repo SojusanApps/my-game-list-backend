@@ -1,9 +1,10 @@
 """This module contains the models for the collection related data."""
 
-from typing import ClassVar, Self
+from typing import Any, ClassVar, Self
 
 from django.conf import settings
 from django.db import models
+from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
 from my_game_list.my_game_list.models import BaseModel
@@ -74,6 +75,7 @@ class Collection(BaseModel):
     )
     created_at = models.DateTimeField(_("creation time"), auto_now_add=True)
     last_modified_at = models.DateTimeField(_("last modified"), auto_now=True)
+    slug = models.SlugField(_("slug"), max_length=512, unique=True, blank=True)
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -97,6 +99,18 @@ class Collection(BaseModel):
     def __str__(self: Self) -> str:
         """String representation of the collection model."""
         return f"{self.user.username} - {self.name}"
+
+    def save(self: Self, *args: Any, **kwargs: Any) -> None:  # noqa: ANN401
+        """Save the collection and generate a slug based on the name."""
+        if not self.slug and self.name:
+            base_slug = slugify(f"{self.user.username}-{self.name}")
+            slug = base_slug
+            counter = 1
+            while Collection.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+            self.slug = slug
+        super().save(*args, **kwargs)
 
 
 class CollectionItem(BaseModel):

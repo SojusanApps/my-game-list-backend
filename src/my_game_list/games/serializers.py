@@ -43,7 +43,7 @@ class CompanyGameSerializer(serializers.ModelSerializer[Game]):
         """Meta data for company game serializer."""
 
         model = Game
-        fields = ("id", "cover_image_id", "title")
+        fields = ("id", "cover_image_id", "title", "slug")
 
 
 class CompanySerializer(BaseDictionarySerializer):
@@ -58,6 +58,7 @@ class CompanySerializer(BaseDictionarySerializer):
             "company_logo_id",
             "igdb_id",
             "igdb_updated_at",
+            "slug",
         )
 
 
@@ -104,6 +105,7 @@ class GameListSerializer(serializers.ModelSerializer[GameList]):
     status = serializers.CharField(source="get_status_display", read_only=True)
     status_code = serializers.CharField(source="status")
     game_id = serializers.IntegerField(source="game.id", read_only=True)
+    game_slug = serializers.CharField(source="game.slug", read_only=True)
     title = serializers.CharField(source="game.title", read_only=True)
     game_cover_image = serializers.CharField(source="game.cover_image_id", read_only=True)
     owned_on = GameMediaSerializer(many=True)
@@ -124,6 +126,7 @@ class GameListSerializer(serializers.ModelSerializer[GameList]):
             "created_at",
             "last_modified_at",
             "game_id",
+            "game_slug",
             "title",
             "game_cover_image",
             "user",
@@ -320,6 +323,7 @@ class GameSimpleListSerializer(serializers.ModelSerializer[Game]):
             "popularity",
             "game_status",
             "game_type",
+            "slug",
         )
 
 
@@ -383,6 +387,7 @@ class GameSerializer(serializers.ModelSerializer[Game]):
             "player_perspectives",
             "external_games",
             "screenshots",
+            "slug",
         )
 
 

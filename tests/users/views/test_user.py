@@ -56,6 +56,7 @@ def test_list_users(authenticated_api_client: APIClient, admin_user_fixture: Use
         "results": [
             {
                 "id": users_ids[0],
+                "slug": ANY,
                 "username": "test_user",
                 "email": "test@email.com",
                 "gender": "",
@@ -67,6 +68,7 @@ def test_list_users(authenticated_api_client: APIClient, admin_user_fixture: Use
             },
             {
                 "id": users_ids[1],
+                "slug": ANY,
                 "username": "test_admin",
                 "email": "test_admin@email.com",
                 "gender": "",
@@ -91,6 +93,7 @@ def test_get_user(authenticated_api_client: APIClient) -> None:
     assert response.status_code == status.HTTP_200_OK
     assert response.json() == {
         "id": user.pk,
+        "slug": ANY,
         "email": "test@email.com",
         "username": "test_user",
         "gender": "",

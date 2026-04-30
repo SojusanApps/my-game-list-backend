@@ -23,6 +23,7 @@ class NotificationUserActorSerializer(NotificationGenericActorSerializer):
     """Serializer for user notification actors."""
 
     gravatar_url = serializers.CharField()
+    slug = serializers.CharField()
 
 
 actor_serializer = PolymorphicProxySerializer(
@@ -65,6 +66,7 @@ class NotificationSerializer(serializers.ModelSerializer[Notification]):
             data: dict[str, Any] = {"id": obj.actor.pk, "str": str(obj.actor), "type": obj.actor_content_type.model}
             if isinstance(obj.actor, User):
                 data["gravatar_url"] = obj.actor.gravatar_url
+                data["slug"] = obj.actor.slug
             return data
         return None
 
@@ -75,5 +77,6 @@ class NotificationSerializer(serializers.ModelSerializer[Notification]):
             data: dict[str, Any] = {"id": obj.target.pk, "str": str(obj.target), "type": obj.target_content_type.model}
             if isinstance(obj.target, User):
                 data["gravatar_url"] = obj.target.gravatar_url
+                data["slug"] = obj.target.slug
             return data
         return None

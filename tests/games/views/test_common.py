@@ -226,6 +226,7 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
                 "results": [
                     {
                         "id": ANY,
+                        "slug": ANY,
                         "name": ANY,
                         "company_logo_id": "",
                         "igdb_id": ANY,
@@ -265,6 +266,7 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
                         "id": ANY,
                         "title": ANY,
                         "game_id": ANY,
+                        "game_slug": ANY,
                         "game_cover_image": ANY,
                         "user": ANY,
                         "score": 5,
@@ -312,6 +314,7 @@ def test_unauthorized_access_detail(viewname: str, api_client: APIClient) -> Non
                 "results": [
                     {
                         "id": ANY,
+                        "slug": ANY,
                         "title": ANY,
                         "release_date": None,
                         "created_at": "2023-06-22T16:47:12Z",
@@ -535,6 +538,7 @@ def test_list_model(
             "developer_fixture",
             {
                 "id": ANY,
+                "slug": ANY,
                 "name": ANY,
                 "company_logo_id": "",
                 "igdb_id": ANY,
@@ -562,6 +566,7 @@ def test_list_model(
                 "id": ANY,
                 "title": ANY,
                 "game_id": ANY,
+                "game_slug": ANY,
                 "game_cover_image": ANY,
                 "user": ANY,
                 "score": 5,
@@ -601,6 +606,7 @@ def test_list_model(
                 "igdb_updated_at": ANY,
                 "developer": {
                     "id": ANY,
+                    "slug": ANY,
                     "name": ANY,
                     "company_logo_id": "",
                     "igdb_id": ANY,
@@ -608,10 +614,12 @@ def test_list_model(
                 },
                 "genres": [{"id": ANY, "name": ANY, "igdb_id": ANY, "igdb_updated_at": ANY}],
                 "id": ANY,
+                "slug": ANY,
                 "last_modified_at": "2023-06-22T16:47:12Z",
                 "platforms": [{"id": ANY, "name": ANY, "igdb_id": ANY, "abbreviation": "", "igdb_updated_at": ANY}],
                 "publisher": {
                     "id": ANY,
+                    "slug": ANY,
                     "name": ANY,
                     "company_logo_id": "",
                     "igdb_id": ANY,
@@ -780,6 +788,7 @@ def test_get_model_detail(
             },
             {
                 "id": ANY,
+                "slug": ANY,
                 "company_logo_id": "",
             },
             id="Creation of the company.",
@@ -935,6 +944,7 @@ def test_create_model(
                 "igdb_updated_at": "2023-06-22T22:20:01Z",
             },
             {
+                "slug": ANY,
                 "company_logo_id": "",
             },
             id="Update of the company.",
