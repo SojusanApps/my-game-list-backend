@@ -2,6 +2,11 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.17.1] - 05.05.2026
+
+* Updated dependencies in requirements.
+* Migrated to `psycopg3` from `psycopg2`.
+
 ## v. [4.17.0] - 29.04.2026
 
 * Add `slug` filed to `Game`, `Company`, `User` and `Collection` models.
