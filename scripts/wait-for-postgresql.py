@@ -4,7 +4,7 @@
 import os
 from time import sleep
 
-import psycopg2
+import psycopg
 from python_colors import print_error, print_info, print_success
 
 
@@ -23,7 +23,7 @@ def check_database_connection() -> bool:
         bool: True if connection ended successfully, False otherwise.
     """
     try:
-        connection = psycopg2.connect(
+        connection = psycopg.connect(
             dbname=os.environ.get("POSTGRES_DB"),
             user=os.environ.get("POSTGRES_USER"),
             password=os.environ.get("POSTGRES_PASSWORD"),
@@ -31,7 +31,7 @@ def check_database_connection() -> bool:
             port=os.environ.get("POSTGRES_PORT"),
         )
         connection.close()
-    except psycopg2.OperationalError:
+    except psycopg.OperationalError:
         return False
     else:
         return True
