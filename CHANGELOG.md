@@ -2,6 +2,10 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.18.0] - 05.05.2026
+
+* Add traces with `opentelemetry`.
+
 ## v. [4.17.1] - 05.05.2026
 
 * Updated dependencies in requirements.

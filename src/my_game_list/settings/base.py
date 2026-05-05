@@ -1,5 +1,6 @@
 """This is a base configuration for MyGameList Django application."""
 
+import logging
 import os
 from datetime import timedelta
 from pathlib import Path
@@ -189,6 +190,20 @@ if not (log_path := Path(MGL_LOG_DIR_PATH)).is_dir():
 
 LOG_FILE_PATH = Path(MGL_LOG_DIR_PATH, MGL_LOG_FILENAME)
 LOGLEVEL = oeg("DJANGO_LOGLEVEL", "INFO").upper()
+
+
+class OTelFallbackFilter(logging.Filter):
+    """Ensures OTEL fields exist on log records before formatting."""
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        """Add OTEL fields with default values if they are missing."""
+        if not hasattr(record, "otelTraceID"):
+            record.otelTraceID = "0"
+            record.otelSpanID = "0"
+            record.otelServiceName = ""
+        return True
+
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -199,11 +214,17 @@ LOGGING = {
         "require_debug_true": {
             "()": "django.utils.log.RequireDebugTrue",
         },
+        "otel_fallback": {
+            "()": "my_game_list.settings.base.OTelFallbackFilter",
+        },
     },
     "formatters": {
         "color": {
             "()": "colorlog.ColoredFormatter",
-            "format": "{log_color}[{asctime}] {levelname}\t{module} - {funcName} :: {message}",
+            "format": (
+                "{log_color}[{asctime}] {levelname}\t{module} - {funcName}"
+                " [trace_id={otelTraceID} span_id={otelSpanID}] :: {message}"
+            ),
             "style": "{",
             "datefmt": "%Y-%m-%d %H:%M:%S",
             "log_colors": {
@@ -220,12 +241,13 @@ LOGGING = {
             "level": "DEBUG",
             "class": "colorlog.StreamHandler",
             "formatter": "color",
-            "filters": ["require_debug_true"],
+            "filters": ["require_debug_true", "otel_fallback"],
         },
         "file": {
             "level": LOGLEVEL,
             "class": "logging.handlers.RotatingFileHandler",
             "formatter": "color",
+            "filters": ["otel_fallback"],
             "backupCount": 5,
             "maxBytes": 5242880,  # 5*1024*1024 bytes (5MB)
             "filename": LOG_FILE_PATH,
