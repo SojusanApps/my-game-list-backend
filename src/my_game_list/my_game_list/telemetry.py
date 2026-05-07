@@ -12,6 +12,9 @@ from opentelemetry.instrumentation.django import DjangoInstrumentor
 from opentelemetry.instrumentation.logging import LoggingInstrumentor
 from opentelemetry.instrumentation.psycopg import PsycopgInstrumentor
 from opentelemetry.instrumentation.redis import RedisInstrumentor
+from opentelemetry.instrumentation.requests import RequestsInstrumentor
+from opentelemetry.instrumentation.urllib import URLLibInstrumentor
+from opentelemetry.instrumentation.urllib3 import URLLib3Instrumentor
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
@@ -45,6 +48,9 @@ def setup_telemetry() -> None:
     trace.set_tracer_provider(provider)
 
     # Instrument everywhere
+    RequestsInstrumentor().instrument()
+    URLLibInstrumentor().instrument()
+    URLLib3Instrumentor().instrument()
     LoggingInstrumentor().instrument(set_logging_format=False)
     DjangoInstrumentor().instrument()
     CeleryInstrumentor().instrument()

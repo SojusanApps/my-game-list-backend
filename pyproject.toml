@@ -48,6 +48,9 @@ dependencies = [
     "opentelemetry-instrumentation-psycopg==0.62b1",
     "opentelemetry-instrumentation-redis==0.62b1",
     "opentelemetry-instrumentation-logging==0.62b1",
+    "opentelemetry-instrumentation-requests>=0.62b1",
+    "opentelemetry-instrumentation-urllib>=0.62b1",
+    "opentelemetry-instrumentation-urllib3>=0.62b1",
 ]
 
 [build-system]
