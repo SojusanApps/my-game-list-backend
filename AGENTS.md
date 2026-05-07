@@ -25,3 +25,17 @@ Welcome, AI coding agent! Follow these guidelines to ensure consistency and corr
 
 - **Branches:** Base new features off the `devel` branch using the format `[bugfix|feature|hotfix]/[description]`. The `master` branch is strictly for stable production code.
 - **Documentation:** Don't duplicate instructions. For detailed deploy and local install scenarios, direct users to the [README.md](./README.md).
+
+## Agent skills
+
+### Issue tracker
+
+Issues live as local markdown files under `.scratch/`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Uses the default five-role label vocabulary. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context — one `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.

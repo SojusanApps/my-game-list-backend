@@ -2,6 +2,10 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.18.1] - 07.05.2026
+
+* Add more traces for `requests`, `urllib` and `urllib3`.
+
 ## v. [4.18.0] - 05.05.2026
 
 * Add traces with `opentelemetry`.
