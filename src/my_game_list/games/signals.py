@@ -7,6 +7,7 @@ from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 
 from my_game_list.games.models import Game, GameList, GameStats
+from my_game_list.my_game_list.metrics import Metrics
 
 
 @receiver(post_save, sender=Game)
@@ -19,6 +20,17 @@ def create_game_stats(
     """Create GameStats for new games."""
     if created:
         GameStats.objects.get_or_create(game=instance)
+
+
+@receiver(post_save, sender=GameList)
+def increment_game_lists_entries_created_total(
+    sender: type[GameList],  # noqa: ARG001
+    created: bool,  # noqa: FBT001
+    **kwargs: Any,  # noqa: ARG001, ANN401
+) -> None:
+    """Increment game_lists_entries_created_total counter when a new GameList entry is created."""
+    if created:
+        Metrics.game_lists_entries_created_total.inc()
 
 
 @receiver(post_save, sender=GameList)
