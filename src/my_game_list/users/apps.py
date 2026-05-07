@@ -1,5 +1,7 @@
 """This module contains the configuration for user application."""
 
+import contextlib
+
 from django.apps import AppConfig
 
 
@@ -8,3 +10,8 @@ class UsersConfig(AppConfig):
 
     default_auto_field = "django.db.models.BigAutoField"
     name = "my_game_list.users"
+
+    def ready(self) -> None:
+        """Import signals when the app is ready."""
+        with contextlib.suppress(ImportError):
+            import my_game_list.users.signals  # noqa: F401, PLC0415

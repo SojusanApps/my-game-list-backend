@@ -45,7 +45,8 @@ ENV PATH="/.venv/bin:$PATH"
 # Create the needed directories and set a non-root user as the owner to omit the permission error
 RUN mkdir -p "${MGL_LOG_DIR_PATH}" && chown -R nonroot: "${MGL_LOG_DIR_PATH}" && \
     mkdir -p /opt/my_game_list/static && chown -R nonroot: /opt/my_game_list/static && \
-    mkdir -p /home/nonroot/.cache && chown -R nonroot: /home/nonroot/.cache
+    mkdir -p /home/nonroot/.cache && chown -R nonroot: /home/nonroot/.cache && \
+    mkdir -p /home/nonroot/.gunicorn && chown -R nonroot: /home/nonroot/.gunicorn
 
 ENV HOME=/home/nonroot
 # Run application as non-root user

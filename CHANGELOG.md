@@ -2,6 +2,12 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.18.2] - 07.05.2026
+
+* Add prometheus metrics:
+ * `users_registered_total` - Total number of registered users.
+ * `game_lists_entries_created_total` - Total number of game list entries created.
+
 ## v. [4.18.1] - 07.05.2026
 
 * Add more traces for `requests`, `urllib` and `urllib3`.
