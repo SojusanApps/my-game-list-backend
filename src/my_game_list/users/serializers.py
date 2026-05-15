@@ -55,7 +55,7 @@ class UserSimpleSerializer(serializers.ModelSerializer[UserModel]):
         """Meta data for the class."""
 
         model = User
-        fields = ("id", "username", "gravatar_url", "slug")
+        fields = ("id", "username", "gravatar_url", "slug", "is_staff")
 
 
 class UserSerializer(serializers.ModelSerializer[UserModel]):
@@ -78,6 +78,7 @@ class UserSerializer(serializers.ModelSerializer[UserModel]):
             "gravatar_url",
             "is_active",
             "slug",
+            "is_staff",
         )
         read_only_fields = ("id", "gravatar_url", "last_login", "last_active", "date_joined", "slug")
 
@@ -107,6 +108,7 @@ class UserDetailSerializer(serializers.ModelSerializer[UserModel]):
             "friends",
             "latest_game_list_updates",
             "slug",
+            "is_staff",
         )
 
     @extend_schema_field(

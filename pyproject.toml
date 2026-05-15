@@ -75,6 +75,7 @@ tox = ["tox-uv==1.35.2"]
 
 [dependency-groups]
 dev = [
+    "isort==8.0.1",
     "ipython==9.13.0",
     "pre-commit==4.6.0",
     "black==26.3.1",
