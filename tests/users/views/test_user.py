@@ -65,6 +65,7 @@ def test_list_users(authenticated_api_client: APIClient, admin_user_fixture: Use
                 "date_joined": "2023-05-25T12:01:12Z",
                 "gravatar_url": ANY,
                 "is_active": True,
+                "is_staff": False,
             },
             {
                 "id": users_ids[1],
@@ -77,6 +78,7 @@ def test_list_users(authenticated_api_client: APIClient, admin_user_fixture: Use
                 "date_joined": "2023-05-25T14:21:13Z",
                 "gravatar_url": ANY,
                 "is_active": True,
+                "is_staff": True,
             },
         ],
     }
@@ -103,6 +105,7 @@ def test_get_user(authenticated_api_client: APIClient) -> None:
         "gravatar_url": ANY,
         "friends": [],
         "latest_game_list_updates": [],
+        "is_staff": False,
         "game_list_statistics": {
             "completed": 0,
             "dropped": 0,
