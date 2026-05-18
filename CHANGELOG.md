@@ -2,6 +2,10 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.18.4] - 18.05.2026
+
+* Removed create and delete endpoints from the API for `Company` and `Game` models.
+
 ## v. [4.18.3] - 15.05.2026
 
 * Add `is_stuff` to `User` serializers.
