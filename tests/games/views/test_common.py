@@ -11,17 +11,8 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 
 from my_game_list.games.models import (
-    Company,
-    ExternalGame,
     Game,
-    GameEngine,
     GameListStatus,
-    GameMode,
-    GameStatus,
-    GameType,
-    Genre,
-    Platform,
-    PlayerPerspective,
 )
 
 if TYPE_CHECKING:
@@ -780,20 +771,6 @@ def test_get_model_detail(
     ("viewname", "initial_data", "expected_result"),
     [
         pytest.param(
-            "games:companies-list",
-            {
-                "name": "created_developer",
-                "igdb_id": 123,
-                "igdb_updated_at": "2023-06-22T22:20:01Z",
-            },
-            {
-                "id": ANY,
-                "slug": ANY,
-                "company_logo_id": "",
-            },
-            id="Creation of the company.",
-        ),
-        pytest.param(
             "games:game-follows-list",
             {},
             {
@@ -834,38 +811,6 @@ def test_get_model_detail(
             id="Create a new game review.",
         ),
         pytest.param(
-            "games:games-list",
-            {
-                "title": "New created game",
-                "igdb_id": 123,
-                "igdb_updated_at": "2023-06-22T22:20:01Z",
-            },
-            {
-                "id": ANY,
-                "cover_image_id": ANY,
-                "created_at": "2023-06-22T22:20:01Z",
-                "last_modified_at": "2023-06-22T22:20:01Z",
-                "release_date": None,
-                "summary": "",
-                "game_type": ANY,
-                "game_status": ANY,
-                "parent_game": None,
-                "bundles": [],
-                "dlcs": [],
-                "expanded_games": [],
-                "expansions": [],
-                "forks": [],
-                "ports": [],
-                "standalone_expansions": [],
-                "game_engines": ANY,
-                "game_modes": ANY,
-                "player_perspectives": ANY,
-                "external_games": ANY,
-                "screenshots": [],
-            },
-            id="Create a new game.",
-        ),
-        pytest.param(
             "games:game-medias-list",
             {
                 "name": "created_media",
@@ -883,34 +828,11 @@ def test_create_model(
     initial_data: dict[str, Any],
     expected_result: dict[str, Any],
     admin_user_fixture: UserModel,
-    developer_fixture: Company,
-    publisher_fixture: Company,
-    genre_fixture: Genre,
-    platform_fixture: Platform,
-    game_type_fixture: GameType,
-    game_status_fixture: GameStatus,
-    game_engine_fixture: GameEngine,
-    game_mode_fixture: GameMode,
-    player_perspective_fixture: PlayerPerspective,
-    external_game_fixture: ExternalGame,
     game_fixture: Game,
     admin_authenticated_api_client: APIClient,
 ) -> None:
     """Check if creation of the new dictionary model is working properly."""
-    if viewname == "games:games-list":
-        initial_data |= {
-            "developer": developer_fixture.pk,
-            "publisher": publisher_fixture.pk,
-            "genres": [genre_fixture.pk],
-            "platforms": [platform_fixture.pk],
-            "game_type": game_type_fixture.pk,
-            "game_status": game_status_fixture.pk,
-            "game_engines": [game_engine_fixture.pk],
-            "game_modes": [game_mode_fixture.pk],
-            "player_perspectives": [player_perspective_fixture.pk],
-            "external_games": [external_game_fixture.pk],
-        }
-    elif viewname in GAME_USER_DEPENDENT_LIST_VIEWNAMES:
+    if viewname in GAME_USER_DEPENDENT_LIST_VIEWNAMES:
         initial_data |= {"user": admin_user_fixture.pk, "game": game_fixture.pk}
     response = admin_authenticated_api_client.post(reverse(viewname), initial_data)
 
@@ -935,20 +857,6 @@ def test_create_model(
 @pytest.mark.parametrize(
     ("viewname", "fixture_name", "update_data", "expected_result"),
     [
-        pytest.param(
-            "games:companies-detail",
-            "developer_fixture",
-            {
-                "name": "created_developer",
-                "igdb_id": 123,
-                "igdb_updated_at": "2023-06-22T22:20:01Z",
-            },
-            {
-                "slug": ANY,
-                "company_logo_id": "",
-            },
-            id="Update of the company.",
-        ),
         pytest.param(
             "games:game-follows-detail",
             "game_follow_fixture",
@@ -989,37 +897,6 @@ def test_create_model(
             },
             id="Update a game review.",
         ),
-        pytest.param(
-            "games:games-detail",
-            "game_fixture",
-            {
-                "title": "Updated title",
-                "igdb_id": 123,
-                "igdb_updated_at": "2023-06-22T22:20:01Z",
-            },
-            {
-                "created_at": "2023-06-22T16:47:12Z",
-                "last_modified_at": "2023-06-22T22:20:01Z",
-                "release_date": None,
-                "summary": "",
-                "cover_image_id": ANY,
-                "game_type": ANY,
-                "game_status": ANY,
-                "parent_game": None,
-                "bundles": [],
-                "dlcs": [],
-                "expanded_games": [],
-                "expansions": [],
-                "forks": [],
-                "ports": [],
-                "standalone_expansions": [],
-                "game_engines": ANY,
-                "game_modes": ANY,
-                "player_perspectives": ANY,
-                "screenshots": [],
-            },
-            id="Update a game.",
-        ),
     ],
 )
 @pytest.mark.django_db()
@@ -1033,20 +910,7 @@ def test_update_model(
     admin_authenticated_api_client: APIClient,
 ) -> None:
     """Check if updates method works properly for game models."""
-    if viewname == "games:games-detail":
-        update_data |= {
-            "developer": baker.make(Company).pk,
-            "publisher": baker.make(Company).pk,
-            "genres": [baker.make(Genre).pk],
-            "platforms": [baker.make(Platform).pk],
-            "game_type": baker.make(GameType).pk,
-            "game_status": baker.make(GameStatus).pk,
-            "game_engines": [baker.make(GameEngine).pk],
-            "game_modes": [baker.make(GameMode).pk],
-            "player_perspectives": [baker.make(PlayerPerspective).pk],
-            "external_games": [baker.make(ExternalGame).pk],
-        }
-    elif viewname in GAME_USER_DEPENDENT_DETAIL_VIEWNAMES:
+    if viewname in GAME_USER_DEPENDENT_DETAIL_VIEWNAMES:
         update_data |= {
             "user": baker.make(User).pk,
             "game": baker.make(Game).pk,
@@ -1065,12 +929,6 @@ def test_update_model(
     ("viewname", "fixture_name", "total_count_after_deletion"),
     [
         pytest.param(
-            "games:companies-detail",
-            "developer_fixture",
-            0,
-            id="Delete the company.",
-        ),
-        pytest.param(
             "games:game-follows-detail",
             "game_follow_fixture",
             0,
@@ -1087,12 +945,6 @@ def test_update_model(
             "game_review_fixture",
             0,
             id="Delete the game review.",
-        ),
-        pytest.param(
-            "games:games-detail",
-            "game_fixture",
-            0,
-            id="Delete the game.",
         ),
         pytest.param(
             "games:game-medias-detail",

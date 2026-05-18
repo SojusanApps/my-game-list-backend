@@ -46,7 +46,6 @@ from my_game_list.games.serializers import (
     CompanyDetailSerializer,
     CompanySerializer,
     ExternalGameSourceSerializer,
-    GameCreateSerializer,
     GameEngineSerializer,
     GameFollowSerializer,
     GameListCreateSerializer,
@@ -77,7 +76,7 @@ HIGHEST_NUMBER_OF_DAYS_IN_MONTH = 31
 MAX_GAMES_PER_DAY_IN_CALENDAR = 2
 
 
-class CompanyViewSet(ModelViewSet[Company]):
+class CompanyViewSet(ReadOnlyModelViewSet[Company]):
     """A ViewSet for the Company model."""
 
     queryset = Company.objects.all()
@@ -173,7 +172,7 @@ class GameReviewViewSet(ModelViewSet[GameReview]):
         )
 
 
-class GameViewSet(ModelViewSet[Game]):
+class GameViewSet(ReadOnlyModelViewSet[Game]):
     """A ViewSet for the Game model."""
 
     queryset = Game.objects.all()
@@ -210,10 +209,8 @@ class GameViewSet(ModelViewSet[Game]):
 
     def get_serializer_class(
         self: Self,
-    ) -> type[GameCreateSerializer | GameSerializer | GameSimpleListSerializer]:
+    ) -> type[GameSerializer | GameSimpleListSerializer]:
         """Get the serializer class for the Game model."""
-        if self.action in ["create", "update", "partial_update"]:
-            return GameCreateSerializer
         if self.action in ("list", "release_calendar"):
             return GameSimpleListSerializer
         return GameSerializer
