@@ -34,6 +34,8 @@ DOCUMENTATION_ENABLED = oeg("DJANGO_DOCUMENTATION_ENABLED", "True").lower() == "
 MAIN_APP = "my_game_list"
 
 INSTALLED_APPS = [
+    # modeltranslation must be before django.contrib.admin to properly register translation options for admin interface
+    "modeltranslation",
     # Django apps
     "django.contrib.admin",
     "django.contrib.auth",
@@ -130,11 +132,14 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGES = (
-    ("pl", _("Polish")),
     ("en", _("English")),
+    ("pl", _("Polish")),
 )
 
 LANGUAGE_CODE = "en-us"
+
+MODELTRANSLATION_DEFAULT_LANGUAGE = "en"
+MODELTRANSLATION_FALLBACK_LANGUAGES = {"default": ("en",)}
 
 TIME_ZONE = "UTC"
 

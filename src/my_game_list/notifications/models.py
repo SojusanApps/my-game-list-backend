@@ -8,6 +8,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from my_game_list.notifications.constants import NotificationCategory, NotificationLevel
+
 
 class NotificationQuerySet(models.QuerySet["Notification"]):
     """Custom QuerySet for notifications."""
@@ -23,26 +25,6 @@ class NotificationQuerySet(models.QuerySet["Notification"]):
 
 class Notification(models.Model):
     """A simple notification model."""
-
-    LEVEL_INFO = "info"
-    LEVEL_SUCCESS = "success"
-    LEVEL_WARNING = "warning"
-    LEVEL_ERROR = "error"
-    LEVEL_CHOICES = (
-        (LEVEL_INFO, _("Info")),
-        (LEVEL_SUCCESS, _("Success")),
-        (LEVEL_WARNING, _("Warning")),
-        (LEVEL_ERROR, _("Error")),
-    )
-
-    CATEGORY_SYSTEM = "system"
-    CATEGORY_FRIENDSHIP = "friendship"
-    CATEGORY_RELEASE = "game_release"
-    CATEGORY_CHOICES = (
-        (CATEGORY_SYSTEM, _("System")),
-        (CATEGORY_FRIENDSHIP, _("Friendship")),
-        (CATEGORY_RELEASE, _("Game Release")),
-    )
 
     recipient = models.ForeignKey(
         to=settings.AUTH_USER_MODEL,
@@ -97,15 +79,15 @@ class Notification(models.Model):
     level = models.CharField(
         verbose_name=_("level"),
         max_length=20,
-        choices=LEVEL_CHOICES,
-        default=LEVEL_INFO,
+        choices=NotificationLevel.choices,
+        default=NotificationLevel.INFO,
         help_text="The level of the notification.",
     )
     category = models.CharField(
         verbose_name=_("category"),
         max_length=20,
-        choices=CATEGORY_CHOICES,
-        default=CATEGORY_SYSTEM,
+        choices=NotificationCategory.choices,
+        default=NotificationCategory.SYSTEM,
         help_text="The category of the notification.",
     )
     timestamp = models.DateTimeField(

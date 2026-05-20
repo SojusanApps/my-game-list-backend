@@ -5,9 +5,14 @@ from datetime import timedelta
 
 from celery import shared_task
 from django.utils import timezone
-from django.utils.translation import gettext_lazy as _
 
 from my_game_list.games.models import GameFollow
+from my_game_list.notifications.constants import (
+    NotificationCategory,
+    NotificationDescription,
+    NotificationLevel,
+    NotificationVerb,
+)
 from my_game_list.notifications.models import Notification
 from my_game_list.notifications.utils import notify_send
 
@@ -23,41 +28,51 @@ def notify_game_releases() -> None:
     # Releasing today
     follows_today = GameFollow.objects.filter(game__release_date=today).select_related("game", "user")
     for follow in follows_today:
-        verb = str(_("premieres today!"))
+        verb = NotificationVerb.GAME_PREMIERES_TODAY
         if not Notification.objects.filter(
             recipient=follow.user,
             verb=verb,
-            category=Notification.CATEGORY_RELEASE,
+            category=NotificationCategory.RELEASE,
             data__game_id=follow.game_id,
         ).exists():
             notify_send(
                 sender=follow.game,
                 recipient=follow.user,
                 verb=verb,
-                level=Notification.LEVEL_INFO,
-                category=Notification.CATEGORY_RELEASE,
-                description=str(_("{game} is out now. Time to play!")).format(game=follow.game.title),
-                data={"game_id": follow.game_id, "game_slug": follow.game.slug},
+                level=NotificationLevel.INFO,
+                category=NotificationCategory.RELEASE,
+                description=NotificationDescription.GAME_PREMIERES_TODAY,
+                data={
+                    "game_id": follow.game_id,
+                    "game_slug": follow.game.slug,
+                    "game_title_en": follow.game.title_en or "",
+                    "game_title_pl": follow.game.title_pl or follow.game.title_en or "",
+                },
             )
 
     # Releasing in 7 days
     follows_next_week = GameFollow.objects.filter(game__release_date=next_week).select_related("game", "user")
     for follow in follows_next_week:
-        verb = str(_("premieres in a week!"))
+        verb = NotificationVerb.GAME_PREMIERES_IN_A_WEEK
         if not Notification.objects.filter(
             recipient=follow.user,
             verb=verb,
-            category=Notification.CATEGORY_RELEASE,
+            category=NotificationCategory.RELEASE,
             data__game_id=follow.game_id,
         ).exists():
             notify_send(
                 sender=follow.game,
                 recipient=follow.user,
                 verb=verb,
-                level=Notification.LEVEL_INFO,
-                category=Notification.CATEGORY_RELEASE,
-                description=str(_("{game} will be released in 7 days.")).format(game=follow.game.title),
-                data={"game_id": follow.game_id, "game_slug": follow.game.slug},
+                level=NotificationLevel.INFO,
+                category=NotificationCategory.RELEASE,
+                description=NotificationDescription.GAME_PREMIERES_IN_A_WEEK,
+                data={
+                    "game_id": follow.game_id,
+                    "game_slug": follow.game.slug,
+                    "game_title_en": follow.game.title_en or "",
+                    "game_title_pl": follow.game.title_pl or follow.game.title_en or "",
+                },
             )
 
 

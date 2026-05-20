@@ -1,6 +1,7 @@
 """Tests for games models."""
 
 import pytest
+from django.utils.translation import override
 from model_bakery import baker
 
 from my_game_list.games.models import (
@@ -65,3 +66,27 @@ def test_game_media_dunder_str() -> None:
     """Test the `GameMedia` dunder str method."""
     game_media = baker.make(GameMedia)
     assert str(game_media) == game_media.name
+
+
+@pytest.mark.django_db()
+def test_genre_name_returns_polish_value_when_polish_is_active() -> None:
+    """Genre.name proxies to the Polish translation when the active language is Polish."""
+    genre = baker.make(Genre, name_en="Action", name_pl="Akcja")
+    with override("pl"):
+        assert genre.name == "Akcja"
+
+
+@pytest.mark.django_db()
+def test_game_slug_uses_english_title_when_polish_is_active() -> None:
+    """Game.slug is always derived from the English title, regardless of the active language at save time."""
+    with override("pl"):
+        game = baker.make(Game, title_en="The Witcher", title_pl="Wiedzmin", slug="")
+    assert game.slug == "the-witcher"
+
+
+@pytest.mark.django_db()
+def test_company_slug_uses_english_name_when_polish_is_active() -> None:
+    """Company.slug is always derived from the English name, regardless of the active language at save time."""
+    with override("pl"):
+        company = baker.make(Company, name_en="CD Projekt", name_pl="CD Projekt PL", slug="")
+    assert company.slug == "cd-projekt"

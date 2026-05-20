@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-08-11 18:47+0000\n"
+"POT-Creation-Date: 2026-05-19 22:19+0000\n"
 "PO-Revision-Date: 2022-08-11 18:47+0000\n"
 "Last-Translator:   <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,186 +16,575 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && "
+"(n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && "
+"n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
 "X-Translated-Using: django-rosetta 0.9.8\n"
 
-#: my_game_list/friendships/models.py:17
-msgid "friend list"
-msgstr "lista znajomych"
+#: src/my_game_list/collections/filters.py:54
+msgid "Has Tier"
+msgstr "Posiada tier"
 
-#: my_game_list/friendships/models.py:18
-msgid "friend lists"
-msgstr "listy znajomych"
+#: src/my_game_list/collections/models.py:16
+msgid "Public"
+msgstr "Publiczny"
 
-#: my_game_list/friendships/models.py:27
-msgid "message"
-msgstr "wiadomość"
+#: src/my_game_list/collections/models.py:17
+msgid "Friends only"
+msgstr "Tylko znajomi"
 
-#: my_game_list/friendships/models.py:29
-msgid "is active"
-msgstr "czy aktywny"
+#: src/my_game_list/collections/models.py:18
+msgid "Private"
+msgstr "Prywatny"
 
-#: my_game_list/friendships/models.py:31
-msgid "The request will be inactive if the request was accepted or rejected."
-msgstr "Żądanie będzie nieaktywne, jeśli zostanie przyjęte lub odrzucone."
+#: src/my_game_list/collections/models.py:24
+msgid "Solo"
+msgstr "Indywidualna"
 
-#: my_game_list/friendships/models.py:33 my_game_list/games/models.py:45
-#: my_game_list/games/models.py:80 my_game_list/games/models.py:105
-#: my_game_list/games/models.py:131
-msgid "creation time"
-msgstr "czas stworzenia"
+#: src/my_game_list/collections/models.py:25
+msgid "Collaborative"
+msgstr "Współdzielona"
 
-#: my_game_list/friendships/models.py:34 my_game_list/games/models.py:46
-#: my_game_list/games/models.py:81
-msgid "last modified"
-msgstr "ostatnio zmodyfikowano"
+#: src/my_game_list/collections/models.py:31
+msgid "Normal"
+msgstr "Normalna"
 
-#: my_game_list/friendships/models.py:44
-msgid "friendship request"
-msgstr "zaproszenie do znajomych"
+#: src/my_game_list/collections/models.py:32
+msgid "Ranking"
+msgstr "Ranking"
 
-#: my_game_list/friendships/models.py:45
-msgid "friendship requests"
-msgstr "zaproszenia do znajomych"
+#: src/my_game_list/collections/models.py:33
+msgid "Tier list"
+msgstr "Tier lista"
 
-#: my_game_list/games/models.py:13
-msgid "publisher"
-msgstr "wydawca"
+#: src/my_game_list/collections/models.py:39
+msgid "S Tier"
+msgstr "Tier S"
 
-#: my_game_list/games/models.py:14
-msgid "publishers"
-msgstr "wydawcy"
+#: src/my_game_list/collections/models.py:40
+msgid "A Tier"
+msgstr "Tier A"
 
-#: my_game_list/games/models.py:21
-msgid "developer"
-msgstr "deweloper"
+#: src/my_game_list/collections/models.py:41
+msgid "B Tier"
+msgstr "Tier B"
 
-#: my_game_list/games/models.py:22
-msgid "developers"
-msgstr "deweloperzy"
+#: src/my_game_list/collections/models.py:42
+msgid "C Tier"
+msgstr "Tier C"
 
-#: my_game_list/games/models.py:29
-msgid "genre"
-msgstr "gatunek"
+#: src/my_game_list/collections/models.py:43
+msgid "D Tier"
+msgstr "Tier D"
 
-#: my_game_list/games/models.py:30
-msgid "genres"
-msgstr "gatunki"
+#: src/my_game_list/collections/models.py:44
+msgid "E Tier"
+msgstr "Tier E"
 
-#: my_game_list/games/models.py:37
-msgid "platform"
-msgstr "platforma"
-
-#: my_game_list/games/models.py:38
-msgid "platforms"
-msgstr "platformy"
-
-#: my_game_list/games/models.py:44
-msgid "title"
-msgstr "tytuł"
-
-#: my_game_list/games/models.py:47
-msgid "release date"
-msgstr "data wydania"
-
-#: my_game_list/games/models.py:48
-msgid "cover image"
-msgstr "okładka"
-
-#: my_game_list/games/models.py:49 my_game_list/games/models.py:132
-msgid "description"
-msgstr "opis"
-
-#: my_game_list/games/models.py:57
-msgid "game"
-msgstr "gra"
-
-#: my_game_list/games/models.py:58
-msgid "games"
-msgstr "gry"
-
-#: my_game_list/games/models.py:67
-msgid "Completed"
-msgstr "Zakończono"
-
-#: my_game_list/games/models.py:68
-msgid "Plan to play"
-msgstr "W planach"
-
-#: my_game_list/games/models.py:69
-msgid "Playing"
-msgstr "Aktualnie ogrywane"
-
-#: my_game_list/games/models.py:70
-msgid "Dropped"
-msgstr "Porzucno"
-
-#: my_game_list/games/models.py:71
-msgid "On hold"
-msgstr "Wstrzymano"
-
-#: my_game_list/games/models.py:79
-msgid "status"
-msgstr "status"
-
-#: my_game_list/games/models.py:89
-msgid "game list"
-msgstr "lista gier"
-
-#: my_game_list/games/models.py:90
-msgid "game lists"
-msgstr "listy gier"
-
-#: my_game_list/games/models.py:113
-msgid "game follow"
-msgstr "oserwowana gra"
-
-#: my_game_list/games/models.py:114
-msgid "games followed"
-msgstr "obserwowane gry"
-
-#: my_game_list/games/models.py:129
-msgid "score"
-msgstr "ocena"
-
-#: my_game_list/games/models.py:140
-msgid "game review"
-msgstr "recenzja gry"
-
-#: my_game_list/games/models.py:141
-msgid "games reviews"
-msgstr "recenzje gier"
-
-#: my_game_list/my_game_list/models.py:15
+#: src/my_game_list/collections/models.py:55
+#: src/my_game_list/games/models.py:46 src/my_game_list/games/models.py:220
+#: src/my_game_list/my_game_list/models.py:13
 msgid "name"
 msgstr "nazwa"
 
-#: my_game_list/my_game_list/validators.py:13
+#: src/my_game_list/collections/models.py:56
+#: src/my_game_list/collections/models.py:131
+#: src/my_game_list/games/models.py:140
+#: src/my_game_list/notifications/models.py:51
+msgid "description"
+msgstr "opis"
+
+#: src/my_game_list/collections/models.py:57
+msgid "is favorite"
+msgstr "jest ulubioną"
+
+#: src/my_game_list/collections/models.py:59
+msgid "visibility"
+msgstr "widoczność"
+
+#: src/my_game_list/collections/models.py:65
+msgid "mode"
+msgstr "tryb"
+
+#: src/my_game_list/collections/models.py:71
+#: src/my_game_list/games/models.py:284
+msgid "type"
+msgstr "typ"
+
+#: src/my_game_list/collections/models.py:76
+#: src/my_game_list/collections/models.py:132
+#: src/my_game_list/friendships/models.py:22
+#: src/my_game_list/friendships/models.py:64
+#: src/my_game_list/games/models.py:87 src/my_game_list/games/models.py:144
+#: src/my_game_list/games/models.py:168 src/my_game_list/games/models.py:345
+msgid "creation time"
+msgstr "czas stworzenia"
+
+#: src/my_game_list/collections/models.py:77
+#: src/my_game_list/collections/models.py:133
+#: src/my_game_list/friendships/models.py:65
+#: src/my_game_list/games/models.py:145 src/my_game_list/games/models.py:346
+msgid "last modified"
+msgstr "ostatnio zmodyfikowano"
+
+#: src/my_game_list/collections/models.py:78
+#: src/my_game_list/games/models.py:48 src/my_game_list/games/models.py:350
+#: src/my_game_list/users/models.py:27
+msgid "slug"
+msgstr "slug"
+
+#: src/my_game_list/collections/models.py:84
+msgid "owner"
+msgstr "właściciel"
+
+#: src/my_game_list/collections/models.py:90
+msgid "collaborators"
+msgstr "współtwórcy"
+
+#: src/my_game_list/collections/models.py:96
+#: src/my_game_list/collections/models.py:139
+msgid "collection"
+msgstr "kolekcja"
+
+#: src/my_game_list/collections/models.py:97
+msgid "collections"
+msgstr "kolekcje"
+
+#: src/my_game_list/collections/models.py:123
+msgid "order"
+msgstr "kolejność"
+
+#: src/my_game_list/collections/models.py:125
+msgid "tier"
+msgstr "tier"
+
+#: src/my_game_list/collections/models.py:145
+#: src/my_game_list/games/models.py:422
+msgid "game"
+msgstr "gra"
+
+#: src/my_game_list/collections/models.py:152
+msgid "added by"
+msgstr "dodane przez"
+
+#: src/my_game_list/collections/models.py:158
+msgid "collection item"
+msgstr "element kolekcji"
+
+#: src/my_game_list/collections/models.py:159
+msgid "collection items"
+msgstr "elementy kolekcji"
+
+#: src/my_game_list/friendships/models.py:32
+msgid "friendship"
+msgstr "znajomość"
+
+#: src/my_game_list/friendships/models.py:33
+msgid "friendships"
+msgstr "znajomości"
+
+#: src/my_game_list/friendships/models.py:49
+msgid "The user cannot befriend himself."
+msgstr "Użytkownik nie może dodać siebie do znajomych."
+
+#: src/my_game_list/friendships/models.py:62
+msgid "message"
+msgstr "wiadomość"
+
+#: src/my_game_list/friendships/models.py:63
+msgid "rejection time"
+msgstr "czas odrzucenia"
+
+#: src/my_game_list/friendships/models.py:81
+msgid "friendship request"
+msgstr "zaproszenie do znajomych"
+
+#: src/my_game_list/friendships/models.py:82
+msgid "friendship requests"
+msgstr "zaproszenia do znajomych"
+
+#: src/my_game_list/friendships/models.py:110
+msgid "This friendship request is already rejected."
+msgstr "To zaproszenie do znajomych zostało już odrzucone."
+
+#: src/my_game_list/friendships/serializers.py:86
+msgid "Can't create friendship request to yourself."
+msgstr "Nie można wysłać zaproszenia do znajomych do siebie."
+
+#: src/my_game_list/friendships/serializers.py:89
+msgid "You are already friends."
+msgstr "Już jesteście znajomymi."
+
+#: src/my_game_list/friendships/serializers.py:92
+msgid "You already sent a friendship request to this user."
+msgstr "Wysłałeś już zaproszenie do znajomych do tego użytkownika."
+
+#: src/my_game_list/friendships/serializers.py:95
+msgid "This user already sent a friendship request to you."
+msgstr "Ten użytkownik już wysłał Ci zaproszenie do znajomych."
+
+#: src/my_game_list/games/models.py:30
+msgid "igdb id"
+msgstr "id igdb"
+
+#: src/my_game_list/games/models.py:31
+msgid "igdb last updated at"
+msgstr "igdb ostatnio zaktualizowano"
+
+#: src/my_game_list/games/models.py:47
+msgid "company logo id"
+msgstr "id logo firmy"
+
+#: src/my_game_list/games/models.py:57
+msgid "company"
+msgstr "firma"
+
+#: src/my_game_list/games/models.py:58
+msgid "companies"
+msgstr "firmy"
+
+#: src/my_game_list/games/models.py:99
+msgid "game follow"
+msgstr "obserwowana gra"
+
+#: src/my_game_list/games/models.py:100
+msgid "games follows"
+msgstr "obserwowane gry"
+
+#: src/my_game_list/games/models.py:113
+msgid "Completed"
+msgstr "Zakończono"
+
+#: src/my_game_list/games/models.py:114
+msgid "Plan to play"
+msgstr "W planach"
+
+#: src/my_game_list/games/models.py:115
+msgid "Playing"
+msgstr "Aktualnie ogrywane"
+
+#: src/my_game_list/games/models.py:116
+msgid "Dropped"
+msgstr "Porzucono"
+
+#: src/my_game_list/games/models.py:117
+msgid "On hold"
+msgstr "Wstrzymano"
+
+#: src/my_game_list/games/models.py:126
+msgid "game media"
+msgstr "multimedia gry"
+
+#: src/my_game_list/games/models.py:127
+msgid "game medias"
+msgstr "multimedia gier"
+
+#: src/my_game_list/games/models.py:134
+msgid "score"
+msgstr "ocena"
+
+#: src/my_game_list/games/models.py:139 src/my_game_list/games/models.py:300
+msgid "status"
+msgstr "status"
+
+#: src/my_game_list/games/models.py:141
+msgid "completed at"
+msgstr "ukończono"
+
+#: src/my_game_list/games/models.py:142
+msgid "started at"
+msgstr "rozpoczęto"
+
+#: src/my_game_list/games/models.py:143
+msgid "playtime"
+msgstr "czas gry"
+
+#: src/my_game_list/games/models.py:154
+msgid "game list"
+msgstr "lista gier"
+
+#: src/my_game_list/games/models.py:155
+msgid "game lists"
+msgstr "listy gier"
+
+#: src/my_game_list/games/models.py:169
+msgid "review"
+msgstr "recenzja"
+
+#: src/my_game_list/games/models.py:177
+msgid "game review"
+msgstr "recenzja gry"
+
+#: src/my_game_list/games/models.py:178
+msgid "games reviews"
+msgstr "recenzje gier"
+
+#: src/my_game_list/games/models.py:194
+msgid "genre"
+msgstr "gatunek"
+
+#: src/my_game_list/games/models.py:195
+msgid "genres"
+msgstr "gatunki"
+
+#: src/my_game_list/games/models.py:201
+msgid "abbreviation"
+msgstr "skrót"
+
+#: src/my_game_list/games/models.py:206
+msgid "platform"
+msgstr "platforma"
+
+#: src/my_game_list/games/models.py:207
+msgid "platforms"
+msgstr "platformy"
+
+#: src/my_game_list/games/models.py:225
+msgid "game engine"
+msgstr "silnik gry"
+
+#: src/my_game_list/games/models.py:226
+msgid "game engines"
+msgstr "silniki gier"
+
+#: src/my_game_list/games/models.py:235
+msgid "game mode"
+msgstr "tryb gry"
+
+#: src/my_game_list/games/models.py:236
+msgid "game modes"
+msgstr "tryby gry"
+
+#: src/my_game_list/games/models.py:245
+msgid "player perspective"
+msgstr "perspektywa gracza"
+
+#: src/my_game_list/games/models.py:246
+msgid "player perspectives"
+msgstr "perspektywy gracza"
+
+#: src/my_game_list/games/models.py:255
+msgid "score sum"
+msgstr "suma ocen"
+
+#: src/my_game_list/games/models.py:256
+msgid "score count"
+msgstr "liczba ocen"
+
+#: src/my_game_list/games/models.py:258
+msgid "average score"
+msgstr "średnia ocena"
+
+#: src/my_game_list/games/models.py:264
+msgid "members count"
+msgstr "liczba członków"
+
+#: src/my_game_list/games/models.py:267
+msgid "popularity"
+msgstr "popularność"
+
+#: src/my_game_list/games/models.py:268
+msgid "rank position"
+msgstr "pozycja w rankingu"
+
+#: src/my_game_list/games/models.py:273 src/my_game_list/games/models.py:274
+msgid "game stats"
+msgstr "statystyki gry"
+
+#: src/my_game_list/games/models.py:289
+msgid "game type"
+msgstr "typ gry"
+
+#: src/my_game_list/games/models.py:290
+msgid "game types"
+msgstr "typy gier"
+
+#: src/my_game_list/games/models.py:305
+msgid "game status"
+msgstr "status gry"
+
+#: src/my_game_list/games/models.py:306
+msgid "game statuses"
+msgstr "statusy gier"
+
+#: src/my_game_list/games/models.py:319
+msgid "external game source"
+msgstr "źródło zewnętrznej gry"
+
+#: src/my_game_list/games/models.py:320
+msgid "external game sources"
+msgstr "źródła zewnętrznych gier"
+
+#: src/my_game_list/games/models.py:331
+msgid "external id"
+msgstr "id zewnętrzne"
+
+#: src/my_game_list/games/models.py:332
+msgid "url"
+msgstr "url"
+
+#: src/my_game_list/games/models.py:337
+msgid "external game"
+msgstr "zewnętrzna gra"
+
+#: src/my_game_list/games/models.py:338
+msgid "external games"
+msgstr "zewnętrzne gry"
+
+#: src/my_game_list/games/models.py:344
+msgid "title"
+msgstr "tytuł"
+
+#: src/my_game_list/games/models.py:347
+msgid "release date"
+msgstr "data wydania"
+
+#: src/my_game_list/games/models.py:348
+msgid "cover image id"
+msgstr "id okładki"
+
+#: src/my_game_list/games/models.py:349
+msgid "summary"
+msgstr "opis fabuły"
+
+#: src/my_game_list/games/models.py:423
+msgid "games"
+msgstr "gry"
+
+#: src/my_game_list/my_game_list/exceptions.py:14
+msgid "There is a conflict with the current state of the target resource."
+msgstr "Wystąpił konflikt z bieżącym stanem docelowego zasobu."
+
+#: src/my_game_list/notifications/constants.py:10
+msgid "Info"
+msgstr "Informacja"
+
+#: src/my_game_list/notifications/constants.py:11
+msgid "Success"
+msgstr "Sukces"
+
+#: src/my_game_list/notifications/constants.py:12
+msgid "Warning"
+msgstr "Ostrzeżenie"
+
+#: src/my_game_list/notifications/constants.py:13
+msgid "Error"
+msgstr "Błąd"
+
+#: src/my_game_list/notifications/constants.py:19
+msgid "System"
+msgstr "System"
+
+#: src/my_game_list/notifications/constants.py:20
+msgid "Friendship"
+msgstr "Znajomość"
+
+#: src/my_game_list/notifications/constants.py:21
+msgid "Game Release"
+msgstr "Premiera gry"
+
+#: src/my_game_list/notifications/constants.py:27
+msgid "sent you a friend request"
+msgstr "wysłał Ci zaproszenie do znajomych"
+
+#: src/my_game_list/notifications/constants.py:28
+msgid "accepted your friend request"
+msgstr "zaakceptował Twoje zaproszenie do znajomych"
+
+#: src/my_game_list/notifications/constants.py:29
+msgid "premieres today!"
+msgstr "ma dzisiaj premierę!"
+
+#: src/my_game_list/notifications/constants.py:30
+msgid "premieres in a week!"
+msgstr "ma premierę za tydzień!"
+
+#: src/my_game_list/notifications/models.py:34
+msgid "recipient"
+msgstr "odbiorca"
+
+#: src/my_game_list/notifications/models.py:41
+msgid "actor content type"
+msgstr "typ zawartości aktora"
+
+#: src/my_game_list/notifications/models.py:44
+msgid "actor object ID"
+msgstr "ID obiektu aktora"
+
+#: src/my_game_list/notifications/models.py:49
+msgid "verb"
+msgstr "komunikat"
+
+#: src/my_game_list/notifications/models.py:63
+msgid "target content type"
+msgstr "typ zawartości celu"
+
+#: src/my_game_list/notifications/models.py:66
+msgid "target object ID"
+msgstr "ID obiektu celu"
+
+#: src/my_game_list/notifications/models.py:74
+msgid "unread"
+msgstr "nieprzeczytane"
+
+#: src/my_game_list/notifications/models.py:80
+msgid "level"
+msgstr "poziom"
+
+#: src/my_game_list/notifications/models.py:87
+msgid "category"
+msgstr "kategoria"
+
+#: src/my_game_list/notifications/models.py:94
+msgid "timestamp"
+msgstr "znacznik czasu"
+
+#: src/my_game_list/notifications/models.py:99
+msgid "data"
+msgstr "dane"
+
+#: src/my_game_list/notifications/models.py:110
+msgid "notification"
+msgstr "powiadomienie"
+
+#: src/my_game_list/notifications/models.py:111
+msgid "notifications"
+msgstr "powiadomienia"
+
+#: src/my_game_list/notifications/constants.py:35
 #, python-brace-format
-#| msgid "File too large. Size should not exceed {limit} B"
-msgid "File too large. Size should not exceed {limit} B."
-msgstr "Plik jest za duży. Rozmiar nie może przekraczać {limit} B."
+msgid "{game} is out now. Time to play!"
+msgstr "{game} jest już dostępna. Czas zagrać!"
 
-#: my_game_list/settings/base.py:111
-msgid "Polish"
-msgstr "Polski"
+#: src/my_game_list/notifications/constants.py:36
+#, python-brace-format
+msgid "{game} will be released in 7 days."
+msgstr "{game} zostanie wydana za 7 dni."
 
-#: my_game_list/settings/base.py:112
+#: src/my_game_list/settings/base.py:135
 msgid "English"
 msgstr "Angielski"
 
-#: my_game_list/users/models.py:12
+#: src/my_game_list/settings/base.py:136
+msgid "Polish"
+msgstr "Polski"
+
+#: src/my_game_list/users/models.py:19
 msgid "Male"
 msgstr "Mężczyzna"
 
-#: my_game_list/users/models.py:13
+#: src/my_game_list/users/models.py:20
 msgid "Female"
 msgstr "Kobieta"
 
-#: my_game_list/users/models.py:20
-msgid "avatar"
-msgstr "awatar"
+#: src/my_game_list/users/models.py:26
+msgid "email address"
+msgstr "adres e-mail"
 
-#: my_game_list/users/models.py:22
+#: src/my_game_list/users/models.py:29
 msgid "gender"
 msgstr "płeć"
+
+#: src/my_game_list/users/models.py:34
+msgid "last active"
+msgstr "ostatnio aktywny"

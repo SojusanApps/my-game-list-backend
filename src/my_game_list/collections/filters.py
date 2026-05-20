@@ -2,6 +2,7 @@
 
 from typing import TYPE_CHECKING
 
+from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from django_filters import rest_framework as filters
 
@@ -28,6 +29,25 @@ class CollectionFilterSet(filters.FilterSet):
     type = filters.MultipleChoiceFilter(choices=CollectionType.choices)
     is_favorite = filters.BooleanFilter()
     collaborator = filters.NumberFilter(field_name="collaborators__id")
+    member = filters.NumberFilter(
+        label=_("Member"),
+        method="filter_member",
+    )
+
+    def filter_member(
+        self,
+        queryset: QuerySet[Collection],
+        name: str,  # noqa: ARG002
+        value: int,
+    ) -> QuerySet[Collection]:
+        """Filter collections where the given user is the owner or a collaborator.
+
+        Args:
+            queryset: The queryset to filter
+            name: The field name (unused)
+            value: The user ID to check
+        """
+        return queryset.filter(Q(user__id=value) | Q(collaborators__id=value)).distinct()
 
     class Meta:
         """Meta class for collection filter set."""
@@ -42,6 +62,7 @@ class CollectionFilterSet(filters.FilterSet):
             "type",
             "is_favorite",
             "collaborator",
+            "member",
         )
 
 

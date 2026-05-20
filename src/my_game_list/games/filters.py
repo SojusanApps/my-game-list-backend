@@ -1,5 +1,8 @@
 """Filters for game related data."""
 
+from typing import Any
+
+from django.db.models import Q, QuerySet
 from django_filters import rest_framework as filters
 
 from my_game_list.games.models import (
@@ -19,7 +22,7 @@ from my_game_list.games.models import (
     Platform,
     PlayerPerspective,
 )
-from my_game_list.my_game_list.filters import BaseDictionaryFilterSet
+from my_game_list.my_game_list.filters import BaseDictionaryFilterSet, BilingualModelMultipleChoiceFilter
 
 
 class CompanyFilterSet(BaseDictionaryFilterSet):
@@ -90,50 +93,59 @@ class GameReviewFilterSet(filters.FilterSet):
 class GameFilterSet(filters.FilterSet):
     """FilterSet for game model."""
 
-    title = filters.CharFilter(lookup_expr="icontains")
+    title = filters.CharFilter(method="filter_title")
     release_date = filters.DateFromToRangeFilter()
-    publisher = filters.CharFilter(field_name="publisher__name", lookup_expr="icontains")
-    developer = filters.CharFilter(field_name="developer__name", lookup_expr="icontains")
-    genres = filters.ModelMultipleChoiceFilter(
-        field_name="genres__name",
-        to_field_name="name",
+    publisher = filters.CharFilter(method="filter_publisher")
+    developer = filters.CharFilter(method="filter_developer")
+    genres = BilingualModelMultipleChoiceFilter(
+        field_name="genres",
         queryset=Genre.objects.all(),
     )
-    platforms = filters.ModelMultipleChoiceFilter(
-        field_name="platforms__name",
-        to_field_name="name",
+    platforms = BilingualModelMultipleChoiceFilter(
+        field_name="platforms",
         queryset=Platform.objects.all(),
     )
-    game_type = filters.ModelMultipleChoiceFilter(
-        field_name="game_type__type",
-        to_field_name="type",
+    game_type = BilingualModelMultipleChoiceFilter(
+        field_name="game_type",
         queryset=GameType.objects.all(),
+        en_field="type_en",
+        pl_field="type_pl",
     )
-    game_status = filters.ModelMultipleChoiceFilter(
-        field_name="game_status__status",
-        to_field_name="status",
+    game_status = BilingualModelMultipleChoiceFilter(
+        field_name="game_status",
         queryset=GameStatus.objects.all(),
+        en_field="status_en",
+        pl_field="status_pl",
     )
-    game_engines = filters.ModelMultipleChoiceFilter(
-        field_name="game_engines__name",
-        to_field_name="name",
+    game_engines = BilingualModelMultipleChoiceFilter(
+        field_name="game_engines",
         queryset=GameEngine.objects.all(),
     )
-    game_modes = filters.ModelMultipleChoiceFilter(
-        field_name="game_modes__name",
-        to_field_name="name",
+    game_modes = BilingualModelMultipleChoiceFilter(
+        field_name="game_modes",
         queryset=GameMode.objects.all(),
     )
-    player_perspectives = filters.ModelMultipleChoiceFilter(
-        field_name="player_perspectives__name",
-        to_field_name="name",
+    player_perspectives = BilingualModelMultipleChoiceFilter(
+        field_name="player_perspectives",
         queryset=PlayerPerspective.objects.all(),
     )
-    external_games = filters.ModelMultipleChoiceFilter(
-        field_name="external_games__external_game_source__name",
-        to_field_name="name",
+    external_games = BilingualModelMultipleChoiceFilter(
+        field_name="external_games__external_game_source",
         queryset=ExternalGameSource.objects.all(),
     )
+
+    def filter_title(self, queryset: QuerySet[Any], _name: str, value: str) -> QuerySet[Any]:
+        """Filter by title in English or Polish."""
+        return queryset.filter(Q(title_en__icontains=value) | Q(title_pl__icontains=value))
+
+    def filter_publisher(self, queryset: QuerySet[Any], _name: str, value: str) -> QuerySet[Any]:
+        """Filter by publisher name in English or Polish."""
+        return queryset.filter(Q(publisher__name_en__icontains=value) | Q(publisher__name_pl__icontains=value))
+
+    def filter_developer(self, queryset: QuerySet[Any], _name: str, value: str) -> QuerySet[Any]:
+        """Filter by developer name in English or Polish."""
+        return queryset.filter(Q(developer__name_en__icontains=value) | Q(developer__name_pl__icontains=value))
+
     ordering = filters.OrderingFilter(
         fields=(
             ("created_at", "created_at"),
@@ -184,7 +196,11 @@ class PlatformFilterSet(BaseDictionaryFilterSet):
 class GameTypeFilterSet(filters.FilterSet):
     """Filter set for game type model."""
 
-    type = filters.CharFilter(lookup_expr="icontains")
+    type = filters.CharFilter(method="filter_type")
+
+    def filter_type(self, queryset: QuerySet[Any], _name: str, value: str) -> QuerySet[Any]:
+        """Filter by type in English or Polish."""
+        return queryset.filter(Q(type_en__icontains=value) | Q(type_pl__icontains=value))
 
     class Meta:
         """Meta class for GameTypeFilterSet."""
@@ -196,7 +212,11 @@ class GameTypeFilterSet(filters.FilterSet):
 class GameStatusFilterSet(filters.FilterSet):
     """Filter set for game status model."""
 
-    status = filters.CharFilter(lookup_expr="icontains")
+    status = filters.CharFilter(method="filter_status")
+
+    def filter_status(self, queryset: QuerySet[Any], _name: str, value: str) -> QuerySet[Any]:
+        """Filter by status in English or Polish."""
+        return queryset.filter(Q(status_en__icontains=value) | Q(status_pl__icontains=value))
 
     class Meta:
         """Meta class for GameStatusFilterSet."""

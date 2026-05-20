@@ -7,6 +7,7 @@ help:
 	@echo "            runs the migrations, prompts for superuser creation, and at the end runs the application."
 	@echo "check - Check the correctness of code with black formatter and ruff."
 	@echo "translations - Prepare the translations for supported languages."
+	@echo "finish_translations - Compile the translation messages."
 	@echo "coverage - Prepare the coverage report in HTML format."
 	@echo "generate_openapi - Generate OpenAPI schema in JSON format."
 	@echo "test_db - Run a Docker container with test database."
@@ -24,6 +25,9 @@ run:
 
 translations:
 	uv run scripts/my-game-list-manage.py makemessages -l pl
+
+finish_translations:
+	uv run scripts/my-game-list-manage.py compilemessages
 
 fresh_run:
 	uv run scripts/my-game-list-manage.py collectstatic
@@ -74,4 +78,4 @@ recalculate_stats:
 
 # .PHONY defines parts of the makefile that are not dependant on any specific file
 # This is most often used to store functions
-.PHONY: help uv-install install sync uv-compile run fresh_run check translations app_db test_db coverage sync tui import_igdb_data recalculate_stats
+.PHONY: help uv-install install sync uv-compile run fresh_run check translations finish_translations app_db test_db coverage sync tui import_igdb_data recalculate_stats

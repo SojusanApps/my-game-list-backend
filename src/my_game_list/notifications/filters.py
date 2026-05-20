@@ -2,14 +2,15 @@
 
 from django_filters import rest_framework as filters
 
+from my_game_list.notifications.constants import NotificationCategory, NotificationLevel
 from my_game_list.notifications.models import Notification
 
 
 class NotificationFilterSet(filters.FilterSet):
     """FilterSet for the Notification model."""
 
-    category = filters.ChoiceFilter(choices=Notification.CATEGORY_CHOICES)
-    level = filters.ChoiceFilter(choices=Notification.LEVEL_CHOICES)
+    category = filters.ChoiceFilter(choices=NotificationCategory.choices)
+    level = filters.ChoiceFilter(choices=NotificationLevel.choices)
     unread = filters.BooleanFilter()
 
     class Meta:
