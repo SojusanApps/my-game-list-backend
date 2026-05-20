@@ -3,7 +3,6 @@
 from typing import TYPE_CHECKING, Self
 
 from django.contrib.auth import get_user_model
-from django.utils.translation import gettext_lazy as _
 from drf_spectacular.utils import extend_schema
 from rest_framework import serializers, status
 from rest_framework.decorators import action
@@ -27,7 +26,7 @@ from my_game_list.friendships.serializers import (
     FriendshipRequestSerializer,
     FriendshipSerializer,
 )
-from my_game_list.notifications.models import Notification
+from my_game_list.notifications.constants import NotificationCategory, NotificationVerb
 from my_game_list.notifications.utils import notify_send
 
 if TYPE_CHECKING:
@@ -74,8 +73,8 @@ class FriendshipRequestViewSet(
         notify_send(
             sender=user,
             recipient=instance.receiver,
-            verb=str(_("sent you a friend request")),
-            category=Notification.CATEGORY_FRIENDSHIP,
+            verb=NotificationVerb.FRIEND_REQUEST_SENT,
+            category=NotificationCategory.FRIENDSHIP,
         )
 
     @extend_schema(
@@ -95,8 +94,8 @@ class FriendshipRequestViewSet(
         notify_send(
             sender=user,
             recipient=instance.sender,
-            verb=str(_("accepted your friend request")),
-            category=Notification.CATEGORY_FRIENDSHIP,
+            verb=NotificationVerb.FRIEND_REQUEST_ACCEPTED,
+            category=NotificationCategory.FRIENDSHIP,
         )
 
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -137,7 +137,7 @@ class GameListSerializer(serializers.ModelSerializer[GameList]):
 class GameListCreateSerializer(serializers.ModelSerializer[GameList]):
     """A serializer for the game list create model."""
 
-    owned_on = serializers.SlugRelatedField(
+    owned_on = serializers.SlugRelatedField(  # type: ignore[var-annotated]
         queryset=GameMedia.objects.all(),
         slug_field="id",
         many=True,

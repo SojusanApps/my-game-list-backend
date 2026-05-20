@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Any
 
 from django.contrib.contenttypes.models import ContentType
 
+from my_game_list.notifications.constants import NotificationCategory, NotificationLevel
 from my_game_list.notifications.models import Notification
 
 if TYPE_CHECKING:
@@ -18,8 +19,8 @@ def notify_send(  # noqa: PLR0913
     recipient: User | AnonymousUser,
     verb: str,
     target: models.Model | None = None,
-    level: str = Notification.LEVEL_INFO,
-    category: str = Notification.CATEGORY_SYSTEM,
+    level: str = NotificationLevel.INFO,
+    category: str = NotificationCategory.SYSTEM,
     description: str = "",
     data: dict[str, Any] | None = None,
 ) -> Notification:

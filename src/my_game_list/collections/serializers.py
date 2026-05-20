@@ -55,7 +55,7 @@ class CollectionItemSerializer(serializers.ModelSerializer[CollectionItem]):
 class CollectionItemCreateSerializer(serializers.ModelSerializer[CollectionItem]):
     """A serializer for creating collection items."""
 
-    game = serializers.SlugRelatedField(
+    game = serializers.SlugRelatedField(  # type: ignore[var-annotated]
         queryset=Game.objects.all(),
         slug_field="id",
     )

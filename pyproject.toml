@@ -51,6 +51,7 @@ dependencies = [
     "opentelemetry-instrumentation-requests>=0.62b1",
     "opentelemetry-instrumentation-urllib>=0.62b1",
     "opentelemetry-instrumentation-urllib3>=0.62b1",
+    "django-modeltranslation>=0.20.3",
 ]
 
 [build-system]
@@ -197,3 +198,11 @@ django_settings_module = "my_game_list.settings.settings_mypy"
 [[tool.mypy.overrides]]
 module = "dacite"
 implicit_reexport = true
+
+[[tool.mypy.overrides]]
+# modeltranslation replaces model managers with MultilingualManager at runtime;
+# django-stubs cannot resolve the substituted manager type (django-manager-missing),
+# and the resulting type-inference gap cascades into var-annotated errors on M2M
+# fields that target translated models. Both codes are intentionally suppressed here.
+module = "my_game_list.games.models"
+disable_error_code = ["django-manager-missing", "var-annotated"]

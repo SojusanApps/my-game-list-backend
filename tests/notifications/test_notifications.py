@@ -3,6 +3,7 @@
 import pytest
 from django.contrib.auth import get_user_model
 
+from my_game_list.notifications.constants import NotificationCategory
 from my_game_list.notifications.models import Notification
 from my_game_list.notifications.utils import notify_send
 
@@ -21,7 +22,7 @@ def test_notify_send() -> None:
     assert notification.recipient == user2
     assert notification.actor == user1
     assert notification.verb == "sent you a friend request"
-    assert notification.category == Notification.CATEGORY_SYSTEM
+    assert notification.category == NotificationCategory.SYSTEM
     assert notification.unread is True
 
 
@@ -44,15 +45,15 @@ def test_filter_notification() -> None:
     user1 = User.objects.create_user(username="user1", password="password", email="user1@email.com")  # noqa: S106
     user2 = User.objects.create_user(username="user2", password="password", email="user2@email.com")  # noqa: S106
 
-    notify_send(sender=user1, recipient=user2, verb="system info", category=Notification.CATEGORY_SYSTEM)
-    notify_send(sender=user1, recipient=user2, verb="friend request", category=Notification.CATEGORY_FRIENDSHIP)
+    notify_send(sender=user1, recipient=user2, verb="system info", category=NotificationCategory.SYSTEM)
+    notify_send(sender=user1, recipient=user2, verb="friend request", category=NotificationCategory.FRIENDSHIP)
 
-    friendship_notifications = Notification.objects.filter(category=Notification.CATEGORY_FRIENDSHIP)
+    friendship_notifications = Notification.objects.filter(category=NotificationCategory.FRIENDSHIP)
     friendship_notification = friendship_notifications.first()
     assert friendship_notification is not None
     assert friendship_notification.verb == "friend request"
 
-    system_notifications = Notification.objects.filter(category=Notification.CATEGORY_SYSTEM)
+    system_notifications = Notification.objects.filter(category=NotificationCategory.SYSTEM)
     system_notification = system_notifications.first()
     assert system_notification is not None
     assert system_notification.verb == "system info"

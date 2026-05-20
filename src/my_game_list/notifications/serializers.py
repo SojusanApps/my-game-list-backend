@@ -3,6 +3,7 @@
 from typing import Any
 
 from django.contrib.auth import get_user_model
+from django.utils.translation import get_language, gettext
 from drf_spectacular.utils import PolymorphicProxySerializer, extend_schema_field
 from rest_framework import serializers
 
@@ -41,6 +42,10 @@ class NotificationSerializer(serializers.ModelSerializer[Notification]):
 
     actor = serializers.SerializerMethodField()
     target = serializers.SerializerMethodField()
+    verb = serializers.SerializerMethodField()
+    category = serializers.SerializerMethodField()
+    level = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
 
     class Meta:
         """Meta data for the NotificationSerializer."""
@@ -80,3 +85,26 @@ class NotificationSerializer(serializers.ModelSerializer[Notification]):
                 data["slug"] = obj.target.slug
             return data
         return None
+
+    def get_verb(self, obj: Notification) -> str:
+        """Return the verb translated into the current request language."""
+        return gettext(obj.verb)
+
+    def get_category(self, obj: Notification) -> str:
+        """Return the category label translated into the current request language."""
+        return obj.get_category_display()
+
+    def get_level(self, obj: Notification) -> str:
+        """Return the level label translated into the current request language."""
+        return obj.get_level_display()
+
+    def get_description(self, obj: Notification) -> str:
+        """Return the description translated and formatted into the current request language."""
+        if not obj.description:
+            return obj.description
+        translated = gettext(obj.description)
+        if "{game}" in translated and obj.data:
+            lang = (get_language() or "en").split("-")[0]
+            game_title = obj.data.get(f"game_title_{lang}") or obj.data.get("game_title_en", "")
+            return translated.format(game=game_title)
+        return translated

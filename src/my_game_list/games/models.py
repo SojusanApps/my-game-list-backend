@@ -1,6 +1,6 @@
 """This module contains the models for the game related data."""
 
-from typing import Any, ClassVar, Self
+from typing import TYPE_CHECKING, Any, ClassVar, Self
 from uuid import uuid4
 
 from django.conf import settings
@@ -47,6 +47,10 @@ class Company(BaseDictionaryModel, IGDBModel):
     company_logo_id = models.CharField(_("company logo id"), max_length=255, blank=True)
     slug = models.SlugField(_("slug"), max_length=512, unique=True, blank=True)
 
+    if TYPE_CHECKING:
+        name_en: str
+        name_pl: str
+
     class Meta(BaseDictionaryModel.Meta):
         """Meta data for the company model."""
 
@@ -55,8 +59,8 @@ class Company(BaseDictionaryModel, IGDBModel):
 
     def save(self: Self, *args: Any, **kwargs: Any) -> None:  # noqa: ANN401
         """Save the company."""
-        if not self.slug and self.name:
-            self.slug = slugify(self.name)
+        if not self.slug and self.name_en:
+            self.slug = slugify(self.name_en)
         if not self.slug:
             self.slug = str(uuid4())
         super().save(*args, **kwargs)
@@ -406,6 +410,12 @@ class Game(BaseModel, IGDBModel):
 
     objects = GameQuerySet.as_manager()
 
+    if TYPE_CHECKING:
+        title_en: str
+        title_pl: str
+        summary_en: str
+        summary_pl: str
+
     class Meta(BaseModel.Meta):
         """Meta data for the game model."""
 
@@ -418,8 +428,8 @@ class Game(BaseModel, IGDBModel):
 
     def save(self: Self, *args: Any, **kwargs: Any) -> None:  # noqa: ANN401
         """Save the game."""
-        if not self.slug and self.title:
-            self.slug = slugify(self.title)
+        if not self.slug and self.title_en:
+            self.slug = slugify(self.title_en)
         if not self.slug:
             self.slug = str(uuid4())
         super().save(*args, **kwargs)

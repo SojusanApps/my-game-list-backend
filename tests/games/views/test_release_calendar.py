@@ -50,16 +50,16 @@ def test_release_calendar_dates_and_limit(api_client: APIClient, calendar_games:
     assert response.status_code == status.HTTP_200_OK
     results = response.json()
 
-    # 2024-01-01 has 3 games, should only return top 2 (popularity 30 and 20)
+    # 2024-01-01 has 3 games, all 3 returned (limit is MAX_GAMES_PER_DAY_IN_CALENDAR=3)
     # 2024-01-02 has 1 game
-    # Total returned: 3 games
-    assert len(results) == 3  # noqa: PLR2004
+    # Total returned: 4 games
+    assert len(results) == 4  # noqa: PLR2004
 
     dates_counter: dict[str, int] = {}
     for item in results:
         dates_counter[item["release_date"]] = dates_counter.get(item["release_date"], 0) + 1
 
-    assert dates_counter["2024-01-01"] == 2  # noqa: PLR2004
+    assert dates_counter["2024-01-01"] == 3  # noqa: PLR2004
     assert dates_counter["2024-01-02"] == 1
     assert "2024-01-03" not in dates_counter
 
@@ -68,7 +68,8 @@ def test_release_calendar_dates_and_limit(api_client: APIClient, calendar_games:
     # highest popularity first
     assert results[0]["popularity"] == 30  # noqa: PLR2004
     assert results[1]["popularity"] == 20  # noqa: PLR2004
-    assert results[2]["release_date"] == "2024-01-02"
+    assert results[2]["popularity"] == 10  # noqa: PLR2004
+    assert results[3]["release_date"] == "2024-01-02"
 
 
 @pytest.mark.django_db()

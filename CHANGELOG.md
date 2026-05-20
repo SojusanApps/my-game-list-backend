@@ -2,6 +2,12 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.19.0] - 20.05.2026
+
+* Added polish localization.
+* Added `member` to collection filters, this allows to get all collection that the user has access to. (his own and with contributor address).
+* Increased the number of returned items in the calendar endpoint, per day, to 3.
+
 ## v. [4.18.4] - 18.05.2026
 
 * Removed create and delete endpoints from the API for `Company` and `Game` models.

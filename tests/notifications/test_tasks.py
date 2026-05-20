@@ -8,6 +8,7 @@ from django.utils import timezone
 from model_bakery import baker
 
 from my_game_list.games.models import Game, GameFollow
+from my_game_list.notifications.constants import NotificationCategory, NotificationDescription
 from my_game_list.notifications.models import Notification
 from my_game_list.notifications.tasks import notify_game_releases
 
@@ -45,16 +46,26 @@ def test_notify_game_releases() -> None:
     notification_today = Notification.objects.get(recipient=user1)
     assert notification_today.verb == "premieres today!"
     assert notification_today.actor == game_today
-    assert notification_today.category == Notification.CATEGORY_RELEASE
-    assert notification_today.data == {"game_id": game_today.id, "game_slug": game_today.slug}
-    assert "is out now. Time to play!" in notification_today.description
+    assert notification_today.category == NotificationCategory.RELEASE
+    assert notification_today.data == {
+        "game_id": game_today.id,
+        "game_slug": game_today.slug,
+        "game_title_en": game_today.title_en or "",
+        "game_title_pl": game_today.title_pl or game_today.title_en or "",
+    }
+    assert notification_today.description == NotificationDescription.GAME_PREMIERES_TODAY
 
     notification_next_week = Notification.objects.get(recipient=user2)
     assert notification_next_week.verb == "premieres in a week!"
     assert notification_next_week.actor == game_next_week
-    assert notification_next_week.category == Notification.CATEGORY_RELEASE
-    assert notification_next_week.data == {"game_id": game_next_week.id, "game_slug": game_next_week.slug}
-    assert "will be released in 7 days" in notification_next_week.description
+    assert notification_next_week.category == NotificationCategory.RELEASE
+    assert notification_next_week.data == {
+        "game_id": game_next_week.id,
+        "game_slug": game_next_week.slug,
+        "game_title_en": game_next_week.title_en or "",
+        "game_title_pl": game_next_week.title_pl or game_next_week.title_en or "",
+    }
+    assert notification_next_week.description == NotificationDescription.GAME_PREMIERES_IN_A_WEEK
 
     # Test running it again doesn't create duplicate notifications
     notify_game_releases()

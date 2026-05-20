@@ -2,14 +2,14 @@
 
 from typing import ClassVar
 
-from django.contrib import admin
+from modeltranslation.admin import TabbedTranslationAdmin
 
 from my_game_list.my_game_list.models import BaseDictionaryModel
 
 
-class BaseDictionaryModelAdmin(admin.ModelAdmin[BaseDictionaryModel]):
+class BaseDictionaryModelAdmin(TabbedTranslationAdmin[BaseDictionaryModel]):
     """Base admin model for dictionary."""
 
     readonly_fields: ClassVar[tuple[str, ...]] = ("id",)
-    search_fields: ClassVar[tuple[str, ...]] = ("name",)
+    search_fields: ClassVar[tuple[str, ...]] = ("name_en", "name_pl")
     list_display: tuple[str, ...] = (*readonly_fields, *search_fields)
