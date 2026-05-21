@@ -27,8 +27,15 @@ class IGDBModel(models.Model):
     from IGDB or not.
     """
 
-    igdb_id = models.PositiveIntegerField(_("igdb id"), unique=True)
-    igdb_updated_at = models.DateTimeField(_("igdb last updated at"))
+    igdb_id = models.PositiveIntegerField(
+        _("igdb id"),
+        unique=True,
+        help_text="The ID of this record in the IGDB database.",
+    )
+    igdb_updated_at = models.DateTimeField(
+        _("igdb last updated at"),
+        help_text="Timestamp of the last changes in IGDB.",
+    )
 
     class Meta(TypedModelMeta):
         """Meta data for dictionary models."""
@@ -43,9 +50,20 @@ class IGDBModel(models.Model):
 class Company(BaseDictionaryModel, IGDBModel):
     """Data about company."""
 
-    name = models.CharField(_("name"), max_length=255)
-    company_logo_id = models.CharField(_("company logo id"), max_length=255, blank=True)
-    slug = models.SlugField(_("slug"), max_length=512, unique=True, blank=True)
+    name = models.CharField(_("name"), max_length=255, help_text="The company's name.")
+    company_logo_id = models.CharField(
+        _("company logo id"),
+        max_length=255,
+        blank=True,
+        help_text="The IGDB logo ID used to construct the company logo image URL.",
+    )
+    slug = models.SlugField(
+        _("slug"),
+        max_length=512,
+        unique=True,
+        blank=True,
+        help_text="URL-safe identifier, auto-generated from the company name.",
+    )
 
     if TYPE_CHECKING:
         name_en: str
@@ -86,11 +104,17 @@ class GameFollow(BaseModel):
 
     created_at = models.DateTimeField(_("creation time"), auto_now_add=True)
 
-    game = models.ForeignKey("Game", on_delete=models.PROTECT, related_name="follow_list")
+    game = models.ForeignKey(
+        "Game",
+        on_delete=models.PROTECT,
+        related_name="follow_list",
+        help_text="The game being followed.",
+    )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
         related_name="games_followed",
+        help_text="The user following the game.",
     )
 
     class Meta(BaseModel.Meta):
@@ -135,18 +159,58 @@ class GameList(BaseModel):
         validators=[MinValueValidator(1), MaxValueValidator(10)],
         null=True,
         blank=True,
+        help_text="The user's score for this game, between 1 and 10.",
     )
-    status = models.CharField(_("status"), max_length=3, choices=GameListStatus.choices)
-    description = models.CharField(_("description"), max_length=200, blank=True)
-    completed_at = models.DateField(_("completed at"), null=True, blank=True)
-    started_at = models.DateField(_("started at"), null=True, blank=True)
-    playtime = models.PositiveIntegerField(_("playtime"), null=True, blank=True)
+    status = models.CharField(
+        _("status"),
+        max_length=3,
+        choices=GameListStatus.choices,
+        help_text="The user's current play status (Completed, Plan to Play, Playing, Dropped, On Hold).",
+    )
+    description = models.CharField(
+        _("description"),
+        max_length=200,
+        blank=True,
+        help_text="Optional personal notes about this game.",
+    )
+    completed_at = models.DateField(
+        _("completed at"),
+        null=True,
+        blank=True,
+        help_text="The date the user completed this game.",
+    )
+    started_at = models.DateField(
+        _("started at"),
+        null=True,
+        blank=True,
+        help_text="The date the user started playing this game.",
+    )
+    playtime = models.PositiveIntegerField(
+        _("playtime"),
+        null=True,
+        blank=True,
+        help_text="The number of minutes played.",
+    )
     created_at = models.DateTimeField(_("creation time"), auto_now_add=True)
     last_modified_at = models.DateTimeField(_("last modified"), auto_now=True)
 
-    game = models.ForeignKey("Game", on_delete=models.CASCADE, related_name="game_lists")
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="game_lists")
-    owned_on = models.ManyToManyField(GameMedia, related_name="game_lists")
+    game = models.ForeignKey(
+        "Game",
+        on_delete=models.CASCADE,
+        related_name="game_lists",
+        help_text="The game this list entry refers to.",
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="game_lists",
+        help_text="The user who owns this game list entry.",
+    )
+    owned_on = models.ManyToManyField(
+        GameMedia,
+        related_name="game_lists",
+        help_text="The media formats on which the user owns this game.",
+    )
 
     class Meta(BaseModel.Meta):
         """Meta data for game list model."""
@@ -166,10 +230,25 @@ class GameReview(BaseModel):
     """Contains reviews for games."""
 
     created_at = models.DateTimeField(_("creation time"), auto_now_add=True)
-    review = models.TextField(_("review"), blank=True, max_length=1000)
+    review = models.TextField(
+        _("review"),
+        blank=True,
+        max_length=1000,
+        help_text="The review text.",
+    )
 
-    game = models.ForeignKey("Game", on_delete=models.PROTECT, related_name="reviews")
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="reviews")
+    game = models.ForeignKey(
+        "Game",
+        on_delete=models.PROTECT,
+        related_name="reviews",
+        help_text="The game being reviewed.",
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="reviews",
+        help_text="The user who wrote the review.",
+    )
 
     class Meta(BaseModel.Meta):
         """Meta data for game review model."""
@@ -198,7 +277,12 @@ class Genre(BaseDictionaryModel, IGDBModel):
 class Platform(BaseDictionaryModel, IGDBModel):
     """Data about game platforms."""
 
-    abbreviation = models.CharField(_("abbreviation"), max_length=255, blank=True)
+    abbreviation = models.CharField(
+        _("abbreviation"),
+        max_length=255,
+        blank=True,
+        help_text="A short abbreviation for the platform name (e.g. PS5, PC).",
+    )
 
     class Meta(BaseDictionaryModel.Meta):
         """Meta data for the platform model."""
@@ -217,7 +301,7 @@ class Platform(BaseDictionaryModel, IGDBModel):
 class GameEngine(IGDBModel):
     """Data about game engines."""
 
-    name = models.CharField(_("name"), max_length=255)
+    name = models.CharField(_("name"), max_length=255, help_text="The game engine's name.")
 
     class Meta(BaseDictionaryModel.Meta):
         """Meta data for the game engine model."""
@@ -249,23 +333,52 @@ class PlayerPerspective(BaseDictionaryModel, IGDBModel):
 class GameStats(models.Model):
     """Data about game statistics."""
 
-    game = models.OneToOneField("Game", on_delete=models.CASCADE, related_name="stats")
+    game = models.OneToOneField(
+        "Game",
+        on_delete=models.CASCADE,
+        related_name="stats",
+        help_text="The game this statistics record belongs to.",
+    )
 
     # Aggregates (Updated via Signals/Save)
-    score_sum = models.BigIntegerField(_("score sum"), default=0)
-    score_count = models.PositiveIntegerField(_("score count"), default=0)
+    score_sum = models.BigIntegerField(
+        _("score sum"),
+        default=0,
+        help_text="The sum of all user scores, used for average calculation.",
+    )
+    score_count = models.PositiveIntegerField(
+        _("score count"),
+        default=0,
+        help_text="The number of users who have scored this game.",
+    )
     average_score = models.DecimalField(
         _("average score"),
         max_digits=4,
         decimal_places=2,
         default=0,
         db_index=True,
+        help_text="The computed average score across all user ratings.",
     )
-    members_count = models.PositiveIntegerField(_("members count"), default=0, db_index=True)
+    members_count = models.PositiveIntegerField(
+        _("members count"),
+        default=0,
+        db_index=True,
+        help_text="The number of users who have this game in their game list.",
+    )
 
     # Ranks (Updated via Celery)
-    popularity = models.PositiveIntegerField(_("popularity"), null=True, db_index=True)
-    rank_position = models.PositiveIntegerField(_("rank position"), null=True, db_index=True)
+    popularity = models.PositiveIntegerField(
+        _("popularity"),
+        null=True,
+        db_index=True,
+        help_text="The game's popularity rank, updated periodically by a background task.",
+    )
+    rank_position = models.PositiveIntegerField(
+        _("rank position"),
+        null=True,
+        db_index=True,
+        help_text="The game's position in the all-time ranking, updated periodically.",
+    )
 
     class Meta(TypedModelMeta):
         """Meta data for the game stats model."""
@@ -281,7 +394,12 @@ class GameStats(models.Model):
 class GameType(BaseModel, IGDBModel):
     """Data about game types."""
 
-    type = models.CharField(_("type"), max_length=255, unique=True)
+    type = models.CharField(
+        _("type"),
+        max_length=255,
+        unique=True,
+        help_text="The game type name (e.g. Main Game, DLC, Expansion).",
+    )
 
     class Meta(BaseModel.Meta):
         """Meta data for the game type model."""
@@ -297,7 +415,12 @@ class GameType(BaseModel, IGDBModel):
 class GameStatus(BaseModel, IGDBModel):
     """Data about game statuses."""
 
-    status = models.CharField(_("status"), max_length=255, unique=True)
+    status = models.CharField(
+        _("status"),
+        max_length=255,
+        unique=True,
+        help_text="The release status name (e.g. Released, Alpha, Early Access).",
+    )
 
     class Meta(BaseModel.Meta):
         """Meta data for the game status model."""
@@ -327,9 +450,19 @@ class ExternalGame(BaseModel, IGDBModel):
         ExternalGameSource,
         on_delete=models.CASCADE,
         related_name="external_games",
+        help_text="The external platform where this game is listed (e.g. Steam, GOG).",
     )
-    external_id = models.CharField(_("external id"), max_length=255)
-    url = models.URLField(_("url"), max_length=1024, blank=True)
+    external_id = models.CharField(
+        _("external id"),
+        max_length=255,
+        help_text="The game's identifier on the external platform.",
+    )
+    url = models.URLField(
+        _("url"),
+        max_length=1024,
+        blank=True,
+        help_text="A direct link to the game on the external platform.",
+    )
 
     class Meta(BaseModel.Meta):
         """Meta data for the external game model."""
@@ -341,13 +474,34 @@ class ExternalGame(BaseModel, IGDBModel):
 class Game(BaseModel, IGDBModel):
     """A model containing data about games."""
 
-    title = models.CharField(_("title"), max_length=255)
+    title = models.CharField(_("title"), max_length=255, help_text="The game's title.")
     created_at = models.DateTimeField(_("creation time"), auto_now_add=True, db_index=True)
     last_modified_at = models.DateTimeField(_("last modified"), auto_now=True)
-    release_date = models.DateField(_("release date"), blank=True, null=True)
-    cover_image_id = models.CharField(_("cover image id"), max_length=255, blank=True)
-    summary = models.TextField(_("summary"), blank=True, max_length=2000)
-    slug = models.SlugField(_("slug"), max_length=512, unique=True, blank=True)
+    release_date = models.DateField(
+        _("release date"),
+        blank=True,
+        null=True,
+        help_text="The worldwide release date of the game.",
+    )
+    cover_image_id = models.CharField(
+        _("cover image id"),
+        max_length=255,
+        blank=True,
+        help_text="The IGDB cover image ID used to construct the cover image URL.",
+    )
+    summary = models.TextField(
+        _("summary"),
+        blank=True,
+        max_length=2000,
+        help_text="A short description or synopsis of the game.",
+    )
+    slug = models.SlugField(
+        _("slug"),
+        max_length=512,
+        unique=True,
+        blank=True,
+        help_text="URL-safe identifier, auto-generated from the English title.",
+    )
 
     game_type = models.ForeignKey(
         GameType,
@@ -355,6 +509,7 @@ class Game(BaseModel, IGDBModel):
         related_name="games",
         blank=True,
         null=True,
+        help_text="The game type (Main Game, DLC, Expansion, etc.).",
     )
     game_status = models.ForeignKey(
         GameStatus,
@@ -362,6 +517,7 @@ class Game(BaseModel, IGDBModel):
         related_name="games",
         blank=True,
         null=True,
+        help_text="The current release status of the game.",
     )
 
     parent_game = models.ForeignKey(
@@ -370,26 +526,89 @@ class Game(BaseModel, IGDBModel):
         null=True,
         blank=True,
         related_name="children_games",
+        help_text="The parent game this record is a DLC, expansion, or port of.",
     )
 
-    bundles = models.ManyToManyField("self", symmetrical=False, related_name="bundled_in", blank=True)
-    dlcs = models.ManyToManyField("self", symmetrical=False, related_name="dlc_of", blank=True)
-    expanded_games = models.ManyToManyField("self", symmetrical=False, related_name="expanded_by", blank=True)
-    expansions = models.ManyToManyField("self", symmetrical=False, related_name="expansion_of", blank=True)
-    forks = models.ManyToManyField("self", symmetrical=False, related_name="fork_of", blank=True)
-    ports = models.ManyToManyField("self", symmetrical=False, related_name="port_of", blank=True)
+    bundles = models.ManyToManyField(
+        "self",
+        symmetrical=False,
+        related_name="bundled_in",
+        blank=True,
+        help_text="Bundles that include this game.",
+    )
+    dlcs = models.ManyToManyField(
+        "self",
+        symmetrical=False,
+        related_name="dlc_of",
+        blank=True,
+        help_text="DLC additions for this game.",
+    )
+    expanded_games = models.ManyToManyField(
+        "self",
+        symmetrical=False,
+        related_name="expanded_by",
+        blank=True,
+        help_text="Games expanded by this game.",
+    )
+    expansions = models.ManyToManyField(
+        "self",
+        symmetrical=False,
+        related_name="expansion_of",
+        blank=True,
+        help_text="Expansions of this game.",
+    )
+    forks = models.ManyToManyField(
+        "self",
+        symmetrical=False,
+        related_name="fork_of",
+        blank=True,
+        help_text="Fork versions derived from this game.",
+    )
+    ports = models.ManyToManyField(
+        "self",
+        symmetrical=False,
+        related_name="port_of",
+        blank=True,
+        help_text="Platform ports of this game.",
+    )
     standalone_expansions = models.ManyToManyField(
         "self",
         symmetrical=False,
         related_name="standalone_expansion_of",
         blank=True,
+        help_text="Standalone expansions of this game.",
     )
 
-    game_engines = models.ManyToManyField(GameEngine, related_name="games", blank=True)
-    game_modes = models.ManyToManyField(GameMode, related_name="games", blank=True)
-    player_perspectives = models.ManyToManyField(PlayerPerspective, related_name="games", blank=True)
-    external_games = models.ManyToManyField(ExternalGame, related_name="games", blank=True)
-    screenshots = ArrayField(models.CharField(max_length=255), default=list, blank=True)
+    game_engines = models.ManyToManyField(
+        GameEngine,
+        related_name="games",
+        blank=True,
+        help_text="Game engines used to build this game.",
+    )
+    game_modes = models.ManyToManyField(
+        GameMode,
+        related_name="games",
+        blank=True,
+        help_text="Supported game modes (single-player, multiplayer, co-op, etc.).",
+    )
+    player_perspectives = models.ManyToManyField(
+        PlayerPerspective,
+        related_name="games",
+        blank=True,
+        help_text="Supported player perspectives (first-person, third-person, etc.).",
+    )
+    external_games = models.ManyToManyField(
+        ExternalGame,
+        related_name="games",
+        blank=True,
+        help_text="Links to external platforms where this game is available.",
+    )
+    screenshots = ArrayField(
+        models.CharField(max_length=255),
+        default=list,
+        blank=True,
+        help_text="IGDB screenshot IDs for this game.",
+    )
 
     publisher = models.ForeignKey(
         Company,
@@ -397,6 +616,7 @@ class Game(BaseModel, IGDBModel):
         related_name="games_published",
         blank=True,
         null=True,
+        help_text="The company that published this game.",
     )
     developer = models.ForeignKey(
         Company,
@@ -404,9 +624,18 @@ class Game(BaseModel, IGDBModel):
         related_name="games_developed",
         blank=True,
         null=True,
+        help_text="The company that developed this game.",
     )
-    genres = models.ManyToManyField(Genre, related_name="games")
-    platforms = models.ManyToManyField(Platform, related_name="games")
+    genres = models.ManyToManyField(
+        Genre,
+        related_name="games",
+        help_text="Genres this game belongs to.",
+    )
+    platforms = models.ManyToManyField(
+        Platform,
+        related_name="games",
+        help_text="Platforms this game is available on.",
+    )
 
     objects = GameQuerySet.as_manager()
 

@@ -21,8 +21,18 @@ class Friendship(BaseModel):
 
     created_at = models.DateTimeField(_("creation time"), auto_now_add=True)
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="friends")
-    friend = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="_friends")
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="friends",
+        help_text="One party in the friendship.",
+    )
+    friend = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="_friends",
+        help_text="The other party in the friendship.",
+    )
 
     objects = FriendshipManager()
 
@@ -59,8 +69,18 @@ class Friendship(BaseModel):
 class FriendshipRequest(BaseModel):
     """A model contains friendship requests."""
 
-    message = models.CharField(_("message"), max_length=100, blank=True)
-    rejected_at = models.DateTimeField(_("rejection time"), blank=True, null=True)
+    message = models.CharField(
+        _("message"),
+        max_length=100,
+        blank=True,
+        help_text="An optional personal message accompanying the friendship request.",
+    )
+    rejected_at = models.DateTimeField(
+        _("rejection time"),
+        blank=True,
+        null=True,
+        help_text="Timestamp when the request was rejected, or null if not yet rejected.",
+    )
     created_at = models.DateTimeField(_("creation time"), auto_now_add=True)
     last_modified_at = models.DateTimeField(_("last modified"), auto_now=True)
 
@@ -68,11 +88,13 @@ class FriendshipRequest(BaseModel):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="sent_friend_requests",
+        help_text="The user who sent the friendship request.",
     )
     receiver = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="received_friend_requests",
+        help_text="The user who received the friendship request.",
     )
 
     class Meta(BaseModel.Meta):

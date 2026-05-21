@@ -10,7 +10,12 @@ from django_stubs_ext.db.models import TypedModelMeta
 class BaseDictionaryModel(models.Model):
     """Base class for all dictionary models."""
 
-    name = models.CharField(_("name"), max_length=255, unique=True)
+    name = models.CharField(
+        _("name"),
+        max_length=255,
+        unique=True,
+        help_text="The display name of this record.",
+    )
 
     class Meta(TypedModelMeta):
         """Meta data for dictionary models."""

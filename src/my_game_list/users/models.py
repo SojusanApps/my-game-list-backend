@@ -23,15 +23,31 @@ class Gender(models.TextChoices):
 class User(BaseModel, AbstractUser):
     """A model for the application user."""
 
-    email = models.EmailField(_("email address"), unique=True)
-    slug = models.SlugField(_("slug"), max_length=255, unique=True, blank=True)
+    email = models.EmailField(
+        _("email address"),
+        unique=True,
+        help_text="The user's email address. Used as the login credential.",
+    )
+    slug = models.SlugField(
+        _("slug"),
+        max_length=255,
+        unique=True,
+        blank=True,
+        help_text="URL-safe identifier for the user profile, auto-generated from the username.",
+    )
     gender = models.CharField(
         _("gender"),
         max_length=1,
         choices=Gender.choices,
         blank=True,
+        help_text="The user's gender. Optional.",
     )
-    last_active = models.DateTimeField(_("last active"), null=True, blank=True)
+    last_active = models.DateTimeField(
+        _("last active"),
+        null=True,
+        blank=True,
+        help_text="Timestamp of the user's most recent activity. Null if never recorded.",
+    )
 
     # Delete the unwanted fields from the `AbstractUser`
     # first and last name of the user are sensitive data that will not be used in the application

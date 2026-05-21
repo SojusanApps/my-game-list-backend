@@ -3,7 +3,7 @@
 from typing import TYPE_CHECKING, Self
 
 from django.contrib.auth import get_user_model
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
 from rest_framework import serializers, status
 from rest_framework.decorators import action
 from rest_framework.mixins import (
@@ -36,6 +36,35 @@ if TYPE_CHECKING:
 User = get_user_model()
 
 
+@extend_schema_view(
+    list=extend_schema(
+        description=(
+            "List confirmed friendships for the authenticated user. "
+            "A Friendship is a bidirectional, established relationship. "
+            "Each record represents one direction of the relationship."
+        ),
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                description="Filter by exact friendship record ID.",
+            ),
+            OpenApiParameter(
+                name="user",
+                description="Filter by user ID.",
+            ),
+        ],
+    ),
+    retrieve=extend_schema(
+        description="Retrieve a single friendship record by ID.",
+    ),
+    destroy=extend_schema(
+        description=(
+            "Remove a friendship. This action is unilateral: only the authenticated user's "
+            "friendship record is deleted. The other party retains their record until they "
+            "also remove the friendship."
+        ),
+    ),
+)
 class FriendshipViewSet(ListModelMixin, RetrieveModelMixin, DestroyModelMixin, GenericViewSet["Friendship"]):
     """All views related to friendship."""
 
@@ -45,6 +74,38 @@ class FriendshipViewSet(ListModelMixin, RetrieveModelMixin, DestroyModelMixin, G
     filterset_class = FriendshipFilterSet
 
 
+@extend_schema_view(
+    list=extend_schema(
+        description=(
+            "List friendship requests. "
+            "Returns requests sent by or directed to authenticated users. "
+            "Use the `sender` and `receiver` filters to narrow results."
+        ),
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                description="Filter by exact friendship request ID.",
+            ),
+            OpenApiParameter(
+                name="sender",
+                description="Filter by the user ID who sent the request.",
+            ),
+            OpenApiParameter(
+                name="receiver",
+                description="Filter by the user ID who received the request.",
+            ),
+        ],
+    ),
+    create=extend_schema(
+        description="Send a friendship request to another user. A notification is sent to the recipient.",
+    ),
+    retrieve=extend_schema(
+        description="Retrieve a single friendship request by ID.",
+    ),
+    destroy=extend_schema(
+        description="Cancel a friendship request before it is accepted or rejected.",
+    ),
+)
 class FriendshipRequestViewSet(
     ListModelMixin,
     RetrieveModelMixin,
@@ -78,6 +139,11 @@ class FriendshipRequestViewSet(
         )
 
     @extend_schema(
+        description=(
+            "Accept a pending friendship request. "
+            "Creates reciprocal Friendship records for both the sender and receiver, "
+            "and sends a notification to the original sender confirming the acceptance."
+        ),
         request=None,
         responses={204: None},
     )
@@ -101,6 +167,10 @@ class FriendshipRequestViewSet(
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @extend_schema(
+        description=(
+            "Reject a pending friendship request. "
+            "The request record is deleted. No notification is sent to the requester."
+        ),
         request=None,
         responses={204: None},
     )

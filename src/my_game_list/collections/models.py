@@ -52,42 +52,62 @@ class Collection(BaseModel):
     friends-only, or public, and can optionally allow collaborators to add games.
     """
 
-    name = models.CharField(_("name"), max_length=255)
-    description = models.TextField(_("description"), blank=True, max_length=1000)
-    is_favorite = models.BooleanField(_("is favorite"), default=False)
+    name = models.CharField(_("name"), max_length=255, help_text="The name of the collection.")
+    description = models.TextField(
+        _("description"),
+        blank=True,
+        max_length=1000,
+        help_text="An optional description of the collection.",
+    )
+    is_favorite = models.BooleanField(
+        _("is favorite"),
+        default=False,
+        help_text="Whether the collection is marked as a favorite by its owner.",
+    )
     visibility = models.CharField(
         _("visibility"),
         max_length=3,
         choices=CollectionVisibility.choices,
         default=CollectionVisibility.PRIVATE,
+        help_text="Visibility level: PUBLIC, FRIENDS (friends only), or PRIVATE.",
     )
     mode = models.CharField(
         _("mode"),
         max_length=1,
         choices=CollectionMode.choices,
         default=CollectionMode.SOLO,
+        help_text="Collection mode: SOLO (single owner) or COLLABORATIVE (multiple contributors).",
     )
     type = models.CharField(
         _("type"),
         max_length=3,
         choices=CollectionType.choices,
         default=CollectionType.NORMAL,
+        help_text="Collection type: NORMAL, RANK (ordered ranking), or TIER (tier list).",
     )
     created_at = models.DateTimeField(_("creation time"), auto_now_add=True)
     last_modified_at = models.DateTimeField(_("last modified"), auto_now=True)
-    slug = models.SlugField(_("slug"), max_length=512, unique=True, blank=True)
+    slug = models.SlugField(
+        _("slug"),
+        max_length=512,
+        unique=True,
+        blank=True,
+        help_text="URL-safe identifier auto-generated from the owner username and collection name.",
+    )
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="collections",
         verbose_name=_("owner"),
+        help_text="The owner of the collection.",
     )
     collaborators = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
         related_name="collaborated_collections",
         blank=True,
         verbose_name=_("collaborators"),
+        help_text="Users allowed to add and reorder items in COLLABORATIVE collections.",
     )
 
     class Meta(BaseModel.Meta):
@@ -120,15 +140,28 @@ class CollectionItem(BaseModel):
     like ranking order, optional tier classification, and justification notes.
     """
 
-    order = models.DecimalField(_("order"), max_digits=20, decimal_places=10, null=True, db_index=True)
+    order = models.DecimalField(
+        _("order"),
+        max_digits=20,
+        decimal_places=10,
+        null=True,
+        db_index=True,
+        help_text="Fractional decimal position within the collection. Lower values appear first.",
+    )
     tier = models.CharField(
         _("tier"),
         max_length=1,
         choices=Tier.choices,
         blank=True,
         db_index=True,
+        help_text="Optional tier classification for TIER-type collections (S, A, B, C, D, or E).",
     )
-    description = models.TextField(_("description"), blank=True, max_length=500)
+    description = models.TextField(
+        _("description"),
+        blank=True,
+        max_length=500,
+        help_text="Optional notes or justification for this item's position in the collection.",
+    )
     created_at = models.DateTimeField(_("creation time"), auto_now_add=True)
     last_modified_at = models.DateTimeField(_("last modified"), auto_now=True)
 
@@ -137,12 +170,14 @@ class CollectionItem(BaseModel):
         on_delete=models.CASCADE,
         related_name="items",
         verbose_name=_("collection"),
+        help_text="The collection this item belongs to.",
     )
     game = models.ForeignKey(
         "games.Game",
         on_delete=models.PROTECT,
         related_name="collection_items",
         verbose_name=_("game"),
+        help_text="The game this item represents.",
     )
     added_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -150,6 +185,7 @@ class CollectionItem(BaseModel):
         null=True,
         related_name="collection_items_added",
         verbose_name=_("added by"),
+        help_text="The user who added this item. May be null if the adding user was deleted.",
     )
 
     class Meta(BaseModel.Meta):

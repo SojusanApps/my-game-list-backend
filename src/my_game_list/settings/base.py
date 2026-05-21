@@ -185,6 +185,68 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "Application to manage game lists.",
     "VERSION": ".".join(map(str, __version__)),
     "SCHEMA_PATH_PREFIX": "/api/",
+    "TAGS": [
+        {
+            "name": "collection",
+            "description": (
+                "Manage user-created game collections and their items. "
+                "Collections have three visibility levels — PUBLIC, FRIENDS, PRIVATE — "
+                "and three modes: STANDARD, TIER_LIST, and COLLABORATIVE. "
+                "COLLABORATIVE collections allow invited collaborators to add and reorder "
+                "items alongside the owner. Item positions are maintained via server-managed "
+                "fractional decimal values that allow insertion without renumbering other items."
+            ),
+        },
+        {
+            "name": "game",
+            "description": (
+                "Browse and interact with the game catalogue. "
+                "Covers the core Game resource, user game-tracking via GameList (with statuses "
+                "such as Playing, Completed, and Plan to Play), social interactions "
+                "(GameFollow, GameReview, GameMedia), and the read-only Dictionary Models "
+                "that categorise games: Genre, Platform, Company, GameType, GameStatus, "
+                "GameEngine, GameMode, PlayerPerspective, and ExternalGameSource. "
+                "Dictionary Models are sourced from IGDB or maintained manually and are "
+                "only writable by administrators."
+            ),
+        },
+        {
+            "name": "friendship",
+            "description": (
+                "Manage friendships and friendship requests between users. "
+                "A Friendship is a confirmed, bidirectional relationship between two users. "
+                "A FriendshipRequest is a pending invitation; accepting it creates reciprocal "
+                "Friendship records for both parties and sends a notification to the requester."
+            ),
+        },
+        {
+            "name": "notification",
+            "description": (
+                "Retrieve and manage in-app notifications for the authenticated user. "
+                "Notifications are generated automatically by system events such as incoming "
+                "friendship requests and accepted requests. Each notification carries a "
+                "category (e.g. FRIENDSHIP), a level (INFO, WARNING, ERROR), and an unread flag."
+            ),
+        },
+        {
+            "name": "user",
+            "description": (
+                "Register new users and manage user accounts. "
+                "User creation (registration) is publicly accessible without authentication; "
+                "all other operations require a valid session. "
+                "The detail endpoint returns additional private fields to the authenticated "
+                "account owner that are not visible to other users."
+            ),
+        },
+        {
+            "name": "version",
+            "description": (
+                "Application version information. "
+                "Returns the current semantic version of the running API. "
+                "This endpoint is publicly accessible without authentication."
+            ),
+        },
+    ],
 }
 
 MGL_LOG_DIR_PATH = oeg("MGL_LOG_DIR_PATH", BASE_DIR.parent.parent / "logs")

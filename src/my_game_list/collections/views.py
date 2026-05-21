@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Self
 
 from django.db.models import F, Max, Q
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import OpenApiParameter, extend_schema, inline_serializer
+from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view, inline_serializer
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
@@ -38,6 +38,91 @@ if TYPE_CHECKING:
     from rest_framework.request import Request
 
 
+@extend_schema_view(
+    list=extend_schema(
+        description=(
+            "List collections visible to the authenticated user. "
+            "The response includes: the user's own collections, collections they collaborate on, "
+            "all PUBLIC collections, and FRIENDS collections owned by their friends. "
+            "PRIVATE collections are only visible to their owner."
+        ),
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                description="Filter by exact collection ID.",
+            ),
+            OpenApiParameter(
+                name="name",
+                description="Filter by collection name. Case-insensitive partial match.",
+            ),
+            OpenApiParameter(
+                name="user",
+                description="Filter by owner user ID. Returns only collections owned by that user.",
+            ),
+            OpenApiParameter(
+                name="collaborator",
+                description=(
+                    "Filter by collaborator user ID. Returns collections where that user is listed "
+                    "as a collaborator but is NOT the owner."
+                ),
+            ),
+            OpenApiParameter(
+                name="member",
+                description=(
+                    "Filter by member user ID. Returns collections where the user is either the "
+                    "owner OR a collaborator. Unlike `user` (owner only) and `collaborator` "
+                    "(collaborator only), `member` matches both roles."
+                ),
+            ),
+            OpenApiParameter(
+                name="visibility",
+                description=(
+                    "Filter by visibility level. "
+                    "Accepted values: PUBLIC, FRIENDS, PRIVATE. "
+                    "Can be specified multiple times to match several values."
+                ),
+            ),
+            OpenApiParameter(
+                name="mode",
+                description=(
+                    "Filter by collection mode. "
+                    "Accepted values: STANDARD, TIER_LIST, COLLABORATIVE. "
+                    "Can be specified multiple times."
+                ),
+            ),
+            OpenApiParameter(
+                name="type",
+                description=(
+                    "Filter by collection type (e.g. GAMES). "
+                    "Can be specified multiple times to match several values."
+                ),
+            ),
+            OpenApiParameter(
+                name="is_favorite",
+                description="When true, return only collections the owner has marked as a favourite.",
+            ),
+        ],
+    ),
+    create=extend_schema(
+        description="Create a new collection. The authenticated user is automatically set as the owner.",
+    ),
+    retrieve=extend_schema(
+        description=(
+            "Retrieve a single collection by ID. Returns full detail including collaborators "
+            "and the list of items. Visibility rules apply: PRIVATE collections are only "
+            "accessible to their owner."
+        ),
+    ),
+    update=extend_schema(
+        description="Replace all editable fields of an existing collection. Requires ownership.",
+    ),
+    partial_update=extend_schema(
+        description="Update one or more fields of an existing collection. Requires ownership.",
+    ),
+    destroy=extend_schema(
+        description="Delete a collection and all its items permanently. Requires ownership.",
+    ),
+)
 class CollectionViewSet(ModelViewSet[Collection]):
     """A ViewSet for the Collection model.
 
@@ -161,6 +246,12 @@ class CollectionViewSet(ModelViewSet[Collection]):
         return (prev_order + next_order) / Decimal("2.0")
 
     @extend_schema(
+        description=(
+            "Move a single item to a new position within its current tier using fractional "
+            "indexing. The server calculates a new fractional order value based on the target "
+            "position and its neighbors; no other items are modified. "
+            "Position is 0-based: 0 places the item at the top of the tier."
+        ),
         request=CollectionItemReorderSerializer,
         parameters=[
             OpenApiParameter(
@@ -237,6 +328,11 @@ class CollectionViewSet(ModelViewSet[Collection]):
         return Response({"order": str(new_order)}, status=status.HTTP_200_OK)
 
     @extend_schema(
+        description=(
+            "Move a single item to a different tier, and optionally reposition it within that tier. "
+            "If no `position` is provided, the item is appended at the end of the target tier. "
+            "If `position` is provided (0-based index), fractional indexing places the item precisely."
+        ),
         request=CollectionItemTierUpdateSerializer,
         parameters=[
             OpenApiParameter(
@@ -330,6 +426,12 @@ class CollectionViewSet(ModelViewSet[Collection]):
         return Response({"tier": tier, "order": str(new_order)}, status=status.HTTP_200_OK)
 
     @extend_schema(
+        description=(
+            "Reorder all items in a collection in a single request by assigning explicit positions. "
+            "The fractional ordering state is reset: every item receives a clean integer order equal "
+            "to its declared position. The payload must include every item currently in the "
+            "collection; missing or extra items cause an error."
+        ),
         request=CollectionItemBulkReorderSerializer,
         responses={204: None},
     )
@@ -399,6 +501,74 @@ class CollectionViewSet(ModelViewSet[Collection]):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+@extend_schema_view(
+    list=extend_schema(
+        description=(
+            "List collection items visible to the authenticated user, ordered by position (ascending). "
+            "Only items from accessible collections are returned: own collections, collaborated "
+            "collections, PUBLIC collections, and FRIENDS collections from friends. "
+            "Items with no order value appear last."
+        ),
+        parameters=[
+            OpenApiParameter(
+                name="id",
+                description="Filter by exact collection item ID.",
+            ),
+            OpenApiParameter(
+                name="collection",
+                description="Filter by parent collection ID.",
+            ),
+            OpenApiParameter(
+                name="game",
+                description="Filter by game ID. Returns only items linked to that game.",
+            ),
+            OpenApiParameter(
+                name="tier",
+                description=(
+                    "Filter by tier label (e.g. S, A, B). Only relevant for TIER_LIST collections. "
+                    "Can be specified multiple times to match several tiers."
+                ),
+            ),
+            OpenApiParameter(
+                name="has_tier",
+                description=(
+                    "When true, return only items that are assigned to a tier. "
+                    "When false, return only items that have no tier assigned."
+                ),
+            ),
+            OpenApiParameter(
+                name="added_by",
+                description="Filter by the user ID who added the item to the collection.",
+            ),
+            OpenApiParameter(
+                name="ordering",
+                description=(
+                    "Order results by field. "
+                    "Accepted values: order, -order, created_at, -created_at, tier, -tier. "
+                    "Prefix with '-' for descending order."
+                ),
+            ),
+        ],
+    ),
+    create=extend_schema(
+        description=(
+            "Add a game to a collection. The authenticated user is recorded as the item creator. "
+            "Write access requires ownership or collaborator status in COLLABORATIVE mode."
+        ),
+    ),
+    retrieve=extend_schema(
+        description="Retrieve a single collection item by ID.",
+    ),
+    update=extend_schema(
+        description="Replace all editable fields of a collection item.",
+    ),
+    partial_update=extend_schema(
+        description="Update one or more fields of a collection item.",
+    ),
+    destroy=extend_schema(
+        description="Remove an item from its collection permanently.",
+    ),
+)
 class CollectionItemViewSet(ModelViewSet[CollectionItem]):
     """A ViewSet for the CollectionItem model.
 
