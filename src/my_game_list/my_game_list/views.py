@@ -20,12 +20,18 @@ class ApiVersion(APIView):
     permission_classes = (AllowAny,)
 
     @extend_schema(
+        description=(
+            "Return the current semantic version of the running API. "
+            "The version string follows MAJOR.MINOR.PATCH format (e.g. '1.2.3') "
+            "and is updated on every release. "
+            "This endpoint requires no authentication."
+        ),
         responses={
             200: inline_serializer(
                 name="VersionSerializer",
                 fields={
                     "version": CharField(
-                        help_text="The version of the API",
+                        help_text="The semantic version of the API in MAJOR.MINOR.PATCH format.",
                     ),
                 },
             ),

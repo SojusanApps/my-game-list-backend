@@ -394,5 +394,11 @@ class GameSerializer(serializers.ModelSerializer[Game]):
 class ReleaseCalendarQuerySerializer(serializers.Serializer[Any]):
     """A serializer for validating the query parameters for the release calendar endpoint."""
 
-    start_date = serializers.DateField(required=True)
-    end_date = serializers.DateField(required=True)
+    start_date = serializers.DateField(
+        required=True,
+        help_text="Start date of the release date range (YYYY-MM-DD).",
+    )
+    end_date = serializers.DateField(
+        required=True,
+        help_text="End date of the release date range (YYYY-MM-DD). Must be at most 31 days after start_date.",
+    )

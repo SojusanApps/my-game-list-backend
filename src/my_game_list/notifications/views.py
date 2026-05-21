@@ -2,7 +2,7 @@
 
 from typing import TYPE_CHECKING, Self
 
-from drf_spectacular.utils import extend_schema, inline_serializer
+from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view, inline_serializer
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.mixins import DestroyModelMixin, ListModelMixin, RetrieveModelMixin
@@ -21,6 +21,39 @@ if TYPE_CHECKING:
     from my_game_list.notifications.models import NotificationQuerySet
 
 
+@extend_schema_view(
+    list=extend_schema(
+        description=(
+            "List notifications for the authenticated user, ordered newest first. "
+            "Notifications are generated automatically by system events such as incoming "
+            "friendship requests and accepted requests. "
+            "Each notification has a category (e.g. FRIENDSHIP), a severity level "
+            "(INFO, WARNING, ERROR), and an unread flag."
+        ),
+        parameters=[
+            OpenApiParameter(
+                name="category",
+                description="Filter by notification category (e.g. FRIENDSHIP).",
+            ),
+            OpenApiParameter(
+                name="level",
+                description="Filter by notification severity level (INFO, WARNING, ERROR).",
+            ),
+            OpenApiParameter(
+                name="unread",
+                description=(
+                    "When true, return only unread notifications. When false, return only read notifications."
+                ),
+            ),
+        ],
+    ),
+    retrieve=extend_schema(
+        description="Retrieve a single notification by ID.",
+    ),
+    destroy=extend_schema(
+        description="Delete a notification permanently.",
+    ),
+)
 class NotificationViewSet(ListModelMixin, RetrieveModelMixin, DestroyModelMixin, GenericViewSet[Notification]):
     """ViewSet for handling notifications."""
 
@@ -36,6 +69,7 @@ class NotificationViewSet(ListModelMixin, RetrieveModelMixin, DestroyModelMixin,
         return Notification.objects.filter(recipient=user)
 
     @extend_schema(
+        description="Return the count of unread notifications for the authenticated user.",
         responses={
             200: inline_serializer(
                 name="UnreadCountResponse",
@@ -50,6 +84,10 @@ class NotificationViewSet(ListModelMixin, RetrieveModelMixin, DestroyModelMixin,
         return Response({"unread_count": count})
 
     @extend_schema(
+        description=(
+            "Mark a specific notification as read. "
+            "This operation is idempotent: marking an already-read notification has no effect."
+        ),
         request=None,
         responses={204: None},
     )
@@ -61,6 +99,7 @@ class NotificationViewSet(ListModelMixin, RetrieveModelMixin, DestroyModelMixin,
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @extend_schema(
+        description=("Mark all unread notifications for the authenticated user as read. This operation is idempotent."),
         request=None,
         responses={204: None},
     )
@@ -71,6 +110,10 @@ class NotificationViewSet(ListModelMixin, RetrieveModelMixin, DestroyModelMixin,
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @extend_schema(
+        description=(
+            "Delete all read notifications for the authenticated user permanently. "
+            "Unread notifications are not affected."
+        ),
         responses={204: None},
     )
     @action(detail=False, methods=("delete",))

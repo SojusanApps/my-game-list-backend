@@ -2,6 +2,10 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.19.1] - 21.05.2026
+
+* Updated the docs for better swagger schema generation.
+
 ## v. [4.19.0] - 20.05.2026
 
 * Added polish localization.
