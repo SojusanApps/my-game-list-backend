@@ -373,3 +373,5 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": crontab(hour=3, minute=0),
     },
 }
+
+STEAM_API_KEY = oeg("STEAM_API_KEY", "steam_api_key_to_change_on_production")

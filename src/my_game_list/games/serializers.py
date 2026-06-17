@@ -402,3 +402,18 @@ class ReleaseCalendarQuerySerializer(serializers.Serializer[Any]):
         required=True,
         help_text="End date of the release date range (YYYY-MM-DD). Must be at most 31 days after start_date.",
     )
+
+
+class SteamImportNotFoundSerializer(serializers.Serializer[Any]):
+    """A serializer for the Steam games that were not found in the database."""
+
+    appid = serializers.IntegerField(help_text="The AppID of the Steam game.")
+    name = serializers.CharField(help_text="The name of the Steam game.")
+
+
+class SteamImportResponseSerializer(serializers.Serializer[Any]):
+    """A serializer for the Steam import endpoint response."""
+
+    matched = GameSimpleListSerializer(many=True, help_text="List of matched games found in the database.")
+    not_found = SteamImportNotFoundSerializer(many=True, help_text="List of games not found in the database.")
+    total_imported = serializers.IntegerField(help_text="Total number of games retrieved from Steam before filtration.")
