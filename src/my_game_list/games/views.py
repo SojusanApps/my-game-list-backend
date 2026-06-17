@@ -1,7 +1,11 @@
 """This module contains the viewsets for the game related data."""
 
-from typing import TYPE_CHECKING, Self
+from typing import TYPE_CHECKING, Any, Self
 
+import requests
+from django.conf import settings
+from django.core.cache import cache
+from django.db import transaction
 from drf_spectacular.utils import OpenApiParameter, extend_schema, extend_schema_view
 from rest_framework import status
 from rest_framework.decorators import action
@@ -62,6 +66,7 @@ from my_game_list.games.serializers import (
     PlatformSerializer,
     PlayerPerspectiveSerializer,
     ReleaseCalendarQuerySerializer,
+    SteamImportResponseSerializer,
 )
 from my_game_list.my_game_list.permissions import IsAdminOrReadOnly
 
@@ -267,6 +272,140 @@ class GameListViewSet(ModelViewSet[GameList]):
 
         serializer = self.get_serializer(ptp_game)
         return Response(serializer.data)
+
+    @extend_schema(
+        description=(
+            "Import the authenticated user's Steam library by providing a Steam profile ID. "
+            "Returns the list of Steam games that were successfully matched to entries in our catalogue "
+            "and the list of unmatched games with their app IDs and names. "
+            "Matched games are those that have a linked ExternalGame record with the Steam app ID and source. "
+            "Unmatched games may not be in our catalogue or may be missing the Steam external ID. "
+        ),
+        parameters=[
+            OpenApiParameter(
+                name="steam_profile_id",
+                description=(
+                    "The user's Steam profile ID. This is the numeric identifier found in the URL of their "
+                    "Steam community profile (e.g. https://steamcommunity.com/profiles/12345678901234567)."
+                    "The user must have a public profile and public game library for the import to work."
+                ),
+            ),
+        ],
+        responses={200: SteamImportResponseSerializer},
+    )
+    @action(detail=False, methods=["get"], url_path="steam-import")
+    def steam_import(self: Self, request: Request) -> Response:
+        """Return the user's Steam library split into matched and not_found games."""
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        steam_profile_id = request.query_params.get("steam_profile_id")
+        if not steam_profile_id:
+            return Response({"steam_profile_id": ["This field is required."]}, status=status.HTTP_400_BAD_REQUEST)
+
+        cache_key = f"steam_import_{steam_profile_id}"
+        steam_games: list[dict[str, Any]] | None = cache.get(cache_key)
+        if steam_games is None:
+            response = requests.get(
+                "https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/",
+                params={
+                    "key": settings.STEAM_API_KEY,
+                    "steamid": steam_profile_id,
+                    "format": "json",
+                    "include_appinfo": "true",
+                    "include_played_free_games": "true",
+                    "include_free_sub": "true",
+                    "skip_unvetted_apps": "false",
+                },
+                timeout=10,
+            )
+            try:
+                response.raise_for_status()
+            except requests.RequestException:
+                return Response(
+                    {"detail": f"Error fetching Steam library for given Steam profile ID: {steam_profile_id}"},
+                    status=status.HTTP_502_BAD_GATEWAY,
+                )
+            steam_games = response.json().get("response", {}).get("games", [])
+            cache.set(cache_key, steam_games, 600)
+
+        # Build a set of appids already in the user's game list (via Steam ExternalGame records)
+        steam_source = ExternalGameSource.objects.filter(name_en="Steam").first()
+
+        if steam_source is None:
+            response_data = {
+                "matched": [],
+                "not_found": [{"appid": g["appid"], "name": g["name"]} for g in steam_games],
+                "total_imported": len(steam_games),
+            }
+            serializer = SteamImportResponseSerializer(response_data)
+            return Response(serializer.data)
+
+        # Map Steam appid strings → set of internal Game IDs in our DB
+        steam_external_ids = [str(g["appid"]) for g in steam_games]
+        steam_appid_to_game_ids: dict[str, set[int]] = {}
+        for game_id, external_id in Game.objects.filter(
+            external_games__external_game_source=steam_source,
+            external_games__external_id__in=steam_external_ids,
+        ).values_list("id", "external_games__external_id"):
+            steam_appid_to_game_ids.setdefault(str(external_id), set()).add(game_id)
+
+        # Game IDs already in the requesting user's game list
+        user_game_ids: set[int] = set(
+            GameList.objects.filter(user_id=request.user.pk).values_list("game_id", flat=True),
+        )
+
+        matched_game_ids: list[int] = []
+        not_found: list[dict[str, Any]] = []
+
+        for steam_game in steam_games:
+            appid_str = str(steam_game["appid"])
+            if appid_str in steam_appid_to_game_ids:
+                matched_game_ids.extend(
+                    game_id for game_id in steam_appid_to_game_ids[appid_str] if game_id not in user_game_ids
+                )
+            else:
+                not_found.append({"appid": steam_game["appid"], "name": steam_game["name"]})
+
+        matched_games = Game.objects.filter(id__in=matched_game_ids)
+        response_data = {
+            "matched": matched_games,
+            "not_found": not_found,
+            "total_imported": len(steam_games),
+        }
+        serializer = SteamImportResponseSerializer(response_data)
+        return Response(serializer.data)
+
+    @extend_schema(
+        description=(
+            "Bulk-create game-list entries for the authenticated user. "
+            "Accepts a list of objects each containing a game ID and play status. "
+            "Returns the list of created game-list entries. "
+            "This endpoint is useful for bulk-adding games to the user's list, for example after a Steam import."
+        ),
+        request=GameListCreateSerializer(many=True),
+        responses={201: GameListSerializer(many=True)},
+    )
+    @action(detail=False, methods=["post"], url_path="bulk-create", filter_backends=[], pagination_class=None)
+    def bulk_create(self: Self, request: Request) -> Response:
+        """Bulk-create GameList entries for the authenticated user."""
+        items = request.data
+        if not isinstance(items, list) or len(items) == 0:
+            return Response({"non_field_errors": ["This field may not be empty."]}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializers_list = []
+        for item in items:
+            data = {**item, "user": request.user.pk, "owned_on": item.get("owned_on", [])}
+            serializer = GameListCreateSerializer(data=data)
+            if not serializer.is_valid():
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            serializers_list.append(serializer)
+
+        with transaction.atomic():
+            instances = [s.save() for s in serializers_list]
+
+        result = GameListSerializer(instances, many=True)
+        return Response(result.data, status=status.HTTP_201_CREATED)
 
 
 @extend_schema_view(

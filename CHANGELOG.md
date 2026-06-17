@@ -2,6 +2,11 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.20.0] - 17.06.2026
+
+* Added steam import endpoint.
+* Added game list bulk create endpoint.
+
 ## v. [4.19.1] - 21.05.2026
 
 * Updated the docs for better swagger schema generation.

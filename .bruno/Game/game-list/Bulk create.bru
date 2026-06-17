@@ -1,0 +1,39 @@
+meta {
+  name: Bulk create
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{protocol}}/{{host}}:{{port}}/api/game/game-lists/bulk-create/
+  body: json
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}
+
+body:json {
+  [
+    {
+      "status": "C",
+      "score": 10,
+      "description": "string",
+      "completed_at": "2026-06-17",
+      "started_at": "2026-06-17",
+      "playtime": 2147483647,
+      "game": 1,
+      "user": 1,
+      "owned_on": [
+        1
+      ]
+    }
+  ]
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
