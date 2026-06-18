@@ -48,6 +48,20 @@ def test_game_dunder_str(game_fixture: Game) -> None:
 
 
 @pytest.mark.django_db()
+def test_game_save_populates_search_title() -> None:
+    """Game.save() builds search_title from both language titles."""
+    game = baker.make(Game, title_en="Wiedźmin", title_pl="The Witcher")
+    assert game.search_title == "the witcher wiedzmin"
+
+
+@pytest.mark.django_db()
+def test_game_save_deduplicates_search_title_when_titles_identical() -> None:
+    """When EN and PL titles normalize identically, search_title is not duplicated."""
+    game = baker.make(Game, title_en="FIFA 24", title_pl="FIFA 24")
+    assert game.search_title == "fifa 24"
+
+
+@pytest.mark.django_db()
 def test_genre_dunder_str() -> None:
     """Test the `Genre` dunder str method."""
     genre = baker.make(Genre)

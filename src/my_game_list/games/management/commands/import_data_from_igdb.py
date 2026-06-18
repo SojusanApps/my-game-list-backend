@@ -3,7 +3,7 @@
 import time
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
-from typing import TYPE_CHECKING, Any, Literal, Self, TypeVar
+from typing import TYPE_CHECKING, Any, Literal, Self, TypeVar, cast
 
 from django.core.management.base import BaseCommand, CommandParser
 from django.db.models import Max
@@ -40,6 +40,7 @@ from my_game_list.games.models import (
     Platform,
     PlayerPerspective,
 )
+from my_game_list.games.utils import normalize_title
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -358,6 +359,12 @@ class Command(BaseCommand):  # NOSONAR(S8443) - Already inheriting from BaseComm
                 update_fields.update(model_input.keys())
 
             update_fields.discard("igdb_id")
+
+            if model is Game:
+                for game_obj in cast("list[Game]", data_to_import):  # type: ignore[redundant-cast]
+                    parts = {normalize_title(t) for t in (game_obj.title_en or "", game_obj.title_pl or "") if t}
+                    game_obj.search_title = " ".join(sorted(parts))
+                update_fields.add("search_title")
 
             yield (
                 model.objects.bulk_create(
