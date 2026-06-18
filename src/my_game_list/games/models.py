@@ -6,6 +6,7 @@ from uuid import uuid4
 from django.conf import settings
 from django.contrib import admin
 from django.contrib.postgres.fields import ArrayField
+from django.contrib.postgres.indexes import GinIndex
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.html import format_html
@@ -14,6 +15,7 @@ from django.utils.translation import gettext_lazy as _
 from django_stubs_ext.db.models import TypedModelMeta
 
 from my_game_list.games.querysets import GameQuerySet
+from my_game_list.games.utils import normalize_title
 from my_game_list.my_game_list.igdb_integration import IGDBImageSize, get_image_url
 from my_game_list.my_game_list.models import BaseDictionaryModel, BaseModel
 
@@ -502,6 +504,13 @@ class Game(BaseModel, IGDBModel):
         blank=True,
         help_text="URL-safe identifier, auto-generated from the English title.",
     )
+    search_title = models.CharField(
+        _("search title"),
+        max_length=511,
+        blank=True,
+        default="",
+        help_text="Normalized title used for fuzzy search (lowercase, no diacritics, no special chars).",
+    )
 
     game_type = models.ForeignKey(
         GameType,
@@ -650,6 +659,9 @@ class Game(BaseModel, IGDBModel):
 
         verbose_name = _("game")
         verbose_name_plural = _("games")
+        indexes: ClassVar = [
+            GinIndex(fields=["search_title"], name="games_game_search_title_gin", opclasses=["gin_trgm_ops"]),
+        ]
 
     def __str__(self: Self) -> str:
         """String representation of the game model."""
@@ -661,6 +673,8 @@ class Game(BaseModel, IGDBModel):
             self.slug = slugify(self.title_en)
         if not self.slug:
             self.slug = str(uuid4())
+        parts = {normalize_title(t) for t in (self.title_en or "", self.title_pl or "") if t}
+        self.search_title = " ".join(sorted(parts))
         super().save(*args, **kwargs)
 
     @property

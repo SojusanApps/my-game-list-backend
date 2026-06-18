@@ -2,6 +2,15 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.20.1] - 18.06.2026
+
+* Improved game title filter with fuzzy search using PostgreSQL `pg_trgm`.
+  * Added `search_title` field to `Game` model — normalized (lowercase, no diacritics, no special characters) concatenation of English and Polish titles.
+  * Added GIN index on `search_title` for fast trigram lookups.
+  * Filter now supports: case-insensitive matching, diacritic tolerance, partial word matching, word-order independence, and typo tolerance.
+  * Results are ordered by similarity score when the title filter is active.
+  * IGDB Import updated to populate `search_title` during `bulk_create`.
+
 ## v. [4.20.0] - 17.06.2026
 
 * Added steam import endpoint.

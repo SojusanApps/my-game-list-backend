@@ -2,6 +2,7 @@
 
 from typing import Any
 
+from django.contrib.postgres.search import TrigramWordSimilarity
 from django.db.models import Q, QuerySet
 from django_filters import rest_framework as filters
 
@@ -22,6 +23,7 @@ from my_game_list.games.models import (
     Platform,
     PlayerPerspective,
 )
+from my_game_list.games.utils import normalize_title
 from my_game_list.my_game_list.filters import BaseDictionaryFilterSet, BilingualModelMultipleChoiceFilter
 
 
@@ -135,8 +137,14 @@ class GameFilterSet(filters.FilterSet):
     )
 
     def filter_title(self, queryset: QuerySet[Any], _name: str, value: str) -> QuerySet[Any]:
-        """Filter by title in English or Polish."""
-        return queryset.filter(Q(title_en__icontains=value) | Q(title_pl__icontains=value))
+        """Filter by normalized title using pg_trgm word similarity."""
+        normalized = normalize_title(value)
+        result: QuerySet[Any] = (
+            queryset.annotate(rank=TrigramWordSimilarity(normalized, "search_title"))
+            .filter(rank__gte=0.2)
+            .order_by("-rank")
+        )
+        return result
 
     def filter_publisher(self, queryset: QuerySet[Any], _name: str, value: str) -> QuerySet[Any]:
         """Filter by publisher name in English or Polish."""
