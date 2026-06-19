@@ -37,3 +37,4 @@ openapi.json
 # AI related
 .serena
 .scratch
+.claude

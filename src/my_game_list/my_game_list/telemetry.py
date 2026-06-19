@@ -53,6 +53,6 @@ def setup_telemetry() -> None:
     URLLib3Instrumentor().instrument()
     LoggingInstrumentor().instrument(set_logging_format=False)
     DjangoInstrumentor().instrument()
-    CeleryInstrumentor().instrument()
+    CeleryInstrumentor().instrument()  # type: ignore[no-untyped-call]
     PsycopgInstrumentor().instrument()
     RedisInstrumentor().instrument()

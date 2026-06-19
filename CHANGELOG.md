@@ -2,6 +2,15 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.20.2] - 19.06.2026
+
+* Replaced manual Docker test setup with `testcontainers`.
+  * Removed shell scripts `my-game-list-run-tests.sh`, `my-game-list-run-tests-with-pg.sh`, `wait-for-postgresql.py`, and `colors.sh`.
+  * Added `django_db_setup` fixture in `tests/conftest.py` that automatically starts a PostgreSQL container per test worker and runs migrations.
+  * Updated `settings/test.py` with a placeholder `DATABASES` config (overridden at runtime by testcontainers).
+  * Updated `tox.ini` to call `pytest` directly without shell script wrappers.
+  * Removed `services: postgres` from the GitHub Actions CI workflow — testcontainers manages the database in CI as well.
+
 ## v. [4.20.1] - 18.06.2026
 
 * Improved game title filter with fuzzy search using PostgreSQL `pg_trgm`.

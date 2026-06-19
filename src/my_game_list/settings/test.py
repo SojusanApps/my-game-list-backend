@@ -8,14 +8,16 @@ from my_game_list.settings.base import *  # NOSONAR
 
 DEBUG = oeg("DJANGO_DEBUG", "False").lower() == "true"
 
+# Overridden at runtime by the django_db_setup fixture in tests/conftest.py via testcontainers.
+# These values are intentionally invalid to surface misconfiguration early.
 DATABASES = {
     "default": {
-        "ENGINE": oeg("DJANGO_DB_ENGINE", "django.db.backends.postgresql"),
-        "NAME": oeg("POSTGRES_DB", "pytest_postgresql"),
-        "USER": oeg("POSTGRES_USER", "pytest_postgresql"),
-        "PASSWORD": oeg("POSTGRES_PASSWORD", "pytest_postgresql"),
-        "HOST": oeg("POSTGRES_HOST", "localhost"),
-        "PORT": oeg("POSTGRES_PORT", "9999"),
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "testcontainers_managed",
+        "USER": "testcontainers_managed",
+        "PASSWORD": "testcontainers_managed",  # NOSONAR
+        "HOST": "localhost",
+        "PORT": "0",
     },
 }
 

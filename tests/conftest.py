@@ -3,15 +3,46 @@
 from typing import TYPE_CHECKING
 
 import pytest
+from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.management import call_command
 from freezegun import freeze_time
 from model_bakery import baker
 from rest_framework.test import APIClient
+from testcontainers.postgres import PostgresContainer  # type: ignore[import-untyped]
 
 if TYPE_CHECKING:
+    from collections.abc import Generator
+
+    import pytest_django
+
     from my_game_list.users.models import User as UserModel
 
 User: type[UserModel] = get_user_model()
+
+_POSTGRES_IMAGE = "postgres:18.3-alpine"
+
+
+@pytest.fixture(scope="session")
+def django_db_setup(
+    django_test_environment: None,  # noqa: ARG001
+    django_db_blocker: pytest_django.DjangoDbBlocker,
+) -> Generator[None]:
+    """Start a PostgreSQL container and wire it into Django settings for the test session."""
+    with PostgresContainer(_POSTGRES_IMAGE) as postgres:
+        settings.DATABASES["default"].update(
+            {
+                "ENGINE": "django.db.backends.postgresql",
+                "HOST": postgres.get_container_host_ip(),
+                "PORT": postgres.get_exposed_port(5432),
+                "NAME": postgres.dbname,
+                "USER": postgres.username,
+                "PASSWORD": postgres.password,
+            },
+        )
+        with django_db_blocker.unblock():
+            call_command("migrate")
+        yield
 
 
 @pytest.fixture
