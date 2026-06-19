@@ -3,7 +3,8 @@
 [![MyGameList CI](https://github.com/SojusanApps/my-game-list-backend/actions/workflows/my-game-list.yml/badge.svg)](https://github.com/SojusanApps/my-game-list-backend/actions/workflows/my-game-list.yml)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=MyGameListPlaceholder_my-game-list-backend&metric=coverage)](https://sonarcloud.io/summary/new_code?id=MyGameListPlaceholder_my-game-list-backend)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
-[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v1.json)](https://github.com/charliermarsh/ruff)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
 [![Black](https://img.shields.io/badge/code%20style-black-black)](https://github.com/psf/black)
 [![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/summary/new_code?id=MyGameListPlaceholder_my-game-list-backend)
 
