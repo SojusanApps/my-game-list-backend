@@ -3,6 +3,7 @@
 import logging
 
 from celery import shared_task
+from django.core.management import call_command
 
 from my_game_list.games.models import GameStats
 
@@ -35,3 +36,23 @@ def recalculate_ranks() -> None:
     GameStats.objects.bulk_update(stats_list, ["rank_position", "popularity"], batch_size=1000)
 
     logger.info("Recalculated ranks and popularity for %d games.", len(stats_list))
+
+
+@shared_task
+def nightly_igdb_import_and_recalculate() -> None:
+    """Import all data from IGDB then recalculate game statistics."""
+    call_command(
+        "import_data_from_igdb",
+        "platforms",
+        "genres",
+        "game_modes",
+        "player_perspectives",
+        "game_engines",
+        "game_types",
+        "game_statuses",
+        "external_game_sources",
+        "external_games",
+        "companies",
+        "games",
+    )
+    call_command("recalculate_stats")

@@ -372,6 +372,10 @@ CELERY_BEAT_SCHEDULE = {
         "task": "my_game_list.notifications.tasks.notify_game_releases",
         "schedule": crontab(hour=3, minute=0),
     },
+    "nightly-igdb-import-and-recalculate": {
+        "task": "my_game_list.games.tasks.nightly_igdb_import_and_recalculate",
+        "schedule": crontab(hour=0, minute=0),
+    },
 }
 
 STEAM_API_KEY = oeg("STEAM_API_KEY", "steam_api_key_to_change_on_production")
