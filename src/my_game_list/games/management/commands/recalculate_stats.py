@@ -10,7 +10,7 @@ from my_game_list.games.models import Game, GameList, GameStats
 from my_game_list.games.tasks import recalculate_ranks
 
 
-class Command(BaseCommand):
+class Command(BaseCommand):  # NOSONAR(S8443) - Already inheriting from BaseCommand
     """Recalculate statistics for all games."""
 
     help = "Recalculates score_sum, score_count, average_score, members_count, and ranks for all games."

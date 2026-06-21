@@ -2,6 +2,12 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.20.3] - 21.06.2026
+
+* Added a nightly Celery periodic task `nightly_igdb_import_and_recalculate` that runs at midnight UTC.
+  * Incrementally imports all IGDB data (`platforms`, `genres`, `game_modes`, `player_perspectives`, `game_engines`, `game_types`, `game_statuses`, `external_game_sources`, `external_games`, `companies`, `games`).
+  * Recalculates game statistics immediately after a successful import.
+
 ## v. [4.20.2] - 19.06.2026
 
 * Replaced manual Docker test setup with `testcontainers`.
