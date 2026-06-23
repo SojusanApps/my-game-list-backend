@@ -1,0 +1,16 @@
+meta {
+  name: Export Game-List
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{protocol}}/{{host}}:{{port}}/api/game/game-lists/export/
+  body: none
+  auth: basic
+}
+
+auth:basic {
+  username: {{username}}
+  password: {{password}}
+}

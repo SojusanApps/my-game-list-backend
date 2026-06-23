@@ -378,6 +378,24 @@ class GameListViewSet(ModelViewSet[GameList]):
 
     @extend_schema(
         description=(
+            "Export the full game list of the authenticated user as JSON. "
+            "Returns all entries without pagination. "
+            "Use this endpoint to back up or transfer a user's complete game list."
+        ),
+        responses={200: GameListSerializer(many=True)},
+    )
+    @action(detail=False, methods=["get"], url_path="export", filter_backends=[], pagination_class=None)
+    def export(self: Self, request: Request) -> Response:
+        """Return the full game list of the authenticated user without pagination."""
+        if not request.user.is_authenticated:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        queryset = self.get_queryset().filter(user_id=request.user.pk)
+        serializer = GameListSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @extend_schema(
+        description=(
             "Bulk-create game-list entries for the authenticated user. "
             "Accepts a list of objects each containing a game ID and play status. "
             "Returns the list of created game-list entries. "

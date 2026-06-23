@@ -2,6 +2,10 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.21.0] - 23.06.2026
+
+* Added game list export endpoint (`GET /game-lists/export/`) that returns the authenticated user's full game list as JSON without pagination.
+
 ## v. [4.20.3] - 21.06.2026
 
 * Added a nightly Celery periodic task `nightly_igdb_import_and_recalculate` that runs at midnight UTC.
