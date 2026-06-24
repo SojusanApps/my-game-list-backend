@@ -628,6 +628,7 @@ def test_list_model(
                 ],
                 "release_date": None,
                 "title": ANY,
+                "title_en": ANY,
                 "average_score": 0.0,
                 "members_count": 0,
                 "popularity": 0,
