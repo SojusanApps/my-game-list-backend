@@ -356,6 +356,7 @@ class GameSerializer(serializers.ModelSerializer[Game]):
         fields = (
             "id",
             "title",
+            "title_en",
             "created_at",
             "last_modified_at",
             "release_date",

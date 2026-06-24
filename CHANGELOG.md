@@ -2,6 +2,10 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.21.1] - 24.06.2026
+
+* Added `title_en` to `GameSerializer`.
+
 ## v. [4.21.0] - 23.06.2026
 
 * Added game list export endpoint (`GET /game-lists/export/`) that returns the authenticated user's full game list as JSON without pagination.
