@@ -188,7 +188,7 @@ class GameFollowViewSet(ModelViewSet[GameFollow]):
             "List game-list entries for the authenticated user. "
             "Each entry tracks a user's relationship to a game including the play status "
             "(e.g. Playing, Completed, Plan to Play). "
-            "Filter by status, game ID, or user ID."
+            "Filter by status, game ID, user ID, or any game attribute."
         ),
         parameters=[
             OpenApiParameter(
@@ -197,7 +197,7 @@ class GameFollowViewSet(ModelViewSet[GameFollow]):
             ),
             OpenApiParameter(
                 name="status",
-                description=("Filter by play status. Can be specified multiple times to match several statuses."),
+                description="Filter by play status. Can be specified multiple times to match several statuses.",
             ),
             OpenApiParameter(
                 name="game",
@@ -206,6 +206,66 @@ class GameFollowViewSet(ModelViewSet[GameFollow]):
             OpenApiParameter(
                 name="user",
                 description="Filter by user ID.",
+            ),
+            OpenApiParameter(
+                name="title",
+                description="Filter by game title using fuzzy trigram similarity (supports typos and partial matches).",
+            ),
+            OpenApiParameter(
+                name="release_date_after",
+                description="Filter games released on or after this date (YYYY-MM-DD).",
+            ),
+            OpenApiParameter(
+                name="release_date_before",
+                description="Filter games released on or before this date (YYYY-MM-DD).",
+            ),
+            OpenApiParameter(
+                name="publisher",
+                description="Filter by publisher name (English or Polish, case-insensitive substring match).",
+            ),
+            OpenApiParameter(
+                name="developer",
+                description="Filter by developer name (English or Polish, case-insensitive substring match).",
+            ),
+            OpenApiParameter(
+                name="genres",
+                description="Filter by genre name (English or Polish). Can be specified multiple times.",
+                many=True,
+            ),
+            OpenApiParameter(
+                name="platforms",
+                description="Filter by platform name (English or Polish). Can be specified multiple times.",
+                many=True,
+            ),
+            OpenApiParameter(
+                name="game_type",
+                description="Filter by game type (English or Polish). Can be specified multiple times.",
+                many=True,
+            ),
+            OpenApiParameter(
+                name="game_status",
+                description="Filter by game release status (English or Polish). Can be specified multiple times.",
+                many=True,
+            ),
+            OpenApiParameter(
+                name="game_engines",
+                description="Filter by game engine name (English or Polish). Can be specified multiple times.",
+                many=True,
+            ),
+            OpenApiParameter(
+                name="game_modes",
+                description="Filter by game mode (English or Polish). Can be specified multiple times.",
+                many=True,
+            ),
+            OpenApiParameter(
+                name="player_perspectives",
+                description="Filter by player perspective (English or Polish). Can be specified multiple times.",
+                many=True,
+            ),
+            OpenApiParameter(
+                name="external_games",
+                description="Filter by external game source (English or Polish). Can be specified multiple times.",
+                many=True,
             ),
         ],
     ),

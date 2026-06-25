@@ -2,6 +2,11 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.21.2] - 25.06.2026
+
+* Extended `GameListFilterSet` with all game-attribute filters: `title` (fuzzy trigram), `release_date` (range), `publisher`, `developer`, `genres`, `platforms`, `game_type`, `game_status`, `game_engines`, `game_modes`, `player_perspectives`, and `external_games`.
+* Updated `extend_schema` for `GameListViewSet` list action to document all new filter parameters.
+
 ## v. [4.21.1] - 24.06.2026
 
 * Added `title_en` to `GameSerializer`.

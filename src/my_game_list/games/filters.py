@@ -61,6 +61,69 @@ class GameListFilterSet(filters.FilterSet):
     game = filters.NumberFilter(field_name="game__id")
     user = filters.NumberFilter(field_name="user__id")
 
+    title = filters.CharFilter(method="filter_title")
+    release_date = filters.DateFromToRangeFilter(field_name="game__release_date")
+    publisher = filters.CharFilter(method="filter_publisher")
+    developer = filters.CharFilter(method="filter_developer")
+    genres = BilingualModelMultipleChoiceFilter(
+        field_name="game__genres",
+        queryset=Genre.objects.all(),
+    )
+    platforms = BilingualModelMultipleChoiceFilter(
+        field_name="game__platforms",
+        queryset=Platform.objects.all(),
+    )
+    game_type = BilingualModelMultipleChoiceFilter(
+        field_name="game__game_type",
+        queryset=GameType.objects.all(),
+        en_field="type_en",
+        pl_field="type_pl",
+    )
+    game_status = BilingualModelMultipleChoiceFilter(
+        field_name="game__game_status",
+        queryset=GameStatus.objects.all(),
+        en_field="status_en",
+        pl_field="status_pl",
+    )
+    game_engines = BilingualModelMultipleChoiceFilter(
+        field_name="game__game_engines",
+        queryset=GameEngine.objects.all(),
+    )
+    game_modes = BilingualModelMultipleChoiceFilter(
+        field_name="game__game_modes",
+        queryset=GameMode.objects.all(),
+    )
+    player_perspectives = BilingualModelMultipleChoiceFilter(
+        field_name="game__player_perspectives",
+        queryset=PlayerPerspective.objects.all(),
+    )
+    external_games = BilingualModelMultipleChoiceFilter(
+        field_name="game__external_games__external_game_source",
+        queryset=ExternalGameSource.objects.all(),
+    )
+
+    def filter_title(self, queryset: QuerySet[Any], _name: str, value: str) -> QuerySet[Any]:
+        """Filter by game title using pg_trgm word similarity."""
+        normalized = normalize_title(value)
+        result: QuerySet[Any] = (
+            queryset.annotate(rank=TrigramWordSimilarity(normalized, "game__search_title"))
+            .filter(rank__gte=0.2)
+            .order_by("-rank")
+        )
+        return result
+
+    def filter_publisher(self, queryset: QuerySet[Any], _name: str, value: str) -> QuerySet[Any]:
+        """Filter by publisher name in English or Polish."""
+        return queryset.filter(
+            Q(game__publisher__name_en__icontains=value) | Q(game__publisher__name_pl__icontains=value),
+        )
+
+    def filter_developer(self, queryset: QuerySet[Any], _name: str, value: str) -> QuerySet[Any]:
+        """Filter by developer name in English or Polish."""
+        return queryset.filter(
+            Q(game__developer__name_en__icontains=value) | Q(game__developer__name_pl__icontains=value),
+        )
+
     class Meta:
         """Meta class for game list filter set."""
 
@@ -70,6 +133,17 @@ class GameListFilterSet(filters.FilterSet):
             "status",
             "game",
             "user",
+            "title",
+            "release_date",
+            "publisher",
+            "developer",
+            "genres",
+            "platforms",
+            "game_type",
+            "game_status",
+            "game_engines",
+            "game_modes",
+            "player_perspectives",
         )
 
 
