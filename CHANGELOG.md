@@ -2,6 +2,12 @@
 
 > Date format is DD.MM.YYYY.
 
+## v. [4.22.0] - 26.06.2026
+
+* Replaced `Makefile` with a `justfile` — migrated task runner from `make` to `just` with the same set of commands.
+* Improved fuzzy title search ranking: scoring now uses a weighted blend of `TrigramWordSimilarity` (70%) and `TrigramSimilarity` (30%) instead of word-similarity alone, improving relevance for partial and substring matches.
+* Added explicit `url_path` to notification `ViewSet` actions: `unread-count`, `mark-as-read`, `mark-all-as-read`, and `delete-all-read`.
+
 ## v. [4.21.2] - 25.06.2026
 
 * Extended `GameListFilterSet` with all game-attribute filters: `title` (fuzzy trigram), `release_date` (range), `publisher`, `developer`, `genres`, `platforms`, `game_type`, `game_status`, `game_engines`, `game_modes`, `player_perspectives`, and `external_games`.

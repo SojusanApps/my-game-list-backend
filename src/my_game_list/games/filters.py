@@ -2,8 +2,8 @@
 
 from typing import Any
 
-from django.contrib.postgres.search import TrigramWordSimilarity
-from django.db.models import Q, QuerySet
+from django.contrib.postgres.search import TrigramSimilarity, TrigramWordSimilarity
+from django.db.models import ExpressionWrapper, FloatField, Q, QuerySet, Value
 from django_filters import rest_framework as filters
 
 from my_game_list.games.models import (
@@ -106,7 +106,13 @@ class GameListFilterSet(filters.FilterSet):
         """Filter by game title using pg_trgm word similarity."""
         normalized = normalize_title(value)
         result: QuerySet[Any] = (
-            queryset.annotate(rank=TrigramWordSimilarity(normalized, "game__search_title"))
+            queryset.annotate(
+                rank=ExpressionWrapper(
+                    TrigramWordSimilarity(normalized, "game__search_title") * Value(0.7)
+                    + TrigramSimilarity("game__search_title", normalized) * Value(0.3),
+                    output_field=FloatField(),
+                ),
+            )
             .filter(rank__gte=0.2)
             .order_by("-rank")
         )
@@ -214,7 +220,13 @@ class GameFilterSet(filters.FilterSet):
         """Filter by normalized title using pg_trgm word similarity."""
         normalized = normalize_title(value)
         result: QuerySet[Any] = (
-            queryset.annotate(rank=TrigramWordSimilarity(normalized, "search_title"))
+            queryset.annotate(
+                rank=ExpressionWrapper(
+                    TrigramWordSimilarity(normalized, "search_title") * Value(0.7)
+                    + TrigramSimilarity("search_title", normalized) * Value(0.3),
+                    output_field=FloatField(),
+                ),
+            )
             .filter(rank__gte=0.2)
             .order_by("-rank")
         )

@@ -22,6 +22,28 @@ Application to manage game lists.
 * Assumed coverage in tests > 90%
 * Automatic tests for PostgreSQL in GitHub CI
 * Package management with [uv](https://docs.astral.sh/uv)
+* Command runner: [just](https://github.com/casey/just)
+
+## Available commands
+
+Run `just --list` to see all available recipes. Common ones:
+
+| Command | Description |
+| --- | --- |
+| `just sync` | Sync all dependencies |
+| `just run` | Start the development server |
+| `just fresh_run` | First-time setup: migrate, create superuser, start server |
+| `just check` | Run ruff and mypy |
+| `just test` | Run all tests |
+| `just coverage` | Generate HTML coverage report |
+| `just app_db` | Start the app PostgreSQL container |
+| `just test_db` | Start the test PostgreSQL container |
+| `just translations` | Extract translation strings |
+| `just finish_translations` | Compile translation messages |
+| `just generate_openapi` | Generate OpenAPI schema as `openapi.json` |
+| `just import_igdb_data` | Import data from IGDB |
+| `just recalculate_stats` | Recalculate game and user stats |
+| `just tui` | Launch the custom management TUI |
 
 ## Assumptions about the release preparation and deployment methodology
 

@@ -77,7 +77,7 @@ class NotificationViewSet(ListModelMixin, RetrieveModelMixin, DestroyModelMixin,
             ),
         },
     )
-    @action(detail=False, methods=("get",))
+    @action(detail=False, methods=("get",), url_path="unread-count")
     def unread_count(self: Self, request: Request) -> Response:  # noqa: ARG002
         """Get the count of unread notifications."""
         count = self.get_queryset().unread().count()
@@ -91,7 +91,7 @@ class NotificationViewSet(ListModelMixin, RetrieveModelMixin, DestroyModelMixin,
         request=None,
         responses={204: None},
     )
-    @action(detail=True, methods=("post",))
+    @action(detail=True, methods=("post",), url_path="mark-as-read")
     def mark_as_read(self: Self, request: Request, pk: int) -> Response:  # noqa: ARG002
         """Mark a specific notification as read."""
         instance = self.get_object()
@@ -103,7 +103,7 @@ class NotificationViewSet(ListModelMixin, RetrieveModelMixin, DestroyModelMixin,
         request=None,
         responses={204: None},
     )
-    @action(detail=False, methods=("post",))
+    @action(detail=False, methods=("post",), url_path="mark-all-as-read")
     def mark_all_as_read(self: Self, request: Request) -> Response:  # noqa: ARG002
         """Mark all notifications as read for the user."""
         self.get_queryset().unread().mark_all_as_read()
@@ -116,7 +116,7 @@ class NotificationViewSet(ListModelMixin, RetrieveModelMixin, DestroyModelMixin,
         ),
         responses={204: None},
     )
-    @action(detail=False, methods=("delete",))
+    @action(detail=False, methods=("delete",), url_path="delete-all-read")
     def delete_all_read(self: Self, request: Request) -> Response:  # noqa: ARG002
         """Delete all read notifications for the user."""
         self.get_queryset().filter(unread=False).delete()
